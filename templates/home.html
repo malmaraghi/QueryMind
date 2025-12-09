@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QueryMind</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var profilePic = document.getElementById("profile-pic");
+            var dropdown = document.getElementById("profile-dropdown");
+            if (profilePic && dropdown) {
+                profilePic.onclick = function(e){
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                };
+                document.body.onclick = function(){
+                    if(dropdown.classList.contains('show')){
+                        dropdown.classList.remove('show');
+                    }
+                };
+            }
+
+            var form = document.querySelector('form');
+            if (form) {
+                form.onsubmit = function() {
+                    // Hide any existing error message
+                    var errorDiv = document.querySelector('.error');
+                    if (errorDiv) {
+                        errorDiv.style.display = 'none';
+                    }
+                    
+                    var submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = 'Generating query...';
+                        submitBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
+                    }
+                };
+            }
+
+            // Table metadata modal functionality
+            var tableItems = document.querySelectorAll('.table-item');
+            var modal = document.getElementById('table-metadata-modal');
+            var modalClose = document.getElementById('modal-close');
+            var modalTableName = document.getElementById('modal-table-name');
+            var modalTableBody = document.getElementById('modal-table-body');
+            var modalLoading = document.getElementById('modal-loading');
+
+            tableItems.forEach(function(item) {
+                item.onclick = function() {
+                    var tableName = item.querySelector('.table-name').textContent.trim();
+                    modal.classList.add('show');
+                    modalTableName.textContent = tableName;
+                    modalTableBody.innerHTML = '';
+                    modalLoading.style.display = 'block';
+
+                    fetch('/api/table/' + encodeURIComponent(tableName))
+                        .then(response => response.json())
+                        .then(data => {
+                            modalLoading.style.display = 'none';
+                            if (data.error) {
+                                modalTableBody.innerHTML = '<tr><td colspan="5" style="color: #ff6b6b;">Error: ' + data.error + '</td></tr>';
+                            } else {
+                                data.columns.forEach(function(col) {
+                                    var keyBadge = col.key === 'PRI' ? '<span class="key-badge key-pri">PRI</span>' :
+                                                   col.key === 'MUL' ? '<span class="key-badge key-mul">MUL</span>' :
+                                                   col.key === 'UNI' ? '<span class="key-badge key-uni">UNI</span>' : '-';
+                                    var row = '<tr>' +
+                                        '<td class="col-name">' + col.column + '</td>' +
+                                        '<td class="col-type">' + col.type + '</td>' +
+                                        '<td class="col-null">' + col.null + '</td>' +
+                                        '<td class="col-key">' + keyBadge + '</td>' +
+                                        '<td class="col-default">' + col.default + '</td>' +
+                                    '</tr>';
+                                    modalTableBody.innerHTML += row;
+                                });
+                            }
+                        })
+                        .catch(function(err) {
+                            modalLoading.style.display = 'none';
+                            modalTableBody.innerHTML = '<tr><td colspan="5" style="color: #ff6b6b;">Failed to load metadata</td></tr>';
+                        });
+                };
+            });
+
+            if (modalClose) {
+                modalClose.onclick = function() {
+                    modal.classList.remove('show');
+                };
+            }
+
+            // Close modal when clicking outside
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            };
+        });
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-box">
+            <div class="nav-title">QueryMind</div>
+            <div class="subtitle">Intelligent Database Querying Through Natural Language</div>
+        </div>
+        <div class="navbar-right">
+            <div class="model-info">
+                <span class="model-label">LLM:</span> <span class="model-value">llama3.1:8b</span>
+                <span class="model-separator">|</span>
+                <span class="model-label">RAG:</span> <span class="model-value">mxbai-embed-large:latest</span>
+            </div>
+            <button onclick="window.location.href='/logout'" class="logout-btn" title="Sign Out">Log out</button>
+            <div class="profile-pic" id="profile-pic">
+                <img src="https://www.gravatar.com/avatar?d=mp" alt="profile"/>
+            </div>
+            <div class="profile-dropdown" id="profile-dropdown">
+                <div class="profile-label">User Profile</div>
+                <div><b>Username:</b> {{ db_user }}</div>
+                <div><b>Host:</b> {{ db_host }}</div>
+                <div><b>Port:</b> {{ db_port }}</div>
+                <div><b>DB:</b> {{ db_name }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="content-wrapper">
+        {% if tables %}
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span>DATABASE TABLES</span>
+            </div>
+            <div class="sidebar-content">
+                {% for table in tables %}
+                    <div class="table-item">
+                        <span class="table-icon">▸</span>
+                        <span class="table-name">{{ table }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        <div class="main-content">
+            <div class="question-card">
+                <h2>Ask your question</h2>
+                <p class="question-description">
+                    Enter your natural language question about the <span class="db-name">{{ db_name }}</span> database. 
+                    Only <span class="select-highlight">SELECT</span> queries are supported.
+                </p>
+                <form method="post" action="/">
+                    <label for="user_input">E.g. "List customers in Bahrain" or "Show orders from 2024"</label>
+                    <textarea id="user_input" name="user_input" rows="4" required>{{ user_input }}</textarea>
+                    <button type="submit">Generate SQL</button>
+                </form>
+                {% if error %}
+                  <div class="error">{{ error|safe }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Metadata Modal -->
+    <div class="table-modal" id="table-metadata-modal">
+        <div class="table-modal-content">
+            <div class="table-modal-header">
+                <span class="modal-table-name" id="modal-table-name">Table Name</span>
+                <button class="modal-close" id="modal-close">✕</button>
+            </div>
+            <div class="table-modal-body">
+                <div class="modal-loading" id="modal-loading">Loading...</div>
+                <div class="table-scroll-wrapper">
+                    <table class="metadata-table">
+                        <thead>
+                            <tr>
+                                <th>COLUMN</th>
+                                <th>TYPE</th>
+                                <th>NULL</th>
+                                <th>KEY</th>
+                                <th>DEFAULT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Powered by <strong>Ollama</strong> | <strong>Flask</strong> | <strong>ChromaDB</strong>
+    </div>
+</body>
+</html>

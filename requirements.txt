@@ -1,0 +1,6 @@
+flask
+mariadb
+mysql-connector-python
+ollama
+chromadb
+mysql-connector-python>=8.0.0

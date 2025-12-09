@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QueryMind - Database Login</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="navbar-login">
+        <div class="nav-box">
+            <div class="nav-title">QueryMind</div>
+            <div class="subtitle">Intelligent Database Querying Through Natural Language</div>
+        </div>
+    </div>
+    
+    <div class="login-container">
+        <div class="login-split">
+            <div class="login-info">
+                <h2>Welcome to QueryMind</h2>
+                <p class="info-intro">Connect your database and start converting natural language questions to SQL queries instantly.</p>
+                
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <div class="feature-text">
+                            <strong>Natural Language Processing</strong>
+                            <p>Ask questions in plain English</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <div class="feature-text">
+                            <strong>RAG-Enhanced Accuracy</strong>
+                            <p>Retrieval-Augmented Generation for precise queries</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <div class="feature-text">
+                            <strong>Secure & Read-Only</strong>
+                            <p>Only SELECT queries allowed</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <div class="feature-text">
+                            <strong>Real-Time Results</strong>
+                            <p>See query execution time and results instantly</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tech-stack">
+                    <p class="tech-title">Powered by:</p>
+                    <div class="tech-badges">
+                        <span class="tech-badge">Llama 3.1:8b</span>
+                        <span class="tech-badge">ChromaDB</span>
+                        <span class="tech-badge">Flask</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-form-section">
+                <div class="login-card-compact">
+                    <h3>Database Connection</h3>
+                    <p class="form-subtitle">Enter your credentials to connect</p>
+                    
+                    <form method="post" action="/login">
+                        <div class="form-row">
+                            <div class="form-group-compact">
+                                <label for="db_host">Host</label>
+                                <input type="text" id="db_host" name="db_host" placeholder="e.g., localhost" required>
+                            </div>
+                            <div class="form-group-compact form-group-small">
+                                <label for="db_port">Port</label>
+                                <input type="number" id="db_port" name="db_port" placeholder="3306" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group-compact">
+                            <label for="db_user">Username</label>
+                            <input type="text" id="db_user" name="db_user" required autofocus>
+                        </div>
+                        
+                        <div class="form-group-compact">
+                            <label for="db_password">Password</label>
+                            <input type="password" id="db_password" name="db_password" required>
+                        </div>
+                        
+                        <div class="form-group-compact">
+                            <label for="db_name">Database Name</label>
+                            <input type="text" id="db_name" name="db_name" required>
+                        </div>
+                        
+                        {% if error %}
+                            <div class="error-compact">{{ error }}</div>
+                        {% endif %}
+                        
+                        <button type="submit" class="login-button-compact">Connect to Database</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="login-footer">
+        <p>Developed by Senior Cybersecurity Students at the University of Bahrain</p>
+    </div>
+</body>
+</html>
+            </div>
+        </div>
+    </div>
+    
+    <div class="login-footer">
+        <p>Developed by Senior Cybersecurity Students at the University of Bahrain</p>
+    </div>
+    
+    <script>
+        function fillPreset(host, port, user, password, dbname) {
+            document.getElementById('db_host').value = host;
+            document.getElementById('db_port').value = port;
+            document.getElementById('db_user').value = user;
+            document.getElementById('db_password').value = password;
+            document.getElementById('db_name').value = dbname;
+        }
+    </script>
+</body>
+</html>

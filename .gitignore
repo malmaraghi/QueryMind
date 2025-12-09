@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ChromaDB local storage
+chroma_db/
+chroma_db_*/
+.querymind_chromadb/
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Experiment results (optional - remove if you want to include)
+# exp_com_res/
+
+# Jupyter
+.ipynb_checkpoints/

@@ -1,0 +1,162 @@
+{
+  "test_metadata": {
+    "llm_model": "llama3.1:8b",
+    "embedding_model": "mxbai-embed-large:latest",
+    "test_date": "2025-11-26 17:20:30",
+    "total_questions": 5
+  },
+  "local_db_results": [
+    {
+      "id": 1,
+      "question": "Show all product names and their prices",
+      "complexity": "simple",
+      "gold_sql": "SELECT productName, buyPrice FROM products;",
+      "time_rag": 0.048,
+      "time_llm": 27.743,
+      "generated_sql": "SELECT productName, buyPrice FROM products",
+      "time_execution": 0.0,
+      "success": true,
+      "result_count": 110,
+      "time_total": 27.791
+    },
+    {
+      "id": 2,
+      "question": "List customers in USA with their credit limit",
+      "complexity": "simple_filter",
+      "gold_sql": "SELECT customerName, country, creditLimit FROM customers WHERE country = 'USA';",
+      "time_rag": 5.362,
+      "time_llm": 28.18,
+      "generated_sql": "SELECT customerName, creditLimit \nFROM customers \nWHERE country = 'USA';",
+      "time_execution": 0.0,
+      "success": true,
+      "result_count": 25,
+      "time_total": 33.542
+    },
+    {
+      "id": 3,
+      "question": "Show order numbers and their total amount for orders over 50000",
+      "complexity": "aggregation",
+      "gold_sql": "SELECT orderNumber, SUM(quantityOrdered * priceEach) AS total FROM orderdetails GROUP BY orderNumber HAVING SUM(quantityOrdered * priceEach) > 50000;",
+      "time_rag": 5.36,
+      "time_llm": 36.941,
+      "generated_sql": "SELECT o.orderNumber, SUM(p.amount) AS totalAmount \nFROM payments p \nJOIN customers c ON p.customerNumber = c.customerNumber \nJOIN orders o ON c.customerNumber = o.customerNumber \nWHERE o.orderNumber IN (SELECT orderNumber FROM orders WHERE status = 'Shipped') AND o.orderNumber IN (SELECT orderNumber FROM orderdetails WHERE priceEach > 50.00)",
+      "time_execution": 0.003,
+      "success": true,
+      "result_count": 1,
+      "time_total": 42.304
+    },
+    {
+      "id": 4,
+      "question": "Get customer names with their total number of orders",
+      "complexity": "join_aggregation",
+      "gold_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS order_count FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName ORDER BY order_count DESC LIMIT 10;",
+      "time_rag": 5.366,
+      "time_llm": 34.107,
+      "generated_sql": "SELECT t1.customerName, COUNT(t2.orderNumber) FROM customers AS t1 INNER JOIN orders AS t2 ON t1.customerNumber = t2.customerNumber GROUP BY t2.customerNumber",
+      "time_execution": 0.0,
+      "success": true,
+      "result_count": 98,
+      "time_total": 39.473
+    },
+    {
+      "id": 5,
+      "question": "Show all orders with customer name, order date, and total payment amount",
+      "complexity": "multi_join_aggregation",
+      "gold_sql": "SELECT c.customerName, o.orderDate, o.orderNumber, SUM(od.quantityOrdered * od.priceEach) AS total_amount FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.customerName, o.orderDate, o.orderNumber ORDER BY o.orderDate DESC LIMIT 20;",
+      "time_rag": 5.369,
+      "time_llm": 33.879,
+      "generated_sql": "SELECT \n  c.customerName, \n  o.orderDate, \n  p.amount * od.quantityOrdered AS totalPaymentAmount\nFROM \n  orders o\n  JOIN customers c ON o.customerNumber = c.customerNumber\n  JOIN payments p ON c.customerNumber = p.customerNumber\n  JOIN orderdetails od ON o.orderNumber = od.orderNumber",
+      "time_execution": 0.013,
+      "success": true,
+      "result_count": 13297,
+      "time_total": 39.261
+    }
+  ],
+  "remote_db_results": [
+    {
+      "id": 1,
+      "question": "Show all product names and their prices",
+      "complexity": "simple",
+      "gold_sql": "SELECT productName, buyPrice FROM products;",
+      "time_rag": 0.051,
+      "time_llm": 24.333,
+      "generated_sql": "SELECT productName, buyPrice FROM products",
+      "time_execution": 0.148,
+      "success": true,
+      "result_count": 110,
+      "time_total": 24.532
+    },
+    {
+      "id": 2,
+      "question": "List customers in USA with their credit limit",
+      "complexity": "simple_filter",
+      "gold_sql": "SELECT customerName, country, creditLimit FROM customers WHERE country = 'USA';",
+      "time_rag": 5.356,
+      "time_llm": 27.813,
+      "generated_sql": "SELECT customerName, creditLimit FROM customers WHERE country = 'USA'",
+      "time_execution": 0.147,
+      "success": true,
+      "result_count": 25,
+      "time_total": 33.316
+    },
+    {
+      "id": 3,
+      "question": "Show order numbers and their total amount for orders over 50000",
+      "complexity": "aggregation",
+      "gold_sql": "SELECT orderNumber, SUM(quantityOrdered * priceEach) AS total FROM orderdetails GROUP BY orderNumber HAVING SUM(quantityOrdered * priceEach) > 50000;",
+      "time_rag": 5.367,
+      "time_llm": 31.197,
+      "generated_sql": "SELECT T2.orderNumber, SUM(T2.amount) AS TotalAmount\nFROM payments AS T1\nINNER JOIN orders AS T2 ON T1.customerNumber = T2.customerNumber\nGROUP BY T2.orderNumber\nHAVING SUM(T2.amount) > 50000",
+      "time_execution": 0.14,
+      "success": true,
+      "result_count": 0,
+      "time_total": 36.704
+    },
+    {
+      "id": 4,
+      "question": "Get customer names with their total number of orders",
+      "complexity": "join_aggregation",
+      "gold_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS order_count FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName ORDER BY order_count DESC LIMIT 10;",
+      "time_rag": 5.359,
+      "time_llm": 31.236,
+      "generated_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS totalOrders FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerNumber",
+      "time_execution": 0.147,
+      "success": true,
+      "result_count": 98,
+      "time_total": 36.742
+    },
+    {
+      "id": 5,
+      "question": "Show all orders with customer name, order date, and total payment amount",
+      "complexity": "multi_join_aggregation",
+      "gold_sql": "SELECT c.customerName, o.orderDate, o.orderNumber, SUM(od.quantityOrdered * od.priceEach) AS total_amount FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.customerName, o.orderDate, o.orderNumber ORDER BY o.orderDate DESC LIMIT 20;",
+      "time_rag": 5.377,
+      "time_llm": 32.165,
+      "generated_sql": "SELECT \n  c.customerName,\n  o.orderDate,\n  SUM(p.amount) AS totalPaymentAmount\nFROM \n  customers c\nINNER JOIN \n  payments p ON c.customerNumber = p.customerNumber\nINNER JOIN \n  orders o ON c.customerNumber = o.customerNumber\nGROUP BY \n  c.customerName, o.orderDate",
+      "time_execution": 0.262,
+      "success": true,
+      "result_count": 325,
+      "time_total": 37.804
+    }
+  ],
+  "comparison": {
+    "local_db": {
+      "host": "localhost",
+      "avg_total_time": 36.474,
+      "avg_execution_time": 0.003,
+      "total_time_all_queries": 182.371
+    },
+    "remote_db": {
+      "host": "sql12.freesqldatabase.com",
+      "avg_total_time": 33.82,
+      "avg_execution_time": 0.169,
+      "total_time_all_queries": 169.098
+    },
+    "speed_difference": {
+      "total_time_difference": -2.655,
+      "execution_time_difference": 0.166,
+      "local_is_faster": false,
+      "speed_ratio": 0.93
+    }
+  }
+}

@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "question": "List customer records located in france",
+    "main_llm": "qwen3:1.7b",
+    "embedding_model": "all-minilm:latest",
+    "gold_sql": "SELECT * FROM customers WHERE country = 'France';",
+    "time_context_seconds": 0.02,
+    "llm_generated_sql": "<think>\n</think>\n\nSELECT * FROM customers WHERE country = 'France';",
+    "time_generate_sql_seconds": 4.889,
+    "result_match": true
+  },
+  {
+    "id": 2,
+    "question": "Find product records that belong to the 'Trains' product line",
+    "main_llm": "qwen3:1.7b",
+    "embedding_model": "all-minilm:latest",
+    "gold_sql": "SELECT * FROM products WHERE productLine = 'Trains';",
+    "time_context_seconds": 0.031,
+    "llm_generated_sql": "<think>\n</think>\n\nSELECT * FROM products WHERE productLine = 'Trains';",
+    "time_generate_sql_seconds": 4.286,
+    "result_match": true
+  },
+  {
+    "id": 3,
+    "question": "Get payment records made by customer number 124",
+    "main_llm": "qwen3:1.7b",
+    "embedding_model": "all-minilm:latest",
+    "gold_sql": "SELECT * FROM payments WHERE customerNumber = 124;",
+    "time_context_seconds": 0.037,
+    "llm_generated_sql": "<think>\n</think>\n\nSELECT * FROM payments WHERE customerNumber = 124;",
+    "time_generate_sql_seconds": 4.743,
+    "result_match": true
+  },
+  {
+    "id": 4,
+    "question": "Show the customer name and order date for customers in 'France' who placed orders after '2005-01-01'.",
+    "main_llm": "qwen3:1.7b",
+    "embedding_model": "all-minilm:latest",
+    "gold_sql": "SELECT c.customerName, o.orderDate FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber WHERE c.country = 'France' AND o.orderDate > '2005-01-01';",
+    "time_context_seconds": 0.035,
+    "llm_generated_sql": "<think>\n</think>\n\nSELECT customerName, orderDate\nFROM orders\nWHERE customerNumber IN (\n    SELECT customerNumber\n    FROM customers\n    WHERE country = 'France'\n)\nAND orderDate > '2005-01-01';",
+    "time_generate_sql_seconds": 6.369,
+    "result_match": false
+  },
+  {
+    "id": 5,
+    "question": "Count the total number of orders placed by each customer. Show the customer name and the order count.",
+    "main_llm": "qwen3:1.7b",
+    "embedding_model": "all-minilm:latest",
+    "gold_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS order_count FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName;",
+    "time_context_seconds": 0.037,
+    "llm_generated_sql": "<think>\n</think>\n\nSELECT c.customerName, COUNT(*) as orderCount\nFROM customers c\nJOIN orders o ON c.customerNumber = o.customerNumber\nGROUP BY c.customerName;",
+    "time_generate_sql_seconds": 2.29,
+    "result_match": false
+  }
+]
