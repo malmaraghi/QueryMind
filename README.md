@@ -1,4 +1,4 @@
-si# QueryMind
+# QueryMind
 
 <div align="center">
 
@@ -15,7 +15,7 @@ si# QueryMind
 
 ---
 
-## 🎯 Problem Statement
+## Problem Statement
 
 Traditional database querying requires knowledge of SQL syntax, schema structure, and table relationships. This creates barriers for:
 
@@ -28,22 +28,22 @@ Traditional database querying requires knowledge of SQL syntax, schema structure
 
 ---
 
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---------|-------------|
-| 🗣️ **Natural Language Interface** | Ask questions like "Show customers in Bahrain" or "Count orders per customer" |
-| 🎯 **RAG-Enhanced Accuracy** | Retrieves relevant schema context to improve query generation |
-| 🔒 **Read-Only Security** | Only SELECT queries permitted; blocks INSERT, UPDATE, DELETE, DROP |
-| 🏠 **100% Local Processing** | No data sent to external APIs; runs entirely on your machine |
-| 🔐 **Session Isolation** | Each user gets isolated vector stores for their schema |
-| 📊 **Schema Explorer** | Click tables to view column metadata, types, and keys |
-| ⚡ **Performance Metrics** | Track RAG retrieval, LLM generation, and execution times |
-| 🌐 **Multi-Database Support** | Connect to local or remote MySQL/MariaDB databases |
+| **Natural Language Interface** | Ask questions like "Show customers in Bahrain" or "Count orders per customer" |
+| **RAG-Enhanced Accuracy** | Retrieves relevant schema context to improve query generation |
+| **Read-Only Security** | Only SELECT queries permitted; blocks INSERT, UPDATE, DELETE, DROP |
+| **100% Local Processing** | No data sent to external APIs; runs entirely on your machine |
+| **Session Isolation** | Each user gets isolated vector stores for their schema |
+| **Schema Explorer** | Click tables to view column metadata, types, and keys |
+| **Performance Metrics** | Track RAG retrieval, LLM generation, and execution times |
+| **Multi-Database Support** | Connect to local or remote MySQL/MariaDB databases |
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -70,7 +70,7 @@ Traditional database querying requires knowledge of SQL syntax, schema structure
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Component | Technology |
 |-----------|------------|
@@ -83,61 +83,164 @@ Traditional database querying requires knowledge of SQL syntax, schema structure
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 
-- Python 3.8+
-- [Ollama](https://ollama.ai/) installed and running
-- MySQL or MariaDB database
+Before starting, make sure you have the following installed:
 
-### 1. Clone the Repository
+- **Python 3.8 or higher**
+- **Ollama** - For running local LLMs
+- **MySQL or MariaDB** - Database server
 
+---
+
+### Step 1: Set Up the Database
+
+#### For Linux (Using MariaDB)
+
+1. Install MariaDB:
 ```bash
-git clone https://github.com/yourusername/querymind.git
-cd querymind
+sudo apt update
+sudo apt install mariadb-server
 ```
 
-### 2. Create Virtual Environment
-
+2. Start the MariaDB service:
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
 ```
 
-### 3. Install Dependencies
-
+3. Secure your installation:
 ```bash
-pip install -r requirements.txt
+sudo mysql_secure_installation
 ```
 
-### 4. Pull Required Ollama Models
+4. Log in and create a database:
+```bash
+sudo mysql -u root -p
+```
+
+```sql
+CREATE DATABASE your_database_name;
+CREATE USER 'your_username'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON your_database_name.* TO 'your_username'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+5. Import your data (if you have a SQL file):
+```bash
+mysql -u your_username -p your_database_name < your_data.sql
+```
+
+#### For Windows (Using XAMPP)
+
+1. Download and install [XAMPP](https://www.apachefriends.org/)
+
+2. Open XAMPP Control Panel and start **MySQL**
+
+3. Click **Admin** next to MySQL to open phpMyAdmin
+
+4. Create a new database:
+   - Click "New" in the left sidebar
+   - Enter your database name and click "Create"
+
+5. Import your data:
+   - Select your database
+   - Click "Import" tab
+   - Choose your SQL file and click "Go"
+
+---
+
+### Step 2: Install Ollama
+
+#### For Linux
+```bash
+curl -fsSL https://ollama.ai/install.sh | sh
+```
+
+#### For Windows
+Download and install from [ollama.ai](https://ollama.ai/)
+
+#### Verify Ollama is running
+```bash
+ollama --version
+```
+
+---
+
+### Step 3: Download Required Models
+
+Pull the LLM and embedding models:
 
 ```bash
 ollama pull llama3.1:8b
 ollama pull mxbai-embed-large
 ```
 
-### 5. Run the Application
+This may take a few minutes depending on your internet connection.
 
+---
+
+### Step 4: Clone and Set Up the Project
+
+1. Clone the repository:
 ```bash
-python app.py
+git clone https://github.com/malmaraghi/QueryMind.git
+cd QueryMind
 ```
 
-### 6. Access the Application
-
-Open your browser and navigate to:
+2. Create a virtual environment:
+```bash
+python -m venv venv
 ```
-http://localhost:5000
+
+3. Activate the virtual environment:
+
+**Linux/macOS:**
+```bash
+source venv/bin/activate
+```
+
+**Windows:**
+```bash
+venv\Scripts\activate
+```
+
+4. Install Python dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
 ---
 
-## 🚀 Usage
+### Step 5: Run the Application
 
-### Web Application (Recommended)
+1. Make sure Ollama is running in the background
 
-1. **Login** - Enter your database credentials (host, port, username, password, database name)
+2. Start the Flask application:
+```bash
+python app.py
+```
+
+3. Open your browser and go to:
+```
+http://localhost:5000
+```
+
+4. Log in with your database credentials:
+   - **Host**: `localhost` (or your database server IP)
+   - **Port**: `3306` (default MySQL/MariaDB port)
+   - **Username**: Your database username
+   - **Password**: Your database password
+   - **Database**: Your database name
+
+---
+
+## Usage
+
+1. **Login** - Enter your database credentials
 2. **Explore Schema** - Click on tables in the sidebar to view column details
 3. **Ask Questions** - Type natural language questions in the input box
 4. **Review SQL** - See the generated SQL query before execution
@@ -158,30 +261,18 @@ Count orders per customer with customer name
 Show total revenue by product category
 ```
 
-### CLI Testing (Development)
-
-For development and testing purposes, you can use the CLI interface:
-
-1. Configure your database credentials in `db_config.py`
-2. Run:
-```bash
-python main.py
-```
-
-> **Note:** The CLI is for testing only. The web application (`app.py`) is the main interface with full functionality.
-
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-querymind/
+QueryMind/
 ├── app.py                 # Main Flask web application
 ├── chroma_rag.py          # RAG indexing and retrieval logic
 ├── llm_engine.py          # LLM prompt engineering and inference
 ├── query_executor.py      # SQL extraction, validation, and execution
-├── schema_loader.py       # Database schema extraction
-├── db_config.py           # Database config (CLI testing only)
+├── schema_loader.py       # Database schema extraction (testing)
+├── db_config.py           # Database config (testing only)
 ├── main.py                # CLI interface (testing only)
 ├── requirements.txt       # Python dependencies
 ├── templates/
@@ -197,9 +288,11 @@ querymind/
     └── run_experiments.sh
 ```
 
+> **Note:** The files `db_config.py`, `schema_loader.py`, and `main.py` are for CLI testing purposes only. The main application uses `app.py` which handles database connections through the web interface.
+
 ---
 
-## 🔒 Security
+## Security
 
 QueryMind implements multiple security layers:
 
@@ -214,7 +307,7 @@ QueryMind implements multiple security layers:
 
 ---
 
-## 📊 Experimental Results
+## Experimental Results
 
 We evaluated QueryMind with different model configurations:
 
@@ -235,62 +328,43 @@ We evaluated QueryMind with different model configurations:
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
-### Environment Variables
+### Models Used
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `SECRET_KEY` | Flask session secret key | `supersecret_change_in_production` |
+The application uses the following models by default:
 
-### Model Configuration
+- **LLM**: `llama3.1:8b` - For SQL query generation
+- **Embedding Model**: `mxbai-embed-large` - For RAG schema retrieval
 
-Edit `app.py` to change models:
+To change models, edit the configuration in `app.py`:
 
 ```python
-MAIN_LLM_MODEL = "llama3.1:8b"              # LLM for SQL generation
-EMBEDDING_MODEL = "mxbai-embed-large:latest" # Embedding model for RAG
+MAIN_LLM_MODEL = "llama3.1:8b"
+EMBEDDING_MODEL = "mxbai-embed-large:latest"
 ```
 
-### Supported Models
-
-| LLM Models | Embedding Models |
-|------------|------------------|
-| llama3.1:8b | mxbai-embed-large |
-| qwen3:1.7b | all-minilm |
-| gemma3:1b | nomic-embed-text |
-
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
+## License
 
 This project was developed as a senior project at the **University of Bahrain**, College of Information Technology.
 
 ---
 
-## 👥 Authors
+## Authors
 
-- **Mohamed Almaraghi**
-- **Abdulrahman Bumeajib**
-- **Ali Alsowaidi**
+**Cyber Security Students - Batch 2025**
 
-University of Bahrain, 2025
+- Mohamed Almaraghi
+- Abdulrahman Bumeajib
+- Ali Alsowaidi
+
+University of Bahrain
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Ollama](https://ollama.ai/) - Local LLM inference
 - [ChromaDB](https://www.trychroma.com/) - Vector database
@@ -301,6 +375,6 @@ University of Bahrain, 2025
 
 <div align="center">
 
-**Made with ❤️ at University of Bahrain**
+**University of Bahrain - Senior Project 2025**
 
 </div>
