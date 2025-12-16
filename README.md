@@ -360,8 +360,6 @@ This project was developed as a senior project at the **University of Bahrain**,
 - Abdulrahman Bumeajib
 - Ali Alsowaidi
 
-University of Bahrain
-
 ---
 
 ## Acknowledgments
