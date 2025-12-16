@@ -373,6 +373,12 @@ University of Bahrain
 
 ---
 
+## Full Project Report
+
+Download the full project report (PDF): [Download full report (PDF)](https://drive.google.com/file/d/1ng_RuWAV661o0JxJE2x5vGtIlHZuM9De/view?usp=drive_link)
+
+---
+
 <div align="center">
 
 **University of Bahrain - Senior Project 2025**
