@@ -373,8 +373,7 @@ This project was developed as a senior project at the **University of Bahrain**,
 
 ## Full Project Report
 
-Visit our website here: [Click here]
-(querymind-text2sql.com)
+Visit our website here: [Click here](https://querymind-text2sql.com)
 
 ---
 
