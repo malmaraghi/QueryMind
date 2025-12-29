@@ -371,9 +371,15 @@ This project was developed as a senior project at the **University of Bahrain**,
 
 ---
 
-## Full Project Report
+# QueryMind Text2SQL
 
-Visit our website here: [Click here](https://querymind-text2sql.com)
+## Project Website
+
+<div align="center">
+  
+[![Visit Website](https://img.shields.io/badge/🌐_Visit_Our_Website-Click_Here-blue?style=for-the-badge&logo=google-chrome&logoColor=white)](https://querymind-text2sql.com)
+
+</div>
 
 ---
 
