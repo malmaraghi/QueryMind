@@ -48,12 +48,12 @@ Traditional database querying requires knowledge of SQL syntax, schema structure
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        User Interface                           │
-│                    (Flask Web Application)                       │
+│                    (Flask Web Application)                      │
 └─────────────────────────┬───────────────────────────────────────┘
                           │
                           ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     Query Processing                             │
+│                     Query Processing                            │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
 │  │   Input     │  │    RAG      │  │      SQL Validator      │  │
 │  │ Validator   │──│  Retrieval  │──│  (SELECT-only check)    │  │
@@ -373,7 +373,8 @@ This project was developed as a senior project at the **University of Bahrain**,
 
 ## Full Project Report
 
-Download the full project report (PDF): [Download full report (PDF)](https://drive.google.com/file/d/1ng_RuWAV661o0JxJE2x5vGtIlHZuM9De/view?usp=drive_link)
+Visit our website here: [Click here]
+(querymind-text2sql.com)
 
 ---
 
