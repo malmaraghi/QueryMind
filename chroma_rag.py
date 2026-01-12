@@ -31,7 +31,6 @@ def embed_texts(texts: List[str], model: str) -> List[List[float]]:
 
 
 def index_schema_in_chroma(schema_text: str, persist_path: str, model: str):
-    # Clear existing ChromaDB data for this path to avoid conflicts
     if os.path.exists(persist_path):
         try:
             shutil.rmtree(persist_path)
@@ -39,13 +38,11 @@ def index_schema_in_chroma(schema_text: str, persist_path: str, model: str):
         except Exception as e:
             print(f"Warning: Could not clear {persist_path}: {e}")
     
-    # Ensure directory exists with proper permissions
     os.makedirs(persist_path, mode=0o755, exist_ok=True)
     
     try:
         chroma_client = chromadb.PersistentClient(path=persist_path)
         
-        # Try to delete existing collection (ignore if doesn't exist)
         try:
             existing_collections = chroma_client.list_collections()
             for col in existing_collections:
@@ -55,7 +52,6 @@ def index_schema_in_chroma(schema_text: str, persist_path: str, model: str):
         except Exception as e:
             print(f"Note: {e}")
         
-        # Create fresh collection
         collection = chroma_client.create_collection(
             name="db_schema",
             metadata={"hnsw:space": "cosine"}
@@ -85,7 +81,6 @@ def index_schema_in_chroma(schema_text: str, persist_path: str, model: str):
         
     except Exception as e:
         print(f"Error in index_schema_in_chroma: {e}")
-        # Don't raise - allow app to continue
         pass
 
 
@@ -107,14 +102,12 @@ def retrieve_schema_context(question: str, top_k: int = 5, persist_path: str = "
     try:
         chroma_client = chromadb.PersistentClient(path=persist_path)
         
-        # Check if collection exists
         try:
             collection = chroma_client.get_collection("db_schema")
         except Exception:
             print(f"Collection 'db_schema' not found at {persist_path}. Schema needs to be re-indexed.")
             return "ERROR: Schema not indexed. Please log out and log in again to re-index the database schema."
 
-        # Check if collection has documents
         if collection.count() == 0:
             print(f"Collection 'db_schema' is empty at {persist_path}. Schema needs to be re-indexed.")
             return "ERROR: Schema not indexed. Please log out and log in again to re-index the database schema."

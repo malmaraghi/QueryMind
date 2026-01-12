@@ -30,9 +30,12 @@ body {
     background: var(--main-bg);
     font-family: var(--primary-font);
     color: var(--text-main);
-    min-height: 100vh;
+    height: 100vh;
     width: 100vw;
     overflow-x: hidden;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .navbar {
@@ -98,6 +101,52 @@ body {
     font-weight: 500;
 }
 
+.website-link-banner {
+    margin-top: 1.2em;
+    padding: 1em 1.2em;
+    background: linear-gradient(135deg, rgba(187, 35, 254, 0.15), rgba(74, 144, 226, 0.15));
+    border-radius: 12px;
+    border: 1px solid rgba(187, 35, 254, 0.3);
+    text-align: center;
+}
+
+.website-link-banner p {
+    margin: 0 0 0.6em 0;
+    color: #b3b9c9;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.website-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.6em 1.3em;
+    background: linear-gradient(135deg, #4a90e2, #bb23fe);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(187, 35, 254, 0.3);
+}
+
+.website-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(187, 35, 254, 0.5);
+    background: linear-gradient(135deg, #5ba3f5, #d13cff);
+}
+
+.website-link .arrow {
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+
+.website-link:hover .arrow {
+    transform: translateX(4px);
+}
+
 .model-value {
     color: #23c1ed;
     font-weight: 600;
@@ -124,26 +173,24 @@ body {
     width: var(--profile-size);
     height: var(--profile-size);
     border-radius: 50%;
-    background: #926cff;
+    background: linear-gradient(135deg, #bb23fe, #8b1ac9);
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     border: 2px solid #bb23fe;
-    box-shadow: 0 2px 12px #25194a;
-    transition: box-shadow .18s;
+    box-shadow: 0 2px 12px rgba(187, 35, 254, 0.4);
+    transition: all .18s;
 }
 
 .profile-pic:hover {
-    box-shadow: 0 6px 20px #bb23fe;
+    box-shadow: 0 6px 20px rgba(187, 35, 254, 0.6);
+    transform: scale(1.05);
 }
 
-.profile-pic img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
+.profile-pic svg {
+    flex-shrink: 0;
 }
 
 .profile-dropdown {
@@ -187,9 +234,10 @@ body {
 .content-wrapper {
     display: flex;
     width: 100vw;
-    height: calc(100vh - var(--nav-height) - 60px);
+    flex: 1;
     position: relative;
     overflow: hidden;
+    min-height: 0;
 }
 
 .sidebar {
@@ -309,9 +357,10 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
-    padding: 0;
-    overflow: hidden;
+    min-height: 0;
+    padding: 2vh 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .info-card, .question-card, .result-card {
@@ -321,7 +370,7 @@ body {
     width: 99vw;
     max-width: var(--max-card-width);
     margin: 0 auto;
-    padding: 2em 2.7em 1.5em 2.7em;
+    padding: 1.5em 2.5em 1.2em 2.5em;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -669,12 +718,13 @@ tr:hover td {
 .footer {
     width: 100%;
     text-align: center;
-    font-size: 0.98em;
+    font-size: 0.85em;
     color: var(--footer-color);
-    padding: 18px 0 14px 0;
+    padding: 12px 0;
     background: transparent;
     letter-spacing: 0.06em;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
 }
 
 .footer strong {
@@ -921,6 +971,9 @@ tr:hover td {
 }
 
 .logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background: rgba(255, 64, 108, 0.2);
     border: 1px solid rgba(255, 64, 108, 0.4);
     color: #ff406c;
@@ -932,9 +985,8 @@ tr:hover td {
     font-weight: 600;
 }
 
-.logout-btn::before {
-    content: "⎋ ";
-    font-size: 1.1em;
+.logout-btn svg {
+    transition: transform 0.2s;
 }
 
 .logout-btn:hover {
@@ -942,11 +994,15 @@ tr:hover td {
     transform: scale(1.05);
 }
 
+.logout-btn:hover svg {
+    transform: translateX(2px);
+}
+
 /* Login Page - Single Page Layout */
 
 .navbar-login {
     width: 100%;
-    height: 70px;
+    height: var(--nav-height);
     background: var(--card-bg);
     display: flex;
     justify-content: flex-start;
@@ -965,8 +1021,9 @@ tr:hover td {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 70px);
-    padding: 0;
+    min-height: calc(100vh - var(--nav-height) - 46px);
+    max-height: calc(100vh - var(--nav-height) - 46px);
+    padding: 1vh 0;
     overflow: hidden;
 }
 
@@ -974,14 +1031,14 @@ tr:hover td {
     display: flex;
     width: 100%;
     max-width: 1400px;
-    height: 100%;
-    max-height: 650px;
+    height: auto;
+    max-height: 600px;
 }
 
 .login-info {
     flex: 1;
     background: linear-gradient(135deg, #352054 0%, #2a1a42 100%);
-    padding: 3em 3em;
+    padding: 1.8em 2.2em;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -990,41 +1047,41 @@ tr:hover td {
 
 .login-info h2 {
     color: var(--accent);
-    font-size: 2.2em;
-    margin-bottom: 0.3em;
+    font-size: 1.7em;
+    margin-bottom: 0.25em;
 }
 
 .info-intro {
     color: var(--text-soft);
-    font-size: 1.1em;
-    margin-bottom: 2em;
-    line-height: 1.6;
+    font-size: 0.95em;
+    margin-bottom: 1.2em;
+    line-height: 1.5;
 }
 
 .feature-list {
     display: flex;
     flex-direction: column;
-    gap: 1.2em;
-    margin-bottom: 2.5em;
+    gap: 0.8em;
+    margin-bottom: 1.2em;
 }
 
 .feature-item {
     display: flex;
     align-items: flex-start;
-    gap: 1em;
+    gap: 0.8em;
 }
 
 .feature-icon {
     background: rgba(187, 35, 254, 0.2);
     color: var(--accent);
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 1em;
     flex-shrink: 0;
 }
 
@@ -1034,14 +1091,14 @@ tr:hover td {
 
 .feature-text strong {
     color: #fff;
-    font-size: 1.05em;
+    font-size: 1em;
     display: block;
-    margin-bottom: 0.3em;
+    margin-bottom: 0.2em;
 }
 
 .feature-text p {
     color: var(--text-soft);
-    font-size: 0.95em;
+    font-size: 0.9em;
     margin: 0;
 }
 
@@ -1072,9 +1129,9 @@ tr:hover td {
 }
 
 .login-form-section {
-    flex: 0 0 500px;
+    flex: 0 0 540px;
     background: var(--card-bg);
-    padding: 2em;
+    padding: 2em 2.5em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1084,7 +1141,7 @@ tr:hover td {
 .login-card-compact {
     width: 100%;
     max-width: 420px;
-    min-height: 480px;
+    min-height: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1092,25 +1149,25 @@ tr:hover td {
 
 .login-card-compact h3 {
     color: var(--accent);
-    font-size: 1.8em;
-    margin-bottom: 0.3em;
+    font-size: 1.5em;
+    margin-bottom: 0.2em;
     text-align: center;
 }
 
 .form-subtitle {
     color: var(--text-soft);
     text-align: center;
-    margin-bottom: 1.8em;
-    font-size: 1em;
+    margin-bottom: 1.5em;
+    font-size: 0.9em;
 }
 
 .form-row {
     display: flex;
-    gap: 1em;
+    gap: 0.8em;
 }
 
 .form-group-compact {
-    margin-bottom: 1.2em;
+    margin-bottom: 1em;
     flex: 1;
 }
 
@@ -1121,8 +1178,8 @@ tr:hover td {
 .form-group-compact label {
     display: block;
     color: var(--text-soft);
-    font-size: 0.9em;
-    margin-bottom: 0.4em;
+    font-size: 0.85em;
+    margin-bottom: 0.3em;
     font-weight: 500;
 }
 
@@ -1133,7 +1190,7 @@ tr:hover td {
     border: 2px solid rgba(187, 35, 254, 0.3);
     border-radius: 8px;
     color: var(--text-main);
-    font-size: 0.95em;
+    font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
@@ -1149,13 +1206,13 @@ tr:hover td {
     background: var(--accent);
     color: #fff;
     border: none;
-    padding: 0.9em 2em;
-    border-radius: 10px;
-    font-size: 1.05em;
+    padding: 0.7em 1.5em;
+    border-radius: 8px;
+    font-size: 1em;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s, transform 0.2s;
-    margin-top: 1em;
+    margin-top: 0.6em;
 }
 
 .login-button-compact:hover {

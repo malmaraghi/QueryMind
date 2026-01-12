@@ -5,22 +5,15 @@ import re
 def is_dangerous_query(question):
     """Check if the user's question contains dangerous SQL keywords."""
     dangerous_keywords = [
-        # Data modification
         r'\bdrop\b', r'\bdelete\b', r'\btruncate\b', r'\binsert\b',
         r'\bupdate\b', r'\breplace\b', r'\bmerge\b',
-        # Schema modification
         r'\balter\b', r'\bcreate\b', r'\brename\b', r'\bmodify\b',
-        # Permissions
         r'\bgrant\b', r'\brevoke\b',
-        # Execution
         r'\bexec\b', r'\bexecute\b', r'\bcall\b',
-        # Database/table operations
         r'\bload\b', r'\bimport\b', r'\bexport\b',
         r'\block\b', r'\bunlock\b',
         r'\bkill\b', r'\bshutdown\b', r'\breset\b',
-        # File operations
         r'\boutfile\b', r'\binfile\b', r'\bdumpfile\b',
-        # Dangerous commands
         r'\bset\b', r'\bflush\b', r'\bpurge\b',
     ]
     question_lower = question.lower()
@@ -31,11 +24,9 @@ def is_dangerous_query(question):
 
 
 def ask_llm(question, rag_context, model_name):
-    # Block dangerous queries BEFORE sending to LLM
     if is_dangerous_query(question):
         return "Error: Only SELECT queries are allowed."
     
-    # Check if schema context is valid before proceeding
     if not rag_context or rag_context.startswith("ERROR:") or rag_context.startswith("Error"):
         return f"Error: {rag_context}"
     

@@ -6,12 +6,10 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from chroma_rag import index_schema_in_chroma, retrieve_schema_context
 from llm_engine import ask_llm
 from query_executor import extract_sql, run_query
+from config import MAIN_LLM_MODEL, EMBEDDING_MODEL
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecret_change_in_production")
-
-MAIN_LLM_MODEL = "llama3.1:8b"
-EMBEDDING_MODEL = "mxbai-embed-large:latest"
 
 
 def connect_to_db():
@@ -69,12 +67,10 @@ def login():
         db_password = request.form.get("db_password", "")
         db_name = request.form.get("db_name", "").strip()
         
-        # Validate inputs
         if not all([db_user, db_name]):
             error = "Invalid database credentials. Please check your information and try again."
             return render_template("login.html", error=error)
         
-        # Test connection
         try:
             test_conn = mariadb.connect(
                 host=db_host,
@@ -85,7 +81,6 @@ def login():
             )
             test_conn.close()
             
-            # Store in session
             session['db_host'] = db_host
             session['db_port'] = db_port
             session['db_user'] = db_user
@@ -93,10 +88,8 @@ def login():
             session['db_name'] = db_name
             session['logged_in'] = True
             
-            # Index schema with unique absolute path per user
             schema_text, tables = load_schema_from_session()
             if schema_text:
-                # Use unique path for each user/database combination
                 import hashlib
                 unique_id = hashlib.md5(f"{db_user}_{db_host}_{db_name}".encode()).hexdigest()[:8]
                 base_dir = os.path.expanduser("~/.querymind_chromadb")
@@ -108,19 +101,16 @@ def login():
                     index_schema_in_chroma(schema_text, persist_path=persist_path, model=EMBEDDING_MODEL)
                 except Exception as e:
                     print(f"ChromaDB indexing error (non-fatal): {e}")
-                    # Continue anyway - the error is handled in chroma_rag.py
             
             return redirect(url_for('home'))
             
         except mariadb.Error as e:
-            # Generic error message for security - don't reveal specific details
             error = "Invalid database credentials. Please check your information and try again."
-            print(f"Login failed: {str(e)}")  # Log actual error server-side only
+            print(f"Login failed: {str(e)}")
             return render_template("login.html", error=error)
         except Exception as e:
-            # Generic error for any other issues
             error = "Connection failed. Please verify your credentials and try again."
-            print(f"Login error: {e}")  # Log actual error server-side only
+            print(f"Login error: {e}")
             return render_template("login.html", error=error)
     
     return render_template("login.html", error=error)
@@ -144,7 +134,6 @@ def get_table_metadata(table_name):
     
     try:
         cursor = conn.cursor()
-        # Get column information
         cursor.execute(f"DESCRIBE `{table_name}`;")
         columns = cursor.fetchall()
         
@@ -167,14 +156,12 @@ def get_table_metadata(table_name):
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    # Check if logged in
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
     error = ""
     user_input = ""
     
-    # Get accessible tables and schema
     schema_text, accessible_tables = load_schema_from_session()
     
     if request.method == "POST":
@@ -187,12 +174,10 @@ def home():
             model=EMBEDDING_MODEL
         )
         
-        # If schema not indexed, re-index automatically
         if rag_context.startswith("ERROR:") and schema_text:
             print("Schema not indexed, re-indexing now...")
             try:
                 index_schema_in_chroma(schema_text, persist_path=session['persist_path'], model=EMBEDDING_MODEL)
-                # Retry retrieval after re-indexing
                 rag_context = retrieve_schema_context(
                     user_input, 
                     persist_path=session['persist_path'], 
