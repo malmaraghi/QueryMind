@@ -35,6 +35,16 @@ class AnalysisHelperTests(unittest.TestCase):
         self.assertTrue(low <= sum(values) / len(values) <= high)
         self.assertEqual(ar.cluster_bootstrap_ci(values), [low, high])
 
+    def test_questions_outside_every_tier_do_not_crash_the_analysis(self):
+        trial = {"llm": "m", "embedding": "e", "question_id": 1, "repeat": 1, "status": "executed",
+                 "result_correct": True, "status_detail": None, "comparison_reason": "ok", "complexity": "x",
+                 "generated_sql": "SELECT 1", "legacy_result_match": True, "recall_by_k": {"1": 1.0},
+                 "recall_at_k": 1.0, "time_retrieval_s": 0.1, "time_generation_s": 1.0,
+                 "time_db_execution_s": 0.01, "time_total_s": 1.2}
+        result = ar.analyze_config([trial, {**trial, "repeat": 2}], {"easy": {101}})
+        self.assertIsNone(result["difficulty_accuracy"]["easy"]["accuracy"])
+        self.assertEqual(result["execution_result_accuracy"], 1.0)
+
     def test_outlier_rule(self):
         self.assertEqual(ar.outliers([1, 1, 1, 1, 1, 1, 1, 50]), 1)
         self.assertEqual(ar.outliers([1, 2, 3]), 0)

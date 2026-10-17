@@ -109,7 +109,8 @@ def analyze_config(trials, tiers):
     tier_accuracy = {}
     for tier, ids in tiers.items():
         mine = [t for t in trials if t["question_id"] in ids]
-        tier_accuracy[tier] = {"trials": len(mine), "accuracy": mean(1.0 if t["result_correct"] else 0.0 for t in mine)}
+        tier_accuracy[tier] = {"trials": len(mine),
+                               "accuracy": mean(1.0 if t["result_correct"] else 0.0 for t in mine) if mine else None}
     category = defaultdict(list)
     for t in trials:
         category[t["complexity"]].append(1.0 if t["result_correct"] else 0.0)
