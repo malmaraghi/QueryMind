@@ -77,6 +77,26 @@ Determinism: `temperature=0` and `seed=42` are set, but this does not guarantee 
   representative in Q111, order status in Q117/Q129/Q115/Q120, the meaning of "not shipped" in Q103) the wording
   states it explicitly. Q103 means `shippedDate IS NULL`, not `status <> 'Shipped'`.
 
+## Running the paper benchmark, resuming, and analysis
+
+```bash
+experiment/run_paper_benchmark.sh                       # the paper's 5 configurations x 32 questions x 3 repeats (480 trials)
+experiment/run_paper_benchmark.sh --extra               # + the optional Llama + all-minilm run (not in the paper)
+QUESTIONS=experiment/gold_questions.json GROUP=bridge-gold5 experiment/run_paper_benchmark.sh   # original 5 questions
+python experiment/analyze_results.py exp_runs/*paper-v1-P*   # tables, CIs, hallucination rate, latency statistics
+```
+
+- One run directory per configuration under `exp_runs/` (not tracked in Git). Each trial is written and synced to
+  `trials.jsonl` as soon as it finishes.
+- **Resume:** `python experiment/run_benchmark.py --resume exp_runs/<run directory>` runs only the missing trials,
+  after checking that code, models, settings and the database are unchanged. A half-written last line is moved aside, not lost.
+- **Timeout:** each LLM request has a 300 s limit (`--generation-timeout`); a timeout is recorded as `generation_error`.
+- **Reconnect:** a dropped database connection is re-established (read-only status is verified again); if that fails the
+  run stops and can be resumed.
+- Determinism: qwen3:1.7b returned identical SQL for repeated runs of a question in only about 56-59% of cases despite
+  temperature 0 and seed 42.
+- Credentials come from `QM_DB_*` environment variables, normally via `~/.config/querymind/eval.env` (mode 600, outside the repository).
+
 ## Tests
 
 ```bash

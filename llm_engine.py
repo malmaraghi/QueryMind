@@ -23,8 +23,12 @@ def is_dangerous_query(question):
     return False
 
 
-def ask_llm(question, rag_context, model_name, options=None):
-    """``options`` is passed to Ollama as-is (e.g. temperature, seed); the app leaves it unset."""
+def ask_llm(question, rag_context, model_name, options=None, client=None):
+    """``options`` is passed to Ollama as-is (e.g. temperature, seed); the app leaves it unset.
+
+    ``client`` is an optional ``ollama.Client`` (used by the experiment runner to enforce a
+    request timeout); the app uses the default module-level client.
+    """
     if is_dangerous_query(question):
         return "Error: Only SELECT queries are allowed."
     
@@ -48,7 +52,8 @@ SQL Query:"""
 
     try:
         chat_kwargs = {"options": options} if options else {}
-        response = ollama.chat(
+        chat = client.chat if client is not None else ollama.chat
+        response = chat(
             model=model_name,
             messages=[{"role": "user", "content": prompt}],
             **chat_kwargs

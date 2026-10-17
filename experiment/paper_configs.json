@@ -1,0 +1,13 @@
+{
+  "_note": "The LLM / embedding configurations evaluated in the 3ICT2026 paper (Table IV) and traced to the historical result files in exp_com_res/. Order = cheapest first, so a problem shows up early. The optional addition is NOT in the paper and must be reported as an addition.",
+  "paper_configurations": [
+    {"id": "P1", "llm": "gemma3:1b", "embedding": "mxbai-embed-large:latest", "paper_table_iv": {"match_rate": 0.6, "context_s": 0.141, "generation_s": 5.193, "total_s": 5.334}, "historical_file": "exp_com_res/results_gemma3_1b_mxbai-embed-large_latest.json"},
+    {"id": "P2", "llm": "gemma3:1b", "embedding": "all-minilm:latest", "paper_table_iv": {"match_rate": 0.4, "context_s": 0.032, "generation_s": 4.203, "total_s": 4.235}, "historical_file": "exp_com_res/results_gemma3_1b_all-minilm_latest.json"},
+    {"id": "P3", "llm": "qwen3:1.7b", "embedding": "mxbai-embed-large:latest", "paper_table_iv": {"match_rate": 0.6, "context_s": 0.150, "generation_s": 6.686, "total_s": 6.836}, "historical_file": "exp_com_res/results_qwen3_1.7b_mxbai-embed-large_latest.json"},
+    {"id": "P4", "llm": "qwen3:1.7b", "embedding": "all-minilm:latest", "paper_table_iv": {"match_rate": 0.6, "context_s": 0.032, "generation_s": 4.515, "total_s": 4.547}, "historical_file": "exp_com_res/results_qwen3_1.7b_all-minilm_latest.json"},
+    {"id": "P5", "llm": "llama3.1:8b", "embedding": "mxbai-embed-large:latest", "paper_table_iv": {"match_rate": 1.0, "context_s": 4.319, "generation_s": 28.974, "total_s": 33.293}, "historical_file": "exp_com_res/results_llama3.1_8b_mxbai-embed-large_latest.json"}
+  ],
+  "optional_additions": [
+    {"id": "X1", "llm": "llama3.1:8b", "embedding": "all-minilm:latest", "note": "Not in the paper. Completes the 3 x 2 design; run as a separate, clearly labelled run."}
+  ]
+}

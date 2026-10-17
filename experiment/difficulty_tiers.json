@@ -1,0 +1,6 @@
+{
+  "_note": "Difficulty tiers for the 32-question benchmark (sidecar, so benchmark_30.json stays unchanged). easy = single table, no join or subquery; medium = one join, one subquery, or group-by with having; hard = three or more tables, EXISTS, or join + aggregation + ordering. Assigned by the authors before any full-run results were seen.",
+  "easy": [101, 103, 104, 105, 106, 107, 108, 114, 116, 118, 120, 125, 126, 127, 130, 132],
+  "medium": [102, 109, 110, 111, 112, 119, 121, 122, 123, 124, 131],
+  "hard": [113, 115, 117, 128, 129]
+}
