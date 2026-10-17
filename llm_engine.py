@@ -23,7 +23,8 @@ def is_dangerous_query(question):
     return False
 
 
-def ask_llm(question, rag_context, model_name):
+def ask_llm(question, rag_context, model_name, options=None):
+    """``options`` is passed to Ollama as-is (e.g. temperature, seed); the app leaves it unset."""
     if is_dangerous_query(question):
         return "Error: Only SELECT queries are allowed."
     
@@ -46,9 +47,11 @@ User Question: {question}
 SQL Query:"""
 
     try:
+        chat_kwargs = {"options": options} if options else {}
         response = ollama.chat(
             model=model_name,
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            **chat_kwargs
         )
         sql_query = response["message"]["content"]
         sql_query = sql_query.strip().replace("```sql", "").replace("```", "").strip()

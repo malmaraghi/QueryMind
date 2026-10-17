@@ -4,7 +4,9 @@ import os
 import sys
 import time
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# db_config / schema_loader live in testing/; chroma_rag, llm_engine, query_executor in the root.
+sys.path.extend([PROJECT_ROOT, os.path.join(PROJECT_ROOT, 'testing')])
 
 from chroma_rag import index_schema_in_chroma, retrieve_schema_context
 from db_config import connect_db
@@ -22,8 +24,11 @@ def load_gold_questions(filename="gold_questions.json"):
 
 def run_experiment(llm_model, embedding_model):
     schema_text = load_schema()
-    persist_path = f"./chroma_db_{embedding_model.replace(':', '_')}"
-    
+    # Fresh run directory per invocation: results and the index never overwrite earlier data.
+    run_dir = os.path.join(PROJECT_ROOT, "exp_runs", "legacy_" + time.strftime("%Y%m%dT%H%M%S", time.gmtime()))
+    os.makedirs(run_dir, exist_ok=False)
+    persist_path = os.path.join(run_dir, f"chroma_db_{embedding_model.replace(':', '_')}")
+
     print(f"\n=== LLM: {llm_model} ===")
     print(f"Indexing with {embedding_model}...")
     index_schema_in_chroma(schema_text, persist_path=persist_path, model=embedding_model)
@@ -70,7 +75,8 @@ def run_experiment(llm_model, embedding_model):
         results.append(experiment_result)
         print(f"Result match: {experiment_result['result_match']}")
 
-    output_filename = f"results_{llm_model.replace(':', '_')}_{embedding_model.replace(':', '_')}.json"
+    output_filename = os.path.join(
+        run_dir, f"results_{llm_model.replace(':', '_')}_{embedding_model.replace(':', '_')}.json")
     with open(output_filename, "w") as file:
         json.dump(results, file, indent=2)
     print(f"\nResults saved to {output_filename}")

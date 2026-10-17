@@ -1,0 +1,2923 @@
+{
+  "_note": "Expanded benchmark (32 questions) over the existing classicmodels database. expected_rows are intentionally null: they must be generated from the local database with experiment/generate_expected_rows.py (read-only), never typed by hand. The runner refuses to score a question whose expected_rows are missing or do not match the live reference query. Ids start at 101 so they never collide with the original gold set (ids 1-5), which is kept unchanged in gold_questions.json.",
+  "dataset": "classicmodels",
+  "questions": [
+    {
+      "id": 101,
+      "question": "List the first name and last name of every employee.",
+      "gold_sql": "SELECT firstName, lastName FROM employees;",
+      "complexity": "simple_retrieval",
+      "required_tables": [
+        "employees"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Diane",
+          "Murphy"
+        ],
+        [
+          "Mary",
+          "Patterson"
+        ],
+        [
+          "Jeff",
+          "Firrelli"
+        ],
+        [
+          "William",
+          "Patterson"
+        ],
+        [
+          "Gerard",
+          "Bondur"
+        ],
+        [
+          "Anthony",
+          "Bow"
+        ],
+        [
+          "Leslie",
+          "Jennings"
+        ],
+        [
+          "Leslie",
+          "Thompson"
+        ],
+        [
+          "Julie",
+          "Firrelli"
+        ],
+        [
+          "Steve",
+          "Patterson"
+        ],
+        [
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Loui",
+          "Bondur"
+        ],
+        [
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Larry",
+          "Bott"
+        ],
+        [
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Andy",
+          "Fixter"
+        ],
+        [
+          "Peter",
+          "Marsh"
+        ],
+        [
+          "Tom",
+          "King"
+        ],
+        [
+          "Mami",
+          "Nishi"
+        ],
+        [
+          "Yoshimi",
+          "Kato"
+        ],
+        [
+          "Martin",
+          "Gerard"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 102,
+      "question": "Show the last name of each employee together with the last name of the employee they report to, listing the employee's last name first and the manager's last name second. Include only employees who report to someone.",
+      "gold_sql": "SELECT e.lastName, m.lastName FROM employees e JOIN employees m ON e.reportsTo = m.employeeNumber;",
+      "complexity": "self_join",
+      "required_tables": [
+        "employees"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Patterson",
+          "Murphy"
+        ],
+        [
+          "Firrelli",
+          "Murphy"
+        ],
+        [
+          "Patterson",
+          "Patterson"
+        ],
+        [
+          "Bondur",
+          "Patterson"
+        ],
+        [
+          "Bow",
+          "Patterson"
+        ],
+        [
+          "Jennings",
+          "Bow"
+        ],
+        [
+          "Thompson",
+          "Bow"
+        ],
+        [
+          "Firrelli",
+          "Bow"
+        ],
+        [
+          "Patterson",
+          "Bow"
+        ],
+        [
+          "Tseng",
+          "Bow"
+        ],
+        [
+          "Vanauf",
+          "Bow"
+        ],
+        [
+          "Bondur",
+          "Bondur"
+        ],
+        [
+          "Hernandez",
+          "Bondur"
+        ],
+        [
+          "Castillo",
+          "Bondur"
+        ],
+        [
+          "Bott",
+          "Bondur"
+        ],
+        [
+          "Jones",
+          "Bondur"
+        ],
+        [
+          "Fixter",
+          "Patterson"
+        ],
+        [
+          "Marsh",
+          "Patterson"
+        ],
+        [
+          "King",
+          "Patterson"
+        ],
+        [
+          "Nishi",
+          "Patterson"
+        ],
+        [
+          "Kato",
+          "Nishi"
+        ],
+        [
+          "Gerard",
+          "Bondur"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 103,
+      "question": "Show the order number, order date and shipped date of orders that have no shipped date recorded (the shipped date is empty).",
+      "gold_sql": "SELECT orderNumber, orderDate, shippedDate FROM orders WHERE shippedDate IS NULL;",
+      "complexity": "null_handling",
+      "required_tables": [
+        "orders"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          10167,
+          "2003-10-23",
+          null
+        ],
+        [
+          10248,
+          "2004-05-07",
+          null
+        ],
+        [
+          10260,
+          "2004-06-16",
+          null
+        ],
+        [
+          10262,
+          "2004-06-24",
+          null
+        ],
+        [
+          10334,
+          "2004-11-19",
+          null
+        ],
+        [
+          10401,
+          "2005-04-03",
+          null
+        ],
+        [
+          10407,
+          "2005-04-22",
+          null
+        ],
+        [
+          10414,
+          "2005-05-06",
+          null
+        ],
+        [
+          10420,
+          "2005-05-29",
+          null
+        ],
+        [
+          10421,
+          "2005-05-29",
+          null
+        ],
+        [
+          10422,
+          "2005-05-30",
+          null
+        ],
+        [
+          10423,
+          "2005-05-30",
+          null
+        ],
+        [
+          10424,
+          "2005-05-31",
+          null
+        ],
+        [
+          10425,
+          "2005-05-31",
+          null
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 104,
+      "question": "Show the product code, product name and buy price of products with a buy price above 100.",
+      "gold_sql": "SELECT productCode, productName, buyPrice FROM products WHERE buyPrice > 100;",
+      "complexity": "filtering",
+      "required_tables": [
+        "products"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "S10_4962",
+          "1962 LanciaA Delta 16V",
+          "103.42"
+        ],
+        [
+          "S18_2238",
+          "1998 Chrysler Plymouth Prowler",
+          "101.51"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 105,
+      "question": "Show the order number, order date and status of orders that have the status 'Cancelled'.",
+      "gold_sql": "SELECT orderNumber, orderDate, status FROM orders WHERE status = 'Cancelled';",
+      "complexity": "filtering",
+      "required_tables": [
+        "orders"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          10167,
+          "2003-10-23",
+          "Cancelled"
+        ],
+        [
+          10179,
+          "2003-11-11",
+          "Cancelled"
+        ],
+        [
+          10248,
+          "2004-05-07",
+          "Cancelled"
+        ],
+        [
+          10253,
+          "2004-06-01",
+          "Cancelled"
+        ],
+        [
+          10260,
+          "2004-06-16",
+          "Cancelled"
+        ],
+        [
+          10262,
+          "2004-06-24",
+          "Cancelled"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 106,
+      "question": "Show the customer name and credit limit of customers in the USA whose credit limit is greater than 100000.",
+      "gold_sql": "SELECT customerName, creditLimit FROM customers WHERE country = 'USA' AND creditLimit > 100000;",
+      "complexity": "filtering",
+      "required_tables": [
+        "customers"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Mini Gifts Distributors Ltd.",
+          "210500.00"
+        ],
+        [
+          "Land of Toys Inc.",
+          "114900.00"
+        ],
+        [
+          "Muscle Machine Inc",
+          "138500.00"
+        ],
+        [
+          "Diecast Classics Inc.",
+          "100600.00"
+        ],
+        [
+          "Collectable Mini Designs Co.",
+          "105000.00"
+        ],
+        [
+          "Marta's Replicas Co.",
+          "123700.00"
+        ],
+        [
+          "Mini Classics",
+          "102700.00"
+        ],
+        [
+          "Corporate Gift Ideas Co.",
+          "105000.00"
+        ],
+        [
+          "Online Diecast Creations Co.",
+          "114200.00"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 107,
+      "question": "Show the customer number, payment date and amount of payments made in 2004 with an amount greater than 50000.",
+      "gold_sql": "SELECT customerNumber, paymentDate, amount FROM payments WHERE paymentDate BETWEEN '2004-01-01' AND '2004-12-31' AND amount > 50000;",
+      "complexity": "filtering",
+      "required_tables": [
+        "payments"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          114,
+          "2004-12-15",
+          "82261.22"
+        ],
+        [
+          124,
+          "2004-08-28",
+          "85410.87"
+        ],
+        [
+          124,
+          "2004-11-02",
+          "55639.66"
+        ],
+        [
+          131,
+          "2004-12-02",
+          "50025.35"
+        ],
+        [
+          141,
+          "2004-01-30",
+          "59830.55"
+        ],
+        [
+          141,
+          "2004-12-31",
+          "116208.40"
+        ],
+        [
+          157,
+          "2004-09-07",
+          "63357.13"
+        ],
+        [
+          172,
+          "2004-12-04",
+          "51209.58"
+        ],
+        [
+          187,
+          "2004-11-03",
+          "52825.29"
+        ],
+        [
+          204,
+          "2004-08-13",
+          "51152.86"
+        ],
+        [
+          227,
+          "2004-11-02",
+          "53745.34"
+        ],
+        [
+          239,
+          "2004-03-15",
+          "80375.24"
+        ],
+        [
+          256,
+          "2004-10-22",
+          "53116.99"
+        ],
+        [
+          259,
+          "2004-11-06",
+          "61234.67"
+        ],
+        [
+          298,
+          "2004-09-18",
+          "61402.00"
+        ],
+        [
+          363,
+          "2004-11-17",
+          "50799.69"
+        ],
+        [
+          386,
+          "2004-07-18",
+          "51619.02"
+        ],
+        [
+          450,
+          "2004-06-21",
+          "59551.38"
+        ],
+        [
+          496,
+          "2004-12-31",
+          "52166.00"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 108,
+      "question": "Show the first name and last name of employees whose job title is 'Sales Rep'.",
+      "gold_sql": "SELECT firstName, lastName FROM employees WHERE jobTitle = 'Sales Rep';",
+      "complexity": "filtering",
+      "required_tables": [
+        "employees"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Leslie",
+          "Jennings"
+        ],
+        [
+          "Leslie",
+          "Thompson"
+        ],
+        [
+          "Julie",
+          "Firrelli"
+        ],
+        [
+          "Steve",
+          "Patterson"
+        ],
+        [
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Loui",
+          "Bondur"
+        ],
+        [
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Larry",
+          "Bott"
+        ],
+        [
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Andy",
+          "Fixter"
+        ],
+        [
+          "Peter",
+          "Marsh"
+        ],
+        [
+          "Tom",
+          "King"
+        ],
+        [
+          "Mami",
+          "Nishi"
+        ],
+        [
+          "Yoshimi",
+          "Kato"
+        ],
+        [
+          "Martin",
+          "Gerard"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 109,
+      "question": "Show each employee's first name, last name and the city of the office they work in.",
+      "gold_sql": "SELECT e.firstName, e.lastName, o.city FROM employees e JOIN offices o ON e.officeCode = o.officeCode;",
+      "complexity": "join",
+      "required_tables": [
+        "employees",
+        "offices"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Diane",
+          "Murphy",
+          "San Francisco"
+        ],
+        [
+          "Mary",
+          "Patterson",
+          "San Francisco"
+        ],
+        [
+          "Jeff",
+          "Firrelli",
+          "San Francisco"
+        ],
+        [
+          "Anthony",
+          "Bow",
+          "San Francisco"
+        ],
+        [
+          "Leslie",
+          "Jennings",
+          "San Francisco"
+        ],
+        [
+          "Leslie",
+          "Thompson",
+          "San Francisco"
+        ],
+        [
+          "Julie",
+          "Firrelli",
+          "Boston"
+        ],
+        [
+          "Steve",
+          "Patterson",
+          "Boston"
+        ],
+        [
+          "Foon Yue",
+          "Tseng",
+          "NYC"
+        ],
+        [
+          "George",
+          "Vanauf",
+          "NYC"
+        ],
+        [
+          "Gerard",
+          "Bondur",
+          "Paris"
+        ],
+        [
+          "Loui",
+          "Bondur",
+          "Paris"
+        ],
+        [
+          "Gerard",
+          "Hernandez",
+          "Paris"
+        ],
+        [
+          "Pamela",
+          "Castillo",
+          "Paris"
+        ],
+        [
+          "Martin",
+          "Gerard",
+          "Paris"
+        ],
+        [
+          "Mami",
+          "Nishi",
+          "Tokyo"
+        ],
+        [
+          "Yoshimi",
+          "Kato",
+          "Tokyo"
+        ],
+        [
+          "William",
+          "Patterson",
+          "Sydney"
+        ],
+        [
+          "Andy",
+          "Fixter",
+          "Sydney"
+        ],
+        [
+          "Peter",
+          "Marsh",
+          "Sydney"
+        ],
+        [
+          "Tom",
+          "King",
+          "Sydney"
+        ],
+        [
+          "Larry",
+          "Bott",
+          "London"
+        ],
+        [
+          "Barry",
+          "Jones",
+          "London"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 110,
+      "question": "Show the product name and the quantity ordered for every line of order number 10100.",
+      "gold_sql": "SELECT p.productName, od.quantityOrdered FROM orderdetails od JOIN products p ON od.productCode = p.productCode WHERE od.orderNumber = 10100;",
+      "complexity": "join",
+      "required_tables": [
+        "orderdetails",
+        "products"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "1917 Grand Touring Sedan",
+          30
+        ],
+        [
+          "1911 Ford Town Car",
+          50
+        ],
+        [
+          "1932 Alfa Romeo 8C2300 Spider Sport",
+          22
+        ],
+        [
+          "1936 Mercedes Benz 500k Roadster",
+          49
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 111,
+      "question": "Show the name of each customer that has an assigned sales representative, together with the first name and last name of that sales representative. Customers without a sales representative must not be listed.",
+      "gold_sql": "SELECT c.customerName, e.firstName, e.lastName FROM customers c JOIN employees e ON c.salesRepEmployeeNumber = e.employeeNumber;",
+      "complexity": "join",
+      "required_tables": [
+        "customers",
+        "employees"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Mini Gifts Distributors Ltd.",
+          "Leslie",
+          "Jennings"
+        ],
+        [
+          "Mini Wheels Co.",
+          "Leslie",
+          "Jennings"
+        ],
+        [
+          "Technics Stores Inc.",
+          "Leslie",
+          "Jennings"
+        ],
+        [
+          "Corporate Gift Ideas Co.",
+          "Leslie",
+          "Jennings"
+        ],
+        [
+          "The Sharp Gifts Warehouse",
+          "Leslie",
+          "Jennings"
+        ],
+        [
+          "Signal Collectibles Ltd.",
+          "Leslie",
+          "Jennings"
+        ],
+        [
+          "Signal Gift Stores",
+          "Leslie",
+          "Thompson"
+        ],
+        [
+          "Toys4GrownUps.com",
+          "Leslie",
+          "Thompson"
+        ],
+        [
+          "Boards & Toys Co.",
+          "Leslie",
+          "Thompson"
+        ],
+        [
+          "Collectable Mini Designs Co.",
+          "Leslie",
+          "Thompson"
+        ],
+        [
+          "Men 'R' US Retailers, Ltd.",
+          "Leslie",
+          "Thompson"
+        ],
+        [
+          "West Coast Collectables Co.",
+          "Leslie",
+          "Thompson"
+        ],
+        [
+          "Cambridge Collectables Co.",
+          "Julie",
+          "Firrelli"
+        ],
+        [
+          "Online Mini Collectables",
+          "Julie",
+          "Firrelli"
+        ],
+        [
+          "Mini Creations Ltd.",
+          "Julie",
+          "Firrelli"
+        ],
+        [
+          "Classic Gift Ideas, Inc",
+          "Julie",
+          "Firrelli"
+        ],
+        [
+          "Collectables For Less Inc.",
+          "Julie",
+          "Firrelli"
+        ],
+        [
+          "Diecast Collectables",
+          "Julie",
+          "Firrelli"
+        ],
+        [
+          "Diecast Classics Inc.",
+          "Steve",
+          "Patterson"
+        ],
+        [
+          "Auto-Moto Classics Inc.",
+          "Steve",
+          "Patterson"
+        ],
+        [
+          "Marta's Replicas Co.",
+          "Steve",
+          "Patterson"
+        ],
+        [
+          "Gifts4AllAges.com",
+          "Steve",
+          "Patterson"
+        ],
+        [
+          "Online Diecast Creations Co.",
+          "Steve",
+          "Patterson"
+        ],
+        [
+          "FunGiftIdeas.com",
+          "Steve",
+          "Patterson"
+        ],
+        [
+          "Muscle Machine Inc",
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "American Souvenirs Inc",
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "Vitachrome Inc.",
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "Québec Home Shopping Network",
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "Classic Legends Inc.",
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "Super Scale Inc.",
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "Microscale Inc.",
+          "Foon Yue",
+          "Tseng"
+        ],
+        [
+          "Land of Toys Inc.",
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Gift Depot Inc.",
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Canadian Gift Exchange Network",
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Royal Canadian Collectables, Ltd.",
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Mini Classics",
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Tekni Collectables Inc.",
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Gift Ideas Corp.",
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Motor Mint Distributors Inc.",
+          "George",
+          "Vanauf"
+        ],
+        [
+          "Saveley & Henriot, Co.",
+          "Loui",
+          "Bondur"
+        ],
+        [
+          "La Corne D'abondance, Co.",
+          "Loui",
+          "Bondur"
+        ],
+        [
+          "Lyon Souveniers",
+          "Loui",
+          "Bondur"
+        ],
+        [
+          "Marseille Mini Autos",
+          "Loui",
+          "Bondur"
+        ],
+        [
+          "Reims Collectables",
+          "Loui",
+          "Bondur"
+        ],
+        [
+          "Auto Canal+ Petit",
+          "Loui",
+          "Bondur"
+        ],
+        [
+          "Atelier graphique",
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "La Rochelle Gifts",
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "Euro+ Shopping Channel",
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "Daedalus Designs Imports",
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "Mini Caravy",
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "Alpha Cognac",
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "Auto Associés & Cie.",
+          "Gerard",
+          "Hernandez"
+        ],
+        [
+          "Danish Wholesale Imports",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Heintze Collectables",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Amica Models & Co.",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Rovelli Gifts",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Petit Auto",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Royale Belge",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Salzburg Collectables",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "L'ordine Souveniers",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Mini Auto Werke",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Frau da Collezione",
+          "Pamela",
+          "Castillo"
+        ],
+        [
+          "Toys of Finland, Co.",
+          "Larry",
+          "Bott"
+        ],
+        [
+          "AV Stores, Co.",
+          "Larry",
+          "Bott"
+        ],
+        [
+          "UK Collectables, Ltd.",
+          "Larry",
+          "Bott"
+        ],
+        [
+          "giftsbymail.co.uk",
+          "Larry",
+          "Bott"
+        ],
+        [
+          "Oulu Toy Supplies, Inc.",
+          "Larry",
+          "Bott"
+        ],
+        [
+          "Stylish Desk Decors, Co.",
+          "Larry",
+          "Bott"
+        ],
+        [
+          "Suominen Souveniers",
+          "Larry",
+          "Bott"
+        ],
+        [
+          "Double Decker Gift Stores, Ltd",
+          "Larry",
+          "Bott"
+        ],
+        [
+          "Baane Mini Imports",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Blauer See Auto, Co.",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Volvo Model Replicas, Co",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Herkku Gifts",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Clover Collections, Co.",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Toms Spezialitäten, Ltd",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Norway Gifts By Mail, Co.",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Bavarian Collectables Imports, Co.",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Scandinavian Gift Ideas",
+          "Barry",
+          "Jones"
+        ],
+        [
+          "Australian Collectors, Co.",
+          "Andy",
+          "Fixter"
+        ],
+        [
+          "Anna's Decorations, Ltd",
+          "Andy",
+          "Fixter"
+        ],
+        [
+          "Souveniers And Things Co.",
+          "Andy",
+          "Fixter"
+        ],
+        [
+          "Australian Gift Network, Co",
+          "Andy",
+          "Fixter"
+        ],
+        [
+          "Australian Collectables, Ltd",
+          "Andy",
+          "Fixter"
+        ],
+        [
+          "Handji Gifts& Co",
+          "Peter",
+          "Marsh"
+        ],
+        [
+          "Down Under Souveniers, Inc",
+          "Peter",
+          "Marsh"
+        ],
+        [
+          "GiftsForHim.com",
+          "Peter",
+          "Marsh"
+        ],
+        [
+          "Extreme Desk Decorations, Ltd",
+          "Peter",
+          "Marsh"
+        ],
+        [
+          "Kelly's Gift Shop",
+          "Peter",
+          "Marsh"
+        ],
+        [
+          "Dragon Souveniers, Ltd.",
+          "Mami",
+          "Nishi"
+        ],
+        [
+          "Osaka Souveniers Co.",
+          "Mami",
+          "Nishi"
+        ],
+        [
+          "King Kong Collectables, Co.",
+          "Mami",
+          "Nishi"
+        ],
+        [
+          "Cruz & Sons Co.",
+          "Mami",
+          "Nishi"
+        ],
+        [
+          "Tokyo Collectables, Ltd",
+          "Mami",
+          "Nishi"
+        ],
+        [
+          "Enaco Distributors",
+          "Martin",
+          "Gerard"
+        ],
+        [
+          "Vida Sport, Ltd",
+          "Martin",
+          "Gerard"
+        ],
+        [
+          "CAF Imports",
+          "Martin",
+          "Gerard"
+        ],
+        [
+          "Precious Collectables",
+          "Martin",
+          "Gerard"
+        ],
+        [
+          "Corrida Auto Replicas, Ltd",
+          "Martin",
+          "Gerard"
+        ],
+        [
+          "Iberia Gift Imports, Corp.",
+          "Martin",
+          "Gerard"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 112,
+      "question": "List the distinct names of customers who have made at least one payment greater than 100000.",
+      "gold_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN payments p ON c.customerNumber = p.customerNumber WHERE p.amount > 100000;",
+      "complexity": "join",
+      "required_tables": [
+        "customers",
+        "payments"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Mini Gifts Distributors Ltd."
+        ],
+        [
+          "Euro+ Shopping Channel"
+        ],
+        [
+          "Dragon Souveniers, Ltd."
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 113,
+      "question": "For order number 10100, show the customer name, the product name and the quantity ordered for each order line.",
+      "gold_sql": "SELECT c.customerName, p.productName, od.quantityOrdered FROM orders o JOIN customers c ON o.customerNumber = c.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber JOIN products p ON od.productCode = p.productCode WHERE o.orderNumber = 10100;",
+      "complexity": "multi_join",
+      "required_tables": [
+        "orders",
+        "customers",
+        "orderdetails",
+        "products"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Online Diecast Creations Co.",
+          "1917 Grand Touring Sedan",
+          30
+        ],
+        [
+          "Online Diecast Creations Co.",
+          "1911 Ford Town Car",
+          50
+        ],
+        [
+          "Online Diecast Creations Co.",
+          "1932 Alfa Romeo 8C2300 Spider Sport",
+          22
+        ],
+        [
+          "Online Diecast Creations Co.",
+          "1936 Mercedes Benz 500k Roadster",
+          49
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 114,
+      "question": "How many customers are there in each country? Show the country and the number of customers.",
+      "gold_sql": "SELECT country, COUNT(*) FROM customers GROUP BY country;",
+      "complexity": "aggregation",
+      "required_tables": [
+        "customers"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Australia",
+          5
+        ],
+        [
+          "Austria",
+          2
+        ],
+        [
+          "Belgium",
+          2
+        ],
+        [
+          "Canada",
+          3
+        ],
+        [
+          "Denmark",
+          2
+        ],
+        [
+          "Finland",
+          3
+        ],
+        [
+          "France",
+          12
+        ],
+        [
+          "Germany",
+          13
+        ],
+        [
+          "Hong Kong",
+          1
+        ],
+        [
+          "Ireland",
+          2
+        ],
+        [
+          "Israel",
+          1
+        ],
+        [
+          "Italy",
+          4
+        ],
+        [
+          "Japan",
+          2
+        ],
+        [
+          "Netherlands",
+          1
+        ],
+        [
+          "New Zealand",
+          4
+        ],
+        [
+          "Norway",
+          3
+        ],
+        [
+          "Philippines",
+          1
+        ],
+        [
+          "Poland",
+          1
+        ],
+        [
+          "Portugal",
+          2
+        ],
+        [
+          "Russia",
+          1
+        ],
+        [
+          "Singapore",
+          3
+        ],
+        [
+          "South Africa",
+          1
+        ],
+        [
+          "Spain",
+          7
+        ],
+        [
+          "Sweden",
+          2
+        ],
+        [
+          "Switzerland",
+          3
+        ],
+        [
+          "UK",
+          5
+        ],
+        [
+          "USA",
+          36
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 115,
+      "question": "List the names of customers who have ordered at least one product from the 'Planes' product line in any of their orders, regardless of order status. Show each customer name once.",
+      "gold_sql": "SELECT c.customerName FROM customers c WHERE EXISTS (SELECT 1 FROM orders o JOIN orderdetails od ON o.orderNumber = od.orderNumber JOIN products p ON od.productCode = p.productCode WHERE o.customerNumber = c.customerNumber AND p.productLine = 'Planes');",
+      "complexity": "exists_subquery",
+      "required_tables": [
+        "customers",
+        "orders",
+        "orderdetails",
+        "products"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Rovelli Gifts"
+        ],
+        [
+          "Salzburg Collectables"
+        ],
+        [
+          "Gift Ideas Corp."
+        ],
+        [
+          "Mini Creations Ltd."
+        ],
+        [
+          "Toys of Finland, Co."
+        ],
+        [
+          "Scandinavian Gift Ideas"
+        ],
+        [
+          "Alpha Cognac"
+        ],
+        [
+          "Double Decker Gift Stores, Ltd"
+        ],
+        [
+          "Cruz & Sons Co."
+        ],
+        [
+          "Osaka Souveniers Co."
+        ],
+        [
+          "Collectable Mini Designs Co."
+        ],
+        [
+          "Extreme Desk Decorations, Ltd"
+        ],
+        [
+          "The Sharp Gifts Warehouse"
+        ],
+        [
+          "Euro+ Shopping Channel"
+        ],
+        [
+          "Collectables For Less Inc."
+        ],
+        [
+          "Norway Gifts By Mail, Co."
+        ],
+        [
+          "Bavarian Collectables Imports, Co."
+        ],
+        [
+          "Classic Gift Ideas, Inc"
+        ],
+        [
+          "giftsbymail.co.uk"
+        ],
+        [
+          "Danish Wholesale Imports"
+        ],
+        [
+          "Royale Belge"
+        ],
+        [
+          "Stylish Desk Decors, Co."
+        ],
+        [
+          "Kelly's Gift Shop"
+        ],
+        [
+          "Oulu Toy Supplies, Inc."
+        ],
+        [
+          "Reims Collectables"
+        ],
+        [
+          "L'ordine Souveniers"
+        ],
+        [
+          "Australian Collectors, Co."
+        ],
+        [
+          "Toys4GrownUps.com"
+        ],
+        [
+          "Frau da Collezione"
+        ],
+        [
+          "Technics Stores Inc."
+        ],
+        [
+          "King Kong Collectables, Co."
+        ],
+        [
+          "Royal Canadian Collectables, Ltd."
+        ],
+        [
+          "Gift Depot Inc."
+        ],
+        [
+          "La Rochelle Gifts"
+        ],
+        [
+          "Clover Collections, Co."
+        ],
+        [
+          "Mini Classics"
+        ],
+        [
+          "Diecast Classics Inc."
+        ],
+        [
+          "Tokyo Collectables, Ltd"
+        ],
+        [
+          "Australian Gift Network, Co"
+        ],
+        [
+          "Tekni Collectables Inc."
+        ],
+        [
+          "Men 'R' US Retailers, Ltd."
+        ],
+        [
+          "Cambridge Collectables Co."
+        ],
+        [
+          "Australian Collectables, Ltd"
+        ],
+        [
+          "Souveniers And Things Co."
+        ],
+        [
+          "Enaco Distributors"
+        ],
+        [
+          "West Coast Collectables Co."
+        ],
+        [
+          "FunGiftIdeas.com"
+        ],
+        [
+          "Auto-Moto Classics Inc."
+        ],
+        [
+          "Herkku Gifts"
+        ],
+        [
+          "Marta's Replicas Co."
+        ],
+        [
+          "Down Under Souveniers, Inc"
+        ],
+        [
+          "Land of Toys Inc."
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 116,
+      "question": "What is the total amount of all payments received?",
+      "gold_sql": "SELECT SUM(amount) FROM payments;",
+      "complexity": "aggregation",
+      "required_tables": [
+        "payments"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "8853839.23"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 117,
+      "question": "Show the total sales value for each customer country, from highest to lowest. Sales value is the quantity ordered multiplied by the price each, summed over all order lines of all orders, including cancelled orders and orders of every other status. List only countries that have order lines. Show the country and the total.",
+      "gold_sql": "SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.country ORDER BY total DESC;",
+      "complexity": "multi_join_aggregation",
+      "required_tables": [
+        "customers",
+        "orders",
+        "orderdetails"
+      ],
+      "order_significant": true,
+      "order_key_indices": [
+        1
+      ],
+      "expected_rows": [
+        [
+          "USA",
+          "3273280.05"
+        ],
+        [
+          "Spain",
+          "1099389.09"
+        ],
+        [
+          "France",
+          "1007374.02"
+        ],
+        [
+          "Australia",
+          "562582.59"
+        ],
+        [
+          "New Zealand",
+          "476847.01"
+        ],
+        [
+          "UK",
+          "436947.44"
+        ],
+        [
+          "Italy",
+          "360616.81"
+        ],
+        [
+          "Finland",
+          "295149.35"
+        ],
+        [
+          "Norway",
+          "270846.30"
+        ],
+        [
+          "Singapore",
+          "263997.78"
+        ],
+        [
+          "Denmark",
+          "218994.92"
+        ],
+        [
+          "Canada",
+          "205911.86"
+        ],
+        [
+          "Germany",
+          "196470.99"
+        ],
+        [
+          "Austria",
+          "188540.06"
+        ],
+        [
+          "Sweden",
+          "187638.35"
+        ],
+        [
+          "Japan",
+          "167909.95"
+        ],
+        [
+          "Switzerland",
+          "108777.92"
+        ],
+        [
+          "Belgium",
+          "100068.76"
+        ],
+        [
+          "Philippines",
+          "87468.30"
+        ],
+        [
+          "Ireland",
+          "49898.27"
+        ],
+        [
+          "Hong Kong",
+          "45480.79"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 118,
+      "question": "What are the highest and the lowest MSRP among all products? Show the highest first and the lowest second.",
+      "gold_sql": "SELECT MAX(MSRP), MIN(MSRP) FROM products;",
+      "complexity": "aggregation",
+      "required_tables": [
+        "products"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "214.30",
+          "33.19"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 119,
+      "question": "How many employees work in each office city? Show the city and the number of employees.",
+      "gold_sql": "SELECT o.city, COUNT(e.employeeNumber) FROM offices o JOIN employees e ON o.officeCode = e.officeCode GROUP BY o.city;",
+      "complexity": "join_aggregation",
+      "required_tables": [
+        "offices",
+        "employees"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Boston",
+          2
+        ],
+        [
+          "London",
+          2
+        ],
+        [
+          "NYC",
+          2
+        ],
+        [
+          "Paris",
+          5
+        ],
+        [
+          "San Francisco",
+          6
+        ],
+        [
+          "Sydney",
+          4
+        ],
+        [
+          "Tokyo",
+          2
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 120,
+      "question": "How many different customers placed at least one order in 2004, based on the order date and regardless of order status?",
+      "gold_sql": "SELECT COUNT(DISTINCT customerNumber) FROM orders WHERE YEAR(orderDate) = 2004;",
+      "complexity": "count_distinct",
+      "required_tables": [
+        "orders"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          89
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 121,
+      "question": "Which customers placed more than 5 orders? Show the customer name and the number of orders.",
+      "gold_sql": "SELECT c.customerName, COUNT(o.orderNumber) FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerNumber, c.customerName HAVING COUNT(o.orderNumber) > 5;",
+      "complexity": "group_having",
+      "required_tables": [
+        "customers",
+        "orders"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Mini Gifts Distributors Ltd.",
+          17
+        ],
+        [
+          "Euro+ Shopping Channel",
+          26
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 122,
+      "question": "Show the product name and buy price of products whose buy price is higher than the average buy price of all products.",
+      "gold_sql": "SELECT productName, buyPrice FROM products WHERE buyPrice > (SELECT AVG(buyPrice) FROM products);",
+      "complexity": "subquery",
+      "required_tables": [
+        "products"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "1952 Alpine Renault 1300",
+          "98.58"
+        ],
+        [
+          "1996 Moto Guzzi 1100i",
+          "68.99"
+        ],
+        [
+          "2003 Harley-Davidson Eagle Drag Bike",
+          "91.02"
+        ],
+        [
+          "1972 Alfa Romeo GTA",
+          "85.68"
+        ],
+        [
+          "1962 LanciaA Delta 16V",
+          "103.42"
+        ],
+        [
+          "1968 Ford Mustang",
+          "95.34"
+        ],
+        [
+          "2001 Ferrari Enzo",
+          "95.59"
+        ],
+        [
+          "1958 Setra Bus",
+          "77.90"
+        ],
+        [
+          "2002 Suzuki XREO",
+          "66.27"
+        ],
+        [
+          "1969 Corvair Monza",
+          "89.14"
+        ],
+        [
+          "1968 Dodge Charger",
+          "75.16"
+        ],
+        [
+          "1969 Ford Falcon",
+          "83.05"
+        ],
+        [
+          "1957 Chevy Pickup",
+          "55.70"
+        ],
+        [
+          "1969 Dodge Charger",
+          "58.73"
+        ],
+        [
+          "1940 Ford Pickup Truck",
+          "58.33"
+        ],
+        [
+          "1993 Mazda RX-7",
+          "83.51"
+        ],
+        [
+          "1937 Lincoln Berline",
+          "60.62"
+        ],
+        [
+          "1965 Aston Martin DB5",
+          "65.96"
+        ],
+        [
+          "1980s Black Hawk Helicopter",
+          "77.27"
+        ],
+        [
+          "1917 Grand Touring Sedan",
+          "86.70"
+        ],
+        [
+          "1995 Honda Civic",
+          "93.89"
+        ],
+        [
+          "1998 Chrysler Plymouth Prowler",
+          "101.51"
+        ],
+        [
+          "1964 Mercedes Tour Bus",
+          "74.86"
+        ],
+        [
+          "1932 Model A Ford J-Coupe",
+          "58.48"
+        ],
+        [
+          "1928 Mercedes-Benz SSK",
+          "72.56"
+        ],
+        [
+          "1999 Indy 500 Monte Carlo SS",
+          "56.76"
+        ],
+        [
+          "1913 Ford Model T Speedster",
+          "60.78"
+        ],
+        [
+          "18th Century Vintage Horse Carriage",
+          "60.74"
+        ],
+        [
+          "1903 Ford Model A",
+          "68.30"
+        ],
+        [
+          "1992 Ferrari 360 Spider red",
+          "77.90"
+        ],
+        [
+          "1985 Toyota Supra",
+          "57.01"
+        ],
+        [
+          "Collectable Wooden Train",
+          "67.56"
+        ],
+        [
+          "1917 Maxwell Touring Car",
+          "57.54"
+        ],
+        [
+          "1976 Ford Gran Torino",
+          "73.49"
+        ],
+        [
+          "1948 Porsche Type 356 Roadster",
+          "62.16"
+        ],
+        [
+          "1941 Chevrolet Special Deluxe Cabriolet",
+          "64.58"
+        ],
+        [
+          "1970 Triumph Spitfire",
+          "91.92"
+        ],
+        [
+          "1940s Ford truck",
+          "84.76"
+        ],
+        [
+          "1957 Corvette Convertible",
+          "69.93"
+        ],
+        [
+          "1997 BMW R 1100 S",
+          "60.86"
+        ],
+        [
+          "1928 British Royal Navy Airplane",
+          "66.74"
+        ],
+        [
+          "18th century schooner",
+          "82.34"
+        ],
+        [
+          "1962 Volkswagen Microbus",
+          "61.34"
+        ],
+        [
+          "1952 Citroen-15CV",
+          "72.82"
+        ],
+        [
+          "2002 Chevy Corvette",
+          "62.11"
+        ],
+        [
+          "1956 Porsche 356A Coupe",
+          "98.30"
+        ],
+        [
+          "1992 Porsche Cayenne Turbo Silver",
+          "69.78"
+        ],
+        [
+          "1936 Chrysler Airflow",
+          "57.46"
+        ],
+        [
+          "1997 BMW F650 ST",
+          "66.92"
+        ],
+        [
+          "1974 Ducati 350 Mk3 Desmo",
+          "56.13"
+        ],
+        [
+          "Diamond T620 Semi-Skirted Tanker",
+          "68.29"
+        ],
+        [
+          "America West Airlines B757-200",
+          "68.80"
+        ],
+        [
+          "ATA: B757-300",
+          "59.33"
+        ],
+        [
+          "F/A 18 Hornet 1/72",
+          "54.40"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 123,
+      "question": "List the names of customers who have never placed an order.",
+      "gold_sql": "SELECT customerName FROM customers WHERE customerNumber NOT IN (SELECT customerNumber FROM orders);",
+      "complexity": "subquery",
+      "required_tables": [
+        "customers",
+        "orders"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Havel & Zbyszek Co"
+        ],
+        [
+          "American Souvenirs Inc"
+        ],
+        [
+          "Porto Imports Co."
+        ],
+        [
+          "Asian Shopping Network, Co"
+        ],
+        [
+          "Natürlich Autos"
+        ],
+        [
+          "ANG Resellers"
+        ],
+        [
+          "Messner Shopping Network"
+        ],
+        [
+          "Franken Gifts, Co"
+        ],
+        [
+          "BG&E Collectables"
+        ],
+        [
+          "Schuyler Imports"
+        ],
+        [
+          "Der Hund Imports"
+        ],
+        [
+          "Cramer Spezialitäten, Ltd"
+        ],
+        [
+          "Asian Treasures, Inc."
+        ],
+        [
+          "SAR Distributors, Co"
+        ],
+        [
+          "Kommission Auto"
+        ],
+        [
+          "Lisboa Souveniers, Inc"
+        ],
+        [
+          "Precious Collectables"
+        ],
+        [
+          "Stuttgart Collectable Exchange"
+        ],
+        [
+          "Feuer Online Stores, Inc"
+        ],
+        [
+          "Warburg Exchange"
+        ],
+        [
+          "Anton Designs, Ltd."
+        ],
+        [
+          "Mit Vergnügen & Co."
+        ],
+        [
+          "Kremlin Collectables, Co."
+        ],
+        [
+          "Raanan Stores, Inc"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 124,
+      "question": "List the product codes and names of products that have never been ordered.",
+      "gold_sql": "SELECT productCode, productName FROM products WHERE productCode NOT IN (SELECT productCode FROM orderdetails);",
+      "complexity": "subquery",
+      "required_tables": [
+        "products",
+        "orderdetails"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "S18_3233",
+          "1985 Toyota Supra"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 125,
+      "question": "Show the product name and MSRP of the 5 products with the highest MSRP, highest first.",
+      "gold_sql": "SELECT productName, MSRP FROM products ORDER BY MSRP DESC LIMIT 5;",
+      "complexity": "ordering_topn",
+      "required_tables": [
+        "products"
+      ],
+      "order_significant": true,
+      "order_key_indices": [
+        1
+      ],
+      "expected_rows": [
+        [
+          "1952 Alpine Renault 1300",
+          "214.30"
+        ],
+        [
+          "2001 Ferrari Enzo",
+          "207.80"
+        ],
+        [
+          "1968 Ford Mustang",
+          "194.57"
+        ],
+        [
+          "2003 Harley-Davidson Eagle Drag Bike",
+          "193.66"
+        ],
+        [
+          "1969 Ford Falcon",
+          "173.02"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 126,
+      "question": "Show the customer number and amount of the 3 largest payments, largest first.",
+      "gold_sql": "SELECT customerNumber, amount FROM payments ORDER BY amount DESC LIMIT 3;",
+      "complexity": "ordering_topn",
+      "required_tables": [
+        "payments"
+      ],
+      "order_significant": true,
+      "order_key_indices": [
+        1
+      ],
+      "expected_rows": [
+        [
+          141,
+          "120166.58"
+        ],
+        [
+          141,
+          "116208.40"
+        ],
+        [
+          124,
+          "111654.40"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 127,
+      "question": "List all product lines in alphabetical order.",
+      "gold_sql": "SELECT productLine FROM productlines ORDER BY productLine;",
+      "complexity": "ordering",
+      "required_tables": [
+        "productlines"
+      ],
+      "order_significant": true,
+      "order_key_indices": [
+        0
+      ],
+      "expected_rows": [
+        [
+          "Classic Cars"
+        ],
+        [
+          "Motorcycles"
+        ],
+        [
+          "Planes"
+        ],
+        [
+          "Ships"
+        ],
+        [
+          "Trains"
+        ],
+        [
+          "Trucks and Buses"
+        ],
+        [
+          "Vintage Cars"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 128,
+      "question": "Which customer has paid the highest total amount? Show the customer name and the total amount paid.",
+      "gold_sql": "SELECT c.customerName, SUM(p.amount) AS total FROM customers c JOIN payments p ON c.customerNumber = p.customerNumber GROUP BY c.customerNumber, c.customerName ORDER BY total DESC LIMIT 1;",
+      "complexity": "ranking",
+      "required_tables": [
+        "customers",
+        "payments"
+      ],
+      "order_significant": true,
+      "order_key_indices": [
+        1
+      ],
+      "expected_rows": [
+        [
+          "Euro+ Shopping Channel",
+          "715738.98"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 129,
+      "question": "Show the total sales value (quantity ordered times price each) for each product line, from highest to lowest, counting all orders regardless of their status. Show the product line and the total.",
+      "gold_sql": "SELECT p.productLine, SUM(od.quantityOrdered * od.priceEach) AS total FROM products p JOIN orderdetails od ON p.productCode = od.productCode GROUP BY p.productLine ORDER BY total DESC;",
+      "complexity": "ranking",
+      "required_tables": [
+        "products",
+        "orderdetails"
+      ],
+      "order_significant": true,
+      "order_key_indices": [
+        1
+      ],
+      "expected_rows": [
+        [
+          "Classic Cars",
+          "3853922.49"
+        ],
+        [
+          "Vintage Cars",
+          "1797559.63"
+        ],
+        [
+          "Motorcycles",
+          "1121426.12"
+        ],
+        [
+          "Trucks and Buses",
+          "1024113.57"
+        ],
+        [
+          "Planes",
+          "954637.54"
+        ],
+        [
+          "Ships",
+          "663998.34"
+        ],
+        [
+          "Trains",
+          "188532.92"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 130,
+      "question": "How many orders were placed in each year? Show the year and the number of orders.",
+      "gold_sql": "SELECT YEAR(orderDate), COUNT(*) FROM orders GROUP BY YEAR(orderDate);",
+      "complexity": "date_function",
+      "required_tables": [
+        "orders"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          2003,
+          111
+        ],
+        [
+          2004,
+          151
+        ],
+        [
+          2005,
+          64
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 131,
+      "question": "Show every customer's name with the number of orders they placed, including customers who placed no orders.",
+      "gold_sql": "SELECT c.customerName, COUNT(o.orderNumber) FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerNumber, c.customerName;",
+      "complexity": "outer_join",
+      "required_tables": [
+        "customers",
+        "orders"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "Atelier graphique",
+          3
+        ],
+        [
+          "Signal Gift Stores",
+          3
+        ],
+        [
+          "Australian Collectors, Co.",
+          5
+        ],
+        [
+          "La Rochelle Gifts",
+          4
+        ],
+        [
+          "Baane Mini Imports",
+          4
+        ],
+        [
+          "Mini Gifts Distributors Ltd.",
+          17
+        ],
+        [
+          "Havel & Zbyszek Co",
+          0
+        ],
+        [
+          "Blauer See Auto, Co.",
+          4
+        ],
+        [
+          "Mini Wheels Co.",
+          3
+        ],
+        [
+          "Land of Toys Inc.",
+          4
+        ],
+        [
+          "Euro+ Shopping Channel",
+          26
+        ],
+        [
+          "Volvo Model Replicas, Co",
+          4
+        ],
+        [
+          "Danish Wholesale Imports",
+          5
+        ],
+        [
+          "Saveley & Henriot, Co.",
+          3
+        ],
+        [
+          "Dragon Souveniers, Ltd.",
+          5
+        ],
+        [
+          "Muscle Machine Inc",
+          4
+        ],
+        [
+          "Diecast Classics Inc.",
+          4
+        ],
+        [
+          "Technics Stores Inc.",
+          4
+        ],
+        [
+          "Handji Gifts& Co",
+          4
+        ],
+        [
+          "Herkku Gifts",
+          3
+        ],
+        [
+          "American Souvenirs Inc",
+          0
+        ],
+        [
+          "Porto Imports Co.",
+          0
+        ],
+        [
+          "Daedalus Designs Imports",
+          2
+        ],
+        [
+          "La Corne D'abondance, Co.",
+          3
+        ],
+        [
+          "Cambridge Collectables Co.",
+          2
+        ],
+        [
+          "Gift Depot Inc.",
+          3
+        ],
+        [
+          "Osaka Souveniers Co.",
+          2
+        ],
+        [
+          "Vitachrome Inc.",
+          3
+        ],
+        [
+          "Toys of Finland, Co.",
+          3
+        ],
+        [
+          "AV Stores, Co.",
+          3
+        ],
+        [
+          "Clover Collections, Co.",
+          2
+        ],
+        [
+          "Auto-Moto Classics Inc.",
+          3
+        ],
+        [
+          "UK Collectables, Ltd.",
+          3
+        ],
+        [
+          "Canadian Gift Exchange Network",
+          2
+        ],
+        [
+          "Online Mini Collectables",
+          2
+        ],
+        [
+          "Toys4GrownUps.com",
+          3
+        ],
+        [
+          "Asian Shopping Network, Co",
+          0
+        ],
+        [
+          "Mini Caravy",
+          3
+        ],
+        [
+          "King Kong Collectables, Co.",
+          2
+        ],
+        [
+          "Enaco Distributors",
+          3
+        ],
+        [
+          "Boards & Toys Co.",
+          2
+        ],
+        [
+          "Natürlich Autos",
+          0
+        ],
+        [
+          "Heintze Collectables",
+          2
+        ],
+        [
+          "Québec Home Shopping Network",
+          3
+        ],
+        [
+          "ANG Resellers",
+          0
+        ],
+        [
+          "Collectable Mini Designs Co.",
+          2
+        ],
+        [
+          "giftsbymail.co.uk",
+          2
+        ],
+        [
+          "Alpha Cognac",
+          3
+        ],
+        [
+          "Messner Shopping Network",
+          0
+        ],
+        [
+          "Amica Models & Co.",
+          2
+        ],
+        [
+          "Lyon Souveniers",
+          3
+        ],
+        [
+          "Auto Associés & Cie.",
+          2
+        ],
+        [
+          "Toms Spezialitäten, Ltd",
+          2
+        ],
+        [
+          "Royal Canadian Collectables, Ltd.",
+          2
+        ],
+        [
+          "Franken Gifts, Co",
+          0
+        ],
+        [
+          "Anna's Decorations, Ltd",
+          4
+        ],
+        [
+          "Rovelli Gifts",
+          3
+        ],
+        [
+          "Souveniers And Things Co.",
+          4
+        ],
+        [
+          "Marta's Replicas Co.",
+          2
+        ],
+        [
+          "BG&E Collectables",
+          0
+        ],
+        [
+          "Vida Sport, Ltd",
+          2
+        ],
+        [
+          "Norway Gifts By Mail, Co.",
+          2
+        ],
+        [
+          "Schuyler Imports",
+          0
+        ],
+        [
+          "Der Hund Imports",
+          0
+        ],
+        [
+          "Oulu Toy Supplies, Inc.",
+          3
+        ],
+        [
+          "Petit Auto",
+          3
+        ],
+        [
+          "Mini Classics",
+          2
+        ],
+        [
+          "Mini Creations Ltd.",
+          3
+        ],
+        [
+          "Corporate Gift Ideas Co.",
+          4
+        ],
+        [
+          "Down Under Souveniers, Inc",
+          5
+        ],
+        [
+          "Stylish Desk Decors, Co.",
+          3
+        ],
+        [
+          "Tekni Collectables Inc.",
+          3
+        ],
+        [
+          "Australian Gift Network, Co",
+          3
+        ],
+        [
+          "Suominen Souveniers",
+          3
+        ],
+        [
+          "Cramer Spezialitäten, Ltd",
+          0
+        ],
+        [
+          "Classic Gift Ideas, Inc",
+          2
+        ],
+        [
+          "CAF Imports",
+          2
+        ],
+        [
+          "Men 'R' US Retailers, Ltd.",
+          2
+        ],
+        [
+          "Asian Treasures, Inc.",
+          0
+        ],
+        [
+          "Marseille Mini Autos",
+          3
+        ],
+        [
+          "Reims Collectables",
+          5
+        ],
+        [
+          "SAR Distributors, Co",
+          0
+        ],
+        [
+          "GiftsForHim.com",
+          3
+        ],
+        [
+          "Kommission Auto",
+          0
+        ],
+        [
+          "Gifts4AllAges.com",
+          3
+        ],
+        [
+          "Online Diecast Creations Co.",
+          3
+        ],
+        [
+          "Lisboa Souveniers, Inc",
+          0
+        ],
+        [
+          "Precious Collectables",
+          0
+        ],
+        [
+          "Collectables For Less Inc.",
+          3
+        ],
+        [
+          "Royale Belge",
+          4
+        ],
+        [
+          "Salzburg Collectables",
+          4
+        ],
+        [
+          "Cruz & Sons Co.",
+          3
+        ],
+        [
+          "L'ordine Souveniers",
+          3
+        ],
+        [
+          "Tokyo Collectables, Ltd",
+          4
+        ],
+        [
+          "Auto Canal+ Petit",
+          3
+        ],
+        [
+          "Stuttgart Collectable Exchange",
+          0
+        ],
+        [
+          "Extreme Desk Decorations, Ltd",
+          3
+        ],
+        [
+          "Bavarian Collectables Imports, Co.",
+          1
+        ],
+        [
+          "Classic Legends Inc.",
+          3
+        ],
+        [
+          "Feuer Online Stores, Inc",
+          0
+        ],
+        [
+          "Gift Ideas Corp.",
+          3
+        ],
+        [
+          "Scandinavian Gift Ideas",
+          3
+        ],
+        [
+          "The Sharp Gifts Warehouse",
+          4
+        ],
+        [
+          "Mini Auto Werke",
+          3
+        ],
+        [
+          "Super Scale Inc.",
+          2
+        ],
+        [
+          "Microscale Inc.",
+          2
+        ],
+        [
+          "Corrida Auto Replicas, Ltd",
+          3
+        ],
+        [
+          "Warburg Exchange",
+          0
+        ],
+        [
+          "FunGiftIdeas.com",
+          3
+        ],
+        [
+          "Anton Designs, Ltd.",
+          0
+        ],
+        [
+          "Australian Collectables, Ltd",
+          3
+        ],
+        [
+          "Frau da Collezione",
+          2
+        ],
+        [
+          "West Coast Collectables Co.",
+          2
+        ],
+        [
+          "Mit Vergnügen & Co.",
+          0
+        ],
+        [
+          "Kremlin Collectables, Co.",
+          0
+        ],
+        [
+          "Raanan Stores, Inc",
+          0
+        ],
+        [
+          "Iberia Gift Imports, Corp.",
+          2
+        ],
+        [
+          "Motor Mint Distributors Inc.",
+          3
+        ],
+        [
+          "Signal Collectibles Ltd.",
+          2
+        ],
+        [
+          "Double Decker Gift Stores, Ltd",
+          2
+        ],
+        [
+          "Diecast Collectables",
+          2
+        ],
+        [
+          "Kelly's Gift Shop",
+          4
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    },
+    {
+      "id": 132,
+      "question": "Show the customer name and country of customers whose name contains the word 'Gifts'.",
+      "gold_sql": "SELECT customerName, country FROM customers WHERE customerName LIKE '%Gifts%';",
+      "complexity": "pattern_match",
+      "required_tables": [
+        "customers"
+      ],
+      "order_significant": false,
+      "expected_rows": [
+        [
+          "La Rochelle Gifts",
+          "France"
+        ],
+        [
+          "Mini Gifts Distributors Ltd.",
+          "USA"
+        ],
+        [
+          "Handji Gifts& Co",
+          "Singapore"
+        ],
+        [
+          "Herkku Gifts",
+          "Norway  "
+        ],
+        [
+          "giftsbymail.co.uk",
+          "UK"
+        ],
+        [
+          "Franken Gifts, Co",
+          "Germany"
+        ],
+        [
+          "Rovelli Gifts",
+          "Italy"
+        ],
+        [
+          "Norway Gifts By Mail, Co.",
+          "Norway  "
+        ],
+        [
+          "GiftsForHim.com",
+          "New Zealand"
+        ],
+        [
+          "Gifts4AllAges.com",
+          "USA"
+        ],
+        [
+          "The Sharp Gifts Warehouse",
+          "USA"
+        ]
+      ],
+      "expected_rows_status": "generated_from_local_db"
+    }
+  ]
+}

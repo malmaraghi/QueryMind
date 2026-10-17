@@ -34,5 +34,12 @@ Thumbs.db
 # Experiment results (optional - remove if you want to include)
 # exp_com_res/
 
+# Output of experiment/run_benchmark.py (per-run metadata, trials, ChromaDB indexes)
+exp_runs/
+
+# Local database credentials for experiments (keep outside the repo; see experiment/EVALUATION.md)
+eval.env
+*.env
+
 # Jupyter
 .ipynb_checkpoints/

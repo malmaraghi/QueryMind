@@ -1,0 +1,10 @@
+{
+  "_note": "Sidecar annotations for the unchanged 5-question experiment/gold_questions.json, matched by id. Kept separate so the original gold file is not modified.",
+  "annotations": [
+    {"id": 1, "complexity": "simple_filter", "required_tables": ["customers"], "order_significant": false},
+    {"id": 2, "complexity": "simple_filter", "required_tables": ["products"], "order_significant": false},
+    {"id": 3, "complexity": "simple_filter", "required_tables": ["payments"], "order_significant": false},
+    {"id": 4, "complexity": "join_filter", "required_tables": ["customers", "orders"], "order_significant": false},
+    {"id": 5, "complexity": "join_aggregation", "required_tables": ["customers", "orders"], "order_significant": false}
+  ]
+}
