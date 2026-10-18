@@ -8,11 +8,17 @@ QueryMind is a research prototype developed at the University of Bahrain. This r
 
 ## Contents
 
-- [Research objectives](#research-objectives) · [Key features](#key-features) · [How it works](#how-it-works)
+- [Demo video](#project-demo-video) · [Research objectives](#research-objectives) · [Key features](#key-features) · [How it works](#how-it-works)
 - [Security architecture](#security-architecture-three-layers) · [Installation](#installation) · [Connecting a database](#connecting-your-database)
 - [Running](#running-the-application) · [Tests](#running-the-tests) · [Reproducing the experiments](#reproducing-the-experiments)
 - [Results](#verified-results) · [Hardware and limitations](#hardware-and-research-limitations) · [Known security limitations](#known-security-limitations)
 - [Project structure](#project-structure) · [Data and licensing](#data-and-licensing-notes) · [Citation](#citation)
+
+## Project Demo Video
+
+This video demonstrates QueryMind in use: connecting to an existing MySQL/MariaDB database, asking questions in natural language, and viewing the SQL queries QueryMind generates and runs.
+
+**[Watch the QueryMind Demo](https://drive.google.com/file/d/1P1yun3DS4n5BoiAbfR6Dis9DOnm5SHRc/view?usp=drivesdk)**
 
 ## Research objectives
 
