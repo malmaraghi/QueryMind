@@ -6,8 +6,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23bb23fe' rx='20'/><text x='50' y='72' font-size='65' font-weight='bold' text-anchor='middle' fill='white' font-family='Arial, sans-serif'>Q</text></svg>">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script>
+    <script nonce="{{ csp_nonce }}">
         document.addEventListener("DOMContentLoaded", function() {
+            var backHome = document.getElementById("back-home");
+            if (backHome) {
+                backHome.onclick = function() { window.location.href = '/'; };
+            }
             var profilePic = document.getElementById("profile-pic");
             var dropdown = document.getElementById("profile-dropdown");
             if (profilePic && dropdown) {
@@ -36,7 +40,9 @@
                 <span class="model-separator">|</span>
                 <span class="model-label">RAG:</span> <span class="model-value">mxbai-embed-large:latest</span>
             </div>
-            <button onclick="window.location.href='/logout'" class="logout-btn" title="Sign Out">
+            <form method="post" action="/logout" style="display:contents">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="logout-btn" title="Sign Out">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
@@ -44,6 +50,7 @@
                 </svg>
                 Logout
             </button>
+            </form>
             <div class="profile-pic" id="profile-pic">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
@@ -83,7 +90,7 @@
             </div>
             
             {% if error %}
-                <div class="error">{{ error|safe }}</div>
+                <div class="error">{{ error }}</div>
             {% endif %}
             {% if results and results != "No records." %}
                 <h2>Results</h2>
@@ -111,7 +118,7 @@
                 <div class="no-records">No records found.</div>
             {% endif %}
             <div class="button-group">
-                <button onclick="window.location.href='/'" class="back-link">Back to Home</button>
+                <button type="button" id="back-home" class="back-link">Back to Home</button>
             </div>
         </div>
     </div>

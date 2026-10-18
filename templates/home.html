@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23bb23fe' rx='20'/><text x='50' y='72' font-size='65' font-weight='bold' text-anchor='middle' fill='white' font-family='Arial, sans-serif'>Q</text></svg>">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script>
+    <script nonce="{{ csp_nonce }}">
         document.addEventListener("DOMContentLoaded", function() {
             var profilePic = document.getElementById("profile-pic");
             var dropdown = document.getElementById("profile-dropdown");
@@ -22,7 +22,7 @@
                 };
             }
 
-            var form = document.querySelector('form');
+            var form = document.getElementById('question-form');
             if (form) {
                 form.onsubmit = function() {
                     // Hide any existing error message
@@ -34,7 +34,7 @@
                     var submitBtn = form.querySelector('button[type="submit"]');
                     if (submitBtn) {
                         submitBtn.disabled = true;
-                        submitBtn.innerHTML = 'Generating query...';
+                        submitBtn.textContent = 'Generating query...';
                         submitBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
                     }
                 };
@@ -53,34 +53,52 @@
                     var tableName = item.querySelector('.table-name').textContent.trim();
                     modal.classList.add('show');
                     modalTableName.textContent = tableName;
-                    modalTableBody.innerHTML = '';
+                    modalTableBody.textContent = '';
                     modalLoading.style.display = 'block';
+
+                    function addRow(cells) {
+                        var tr = document.createElement('tr');
+                        cells.forEach(function(cell) {
+                            var td = document.createElement('td');
+                            if (cell.cls) { td.className = cell.cls; }
+                            if (cell.badge) {
+                                var badge = document.createElement('span');
+                                badge.className = 'key-badge key-' + cell.badge.toLowerCase();
+                                badge.textContent = cell.badge;
+                                td.appendChild(badge);
+                            } else {
+                                td.textContent = cell.text;
+                            }
+                            if (cell.span) { td.colSpan = cell.span; }
+                            if (cell.error) { td.style.color = '#ff6b6b'; }
+                            tr.appendChild(td);
+                        });
+                        modalTableBody.appendChild(tr);
+                    }
 
                     fetch('/api/table/' + encodeURIComponent(tableName))
                         .then(response => response.json())
                         .then(data => {
                             modalLoading.style.display = 'none';
                             if (data.error) {
-                                modalTableBody.innerHTML = '<tr><td colspan="5" style="color: #ff6b6b;">Error: ' + data.error + '</td></tr>';
+                                addRow([{text: 'Error: ' + data.error, span: 5, error: true}]);
                             } else {
                                 data.columns.forEach(function(col) {
-                                    var keyBadge = col.key === 'PRI' ? '<span class="key-badge key-pri">PRI</span>' :
-                                                   col.key === 'MUL' ? '<span class="key-badge key-mul">MUL</span>' :
-                                                   col.key === 'UNI' ? '<span class="key-badge key-uni">UNI</span>' : '-';
-                                    var row = '<tr>' +
-                                        '<td class="col-name">' + col.column + '</td>' +
-                                        '<td class="col-type">' + col.type + '</td>' +
-                                        '<td class="col-null">' + col.null + '</td>' +
-                                        '<td class="col-key">' + keyBadge + '</td>' +
-                                        '<td class="col-default">' + col.default + '</td>' +
-                                    '</tr>';
-                                    modalTableBody.innerHTML += row;
+                                    var keyCell = (col.key === 'PRI' || col.key === 'MUL' || col.key === 'UNI')
+                                        ? {cls: 'col-key', badge: col.key} : {cls: 'col-key', text: '-'};
+                                    addRow([
+                                        {cls: 'col-name', text: col.column},
+                                        {cls: 'col-type', text: col.type},
+                                        {cls: 'col-null', text: col.null},
+                                        keyCell,
+                                        {cls: 'col-default', text: col.default}
+                                    ]);
                                 });
                             }
                         })
                         .catch(function(err) {
                             modalLoading.style.display = 'none';
-                            modalTableBody.innerHTML = '<tr><td colspan="5" style="color: #ff6b6b;">Failed to load metadata</td></tr>';
+                            addRow([{text: 'Failed to load metadata', span: 5, error: true}]);
                         });
                 };
             });
@@ -112,7 +130,9 @@
                 <span class="model-separator">|</span>
                 <span class="model-label">RAG:</span> <span class="model-value">mxbai-embed-large:latest</span>
             </div>
-            <button onclick="window.location.href='/logout'" class="logout-btn" title="Sign Out">
+            <form method="post" action="/logout" style="display:contents">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="logout-btn" title="Sign Out">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
@@ -120,6 +140,7 @@
                 </svg>
                 Logout
             </button>
+            </form>
             <div class="profile-pic" id="profile-pic">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
@@ -157,13 +178,14 @@
                     Enter your natural language question about the <span class="db-name">{{ db_name }}</span> database. 
                     Only <span class="select-highlight">SELECT</span> queries are supported.
                 </p>
-                <form method="post" action="/">
+                <form method="post" action="/" id="question-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <label for="user_input">E.g. "List customers in Bahrain" or "Show orders from 2024"</label>
                     <textarea id="user_input" name="user_input" rows="4" required>{{ user_input }}</textarea>
                     <button type="submit">Generate SQL</button>
                 </form>
                 {% if error %}
-                  <div class="error">{{ error|safe }}</div>
+                  <div class="error">{{ error }}</div>
                 {% endif %}
             </div>
         </div>

@@ -273,15 +273,25 @@ RESULTS_BASELINE = {}
 # ----------------------------------------------------------------------------- full application flow
 
 def application_flow(cfg, run_llm):
+    import secrets
+    os.environ.setdefault("SECRET_KEY", secrets.token_hex(32))     # the app refuses to start without one
     import app as appmod
 
     client_for = {}
 
+    def csrf_of(client, path):
+        """The hidden CSRF token of a page (the application rejects state-changing requests without it)."""
+        html = client.get(path).get_data(as_text=True)
+        return re.search(r'name="csrf_token" value="([^"]+)"', html).group(1)
+
     def login(who, policy):
         appmod.app.config["TESTING"] = True
+        appmod.account_limiter._failures.clear()
+        appmod.ip_limiter._failures.clear()
         client = appmod.app.test_client()
+        token = csrf_of(client, "/login")
         with mock.patch.object(security, "PRIVILEGE_POLICY", policy):
-            response = client.post("/login", data={
+            response = client.post("/login", data={"csrf_token": token,
                 "db_host": cfg["QM_SEC_HOST"], "db_port": cfg["QM_SEC_PORT"], "db_name": cfg["QM_SEC_DB"],
                 "db_user": cfg[f"QM_SEC_{who}_USER"], "db_password": cfg[f"QM_SEC_{who}_PASSWORD"]})
         return client, response
@@ -308,7 +318,7 @@ def application_flow(cfg, run_llm):
         with contextlib.redirect_stdout(out), contextlib.ExitStack() as stack:
             for patch in patches:
                 stack.enter_context(patch)
-            response = client.post("/", data={"user_input": question})
+            response = client.post("/", data={"user_input": question, "csrf_token": csrf_of(client, "/")})
         return response.get_data(as_text=True), seen["llm_output"], out.getvalue()
 
     def classify(html):

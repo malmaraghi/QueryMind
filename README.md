@@ -93,9 +93,9 @@ Use only the tables you are comfortable exposing to the model: tables the accoun
 SECRET_KEY="$(openssl rand -hex 32)" flask --app app run --host 127.0.0.1 --port 5000 --no-debugger --no-reload
 ```
 
-Open <http://127.0.0.1:5000>, sign in with the database credentials, and ask a question. Stop with Ctrl-C. Do **not** start the app with `python app.py`: that enables Flask's debug mode. Bind to `127.0.0.1` only; the application is not designed to be exposed to a network. The first question after a login can take tens of seconds on a small GPU while Ollama loads the model.
+Open <http://127.0.0.1:5000>, sign in with the database credentials, and ask a question. Stop with Ctrl-C. `SECRET_KEY` is **mandatory** (at least 16 characters): the application refuses to start without it, and also refuses to start in Flask debug mode (`--debug`, `FLASK_DEBUG=1`). `python app.py` is safe too (debug off, loopback only). Bind to `127.0.0.1` only; the application is not designed to be exposed to a network. Behind HTTPS set `QUERYMIND_HTTPS=1` so cookies are marked `Secure` and HSTS is sent. The first question after a login can take tens of seconds on a small GPU while Ollama loads the model.
 
-Optional environment variables: `QUERYMIND_PRIVILEGE_POLICY` (`enforce`|`warn`|`off`), `QUERYMIND_STATEMENT_TIMEOUT` (seconds, default 60), `QUERYMIND_MAX_RESULT_ROWS` (default 50000), `QUERYMIND_MAX_QUESTION_CHARS` (default 2000).
+Optional environment variables: `QUERYMIND_PRIVILEGE_POLICY` (`enforce`|`warn`|`off`), `QUERYMIND_STATEMENT_TIMEOUT` (seconds, default 60), `QUERYMIND_MAX_RESULT_ROWS` (default 50000), `QUERYMIND_MAX_QUESTION_CHARS` (default 2000). Web-layer variables: `QUERYMIND_HTTPS` (`1` behind HTTPS), `QUERYMIND_ALLOWED_DB_HOSTS` (comma-separated host names, IP addresses or CIDR ranges of non-loopback database servers that users may connect to; default none, so only `localhost`/loopback), `QUERYMIND_LOGIN_MAX_FAILURES` (default 5 per account within `QUERYMIND_LOGIN_WINDOW` = 300 s; 4x that per client address), `QUERYMIND_SESSION_IDLE` (1800 s) and `QUERYMIND_SESSION_MAX` (28800 s), `QUERYMIND_CONNECT_TIMEOUT` (10 s), `QUERYMIND_INDEX_DIR` (default `~/.querymind_chromadb`), `QUERYMIND_HOST` / `QUERYMIND_PORT` (only for `python app.py`). Connecting to a database server on another machine requires listing it in `QUERYMIND_ALLOWED_DB_HOSTS`.
 
 ## Running the tests
 
@@ -103,7 +103,7 @@ Optional environment variables: `QUERYMIND_PRIVILEGE_POLICY` (`enforce`|`warn`|`
 python -m unittest discover -s tests
 ```
 
-148 unit tests; they use only the standard library plus the installed requirements and do not need a database or Ollama.
+205 unit tests (including the web-security regression tests); they use only the standard library plus the installed requirements and do not need a database or Ollama.
 
 ## Reproducing the experiments
 
@@ -142,7 +142,7 @@ Qwen3 1.7B and Llama 3.1 8B are not significantly different (paired exact McNema
 
 Primary comparison: 14 questions solved only by QueryMind versus 2 only by SQLCoder (exact McNemar p = 0.004). 34 of SQLCoder's 39 database errors were one PostgreSQL ordering modifier (`NULLS LAST`) that MariaDB rejects. In a secondary analysis fixed before it was run, a validated, semantics-preserving translation of that modifier applied to the saved SQL (no regeneration) brings SQLCoder to 86.5%, and the difference to QueryMind is then not significant (-4.2 points, CI -17.7 to +9.4, p = 1.0). This adjusted figure favours the baseline by construction and does not replace the primary result. On first exposure to a prompt SQLCoder needed 49.7 s per question against QueryMind's 43.2 s on this machine; Ollama's prompt caching makes repeated identical prompts much faster, so latency must be compared per first exposure.
 
-**Security evaluation** (disposable private MariaDB, no administrator rights): 103 of 103 checks passed, including attack statements for each layer, rollback of 1-, 2-, 4- and 5-row modifications, and demonstrated limitations. The validator rejected 0 of 386 correct statements generated in the benchmark runs.
+**Security evaluation** (disposable private MariaDB, no administrator rights): 103 of 103 checks passed (re-run without the live-model prompts after the web hardening: 93 of 93), including attack statements for each layer, rollback of 1-, 2-, 4- and 5-row modifications, and demonstrated limitations. The validator rejected 0 of 386 correct statements generated in the benchmark runs.
 
 **Historical pilot.** The original five-question evaluation reported in [`exp_com_res/`](exp_com_res/) (match rates of 40-100%) used Ollama's default sampling, one run per question and an older scoring method, and is **not directly comparable** with the figures above. Re-running those five questions with the current framework gave 14-15 of 15 correct for every configuration ([`archive/legacy-runner/`](archive/legacy-runner/README.md) explains the differences).
 
@@ -156,14 +156,14 @@ Primary comparison: 14 questions solved only by QueryMind versus 2 only by SQLCo
 
 ## Known security limitations
 
-QueryMind is a research prototype. Known issues in the web application, **not yet addressed**:
+QueryMind is a research prototype. The web application was hardened after the evaluation (see [`docs/SECURITY_LAYERS.md`](docs/SECURITY_LAYERS.md#web-application-hardening)): server-side sessions (no credentials in cookies), mandatory `SECRET_KEY`, no debug mode, CSRF tokens on every POST (login and logout included), `HttpOnly`/`SameSite=Lax`/optional `Secure` cookies, a nonce-based Content-Security-Policy and other security headers, no `|safe`/`innerHTML`, validated table names and generic error messages, a database-host policy, login rate limiting, and a private search index per login. Remaining limitations:
 
-- A default `SECRET_KEY` is used unless the environment variable is set; `python app.py` runs Flask in debug mode.
-- The database password is kept in Flask's signed (not encrypted) session cookie. No CSRF protection, login rate limiting, cookie security flags or security headers; logout is a plain `GET`.
-- Some messages and database metadata are rendered without HTML escaping (`|safe`, `innerHTML` in the templates).
-- The table-metadata endpoint builds its query from the table name; the login form accepts any database host.
-- Schema text is sent to the model unmasked (no masking is implemented); the SQL validator is lexical and cannot judge intent; the post-execution guard cannot undo DDL or non-transactional changes.
-- Use a dedicated read-only account, run locally, and do not expose the application to untrusted networks.
+- Sessions, rate-limit counters and indexes live in the memory/disk of **one** process: run a single worker; a restart logs everyone out. Database passwords are kept in that process's memory while a session is active (not encrypted at rest).
+- The application serves plain HTTP and has no user accounts of its own; terminate TLS in front of it and keep it on a trusted network. Behind a reverse proxy all clients share the proxy's address for rate limiting.
+- The database-host policy checks the address when a user logs in; it is not a firewall. A host that the administrator allows (`QUERYMIND_ALLOWED_DB_HOSTS`) is trusted.
+- Database error messages produced by the generated query (for example an unknown column) are still shown to the signed-in user; schema text is sent to the model unmasked (no masking is implemented).
+- The SQL validator is lexical and cannot judge intent; the post-execution guard cannot undo DDL or non-transactional changes.
+- Use a dedicated read-only account, run locally, and do not expose the application to untrusted networks. No independent security audit has been performed.
 
 ## Project structure
 
@@ -175,10 +175,11 @@ QueryMind/
 ├── llm_engine.py          prompt construction and generation (Ollama)
 ├── query_executor.py      SQL extraction from model output
 ├── security.py            the three SELECT-only layers
+├── webguard.py            web-layer protections: server-side sessions, rate limiting, DB host policy, CSRF, headers
 ├── requirements.txt       pinned direct dependencies
 ├── templates/  static/    web interface
 ├── experiment/            benchmark definition, runners, scoring, analysis, baseline, security evidence
-├── tests/                 unit tests (148)
+├── tests/                 unit tests (205)
 ├── docs/                  EVALUATION.md, SECURITY_LAYERS.md (+ architecture diagram)
 ├── exp_com_res/           original five-question results (historical, unchanged)
 └── archive/legacy-runner/ scripts that produced those results (historical, not maintained)

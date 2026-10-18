@@ -68,10 +68,26 @@ python -m unittest discover -s tests            # offline unit tests, including 
 `QUERYMIND_PRIVILEGE_POLICY` (`enforce` | `warn` | `off`, default `enforce`), `QUERYMIND_STATEMENT_TIMEOUT` (seconds,
 default 60), `QUERYMIND_MAX_RESULT_ROWS` (default 50000), `QUERYMIND_MAX_QUESTION_CHARS` (default 2000).
 
+## Web application hardening
+
+Separate from the three SELECT-only layers (which are unchanged), `app.py` and [`webguard.py`](../webguard.py) protect the web application itself. Regression tests: `tests/test_app_security.py`, `tests/test_webguard.py`.
+
+| Weakness | Now |
+|---|---|
+| Database password in the signed (not encrypted) cookie | The cookie holds only a random server-session id and a CSRF token. Host, user, password, database and index path live in an in-memory server-side store: idle timeout 30 min, absolute timeout 8 h, at most 200 sessions (least recently used evicted), ended on logout. A new session id and CSRF token are issued at every login (no session fixation). |
+| Default `SECRET_KEY`, debug mode | No default: the app refuses to start without a `SECRET_KEY` of at least 16 characters. It also refuses to start when Flask debug mode is on (`--debug`, `FLASK_DEBUG`); `python app.py` runs with debug off, on 127.0.0.1. |
+| `|safe`, `innerHTML`, inline handlers | Removed. Messages are escaped by Jinja; the table-metadata dialog is built with `textContent`; handlers are attached from nonce-protected scripts. |
+| No CSRF protection, `GET /logout` | Every POST (login, question, logout) needs the session's token (hidden field or `X-CSRF-Token`, constant-time comparison). Logout is `POST` only. |
+| Cookie and header settings | `HttpOnly`, `SameSite=Lax`, `Secure` and HSTS when `QUERYMIND_HTTPS=1`; CSP (`default-src 'none'`, scripts only with a per-request nonce, `frame-ancestors 'none'`, `form-action 'self'`), `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy: no-referrer`, `Permissions-Policy`, COOP/CORP, `Cache-Control: no-store`. |
+| `/api/table/<name>` | The name must be a plain identifier **and** one of the tables the account can see; backticks are escaped; unknown names give 404 and failures a generic message (the exception text is never returned). Internal errors are logged by type only, never with credentials. |
+| Unrestricted database host | The host must resolve to a loopback address, or be allowed by `QUERYMIND_ALLOWED_DB_HOSTS` (host names, IPs, CIDR ranges). Link-local (including cloud metadata `169.254.169.254`), unspecified, multicast and reserved addresses are always refused, including IPv4-mapped IPv6. The name is resolved once and the connection uses the checked address. Connections have a timeout. Port and name fields are validated. |
+| No brute-force protection | Failed logins are counted per database account (default 5 per 5 min) and per client address (4x that); then HTTP 429 with `Retry-After`. A successful login clears the account counter. |
+| Shared / predictable search index (`md5(user_host_db)`) | Each login gets its own unguessable `sess-<random>` index directory under the index base; it is deleted when the session ends, removal is confined to that prefix and directory, and leftovers of an earlier run are purged at startup. |
+
+Verified on 2026-10-18: 205 unit tests pass; against a private MariaDB server, real login/logout with two independent sessions, the database password absent from the raw and decoded cookies, `GET /logout` 405, missing token 400, a destructive question blocked, and `experiment/security_evaluation.py --skip-llm` 93 of 93 checks (the earlier 103-check run included the live model and is unchanged evidence).
+
+Limits: sessions, counters and the host check exist per process only (use one worker; a restart logs users out); the password is held in server memory while a session is active; plain HTTP unless TLS is added in front; behind a proxy clients share one address for rate limiting; the host policy is not a firewall. Not independently audited.
+
 ## Not covered by these layers
 
-Credentials: the application keeps the database password in the signed (not encrypted) session cookie and falls
-back to a default `SECRET_KEY` unless one is set; `python app.py` starts Flask in debug mode (use
-`flask --app app run`). Some pre-existing messages (for example a model refusal text) are still rendered with
-`|safe` in the templates; only the messages added or changed here are escaped. Schema exposure: the model is shown
-the retrieved table definitions (5 of 8 tables with `top_k=5`). Concurrency and larger schemas were not tested.
+Schema exposure: the model is shown the retrieved table definitions (5 of 8 tables with `top_k=5`). Database error messages caused by the generated query are shown to the signed-in user. Concurrency and larger schemas were not tested.

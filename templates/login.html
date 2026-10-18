@@ -66,6 +66,7 @@
                     <p class="form-subtitle">Enter your credentials to connect</p>
                     
                     <form method="post" action="/login">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <div class="form-row">
                             <div class="form-group-compact">
                                 <label for="db_host">Host</label>
@@ -107,14 +108,5 @@
         © 2026 QueryMind | Final Year Project - Semester 1 (2025/2026) | <span style="color: #4a90e2; font-weight: bold;">College of IT, University of Bahrain</span>
     </div>
     
-    <script>
-        function fillPreset(host, port, user, password, dbname) {
-            document.getElementById('db_host').value = host;
-            document.getElementById('db_port').value = port;
-            document.getElementById('db_user').value = user;
-            document.getElementById('db_password').value = password;
-            document.getElementById('db_name').value = dbname;
-        }
-    </script>
 </body>
 </html>
