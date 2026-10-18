@@ -1,46 +1,68 @@
 /* QueryMind design system.
-   Bootstrap 5.3 (static/vendor/bootstrap) supplies the grid, forms, buttons, alerts, cards and tables.
-   This file only sets the shared design tokens, maps them onto Bootstrap's variables and defines the few
-   QueryMind-specific components (page shell, SQL block, results table, table list). No page-specific files. */
+   Bootstrap 5.3 (static/vendor/bootstrap) provides grid, forms, buttons, alerts, dropdowns, collapse and tables.
+   This file holds the shared design tokens, maps them onto Bootstrap's variables, and defines the few
+   QueryMind components. There are no page-specific stylesheets. */
 
 /* ---- 1. Design tokens -------------------------------------------------------------------------------------- */
 :root {
-  --qm-navy: #14213d;
-  --qm-navy-2: #1d2f57;
-  --qm-primary: #2557b8;            /* 6.6:1 against white */
-  --qm-primary-hover: #1c4494;
+  /* colour */
+  --qm-primary: #6f00a8;               /* 9.4:1 against white */
+  --qm-primary-hover: #580085;
+  --qm-primary-soft: #f1e6f8;
+  --qm-header: #2b0b45;
+  --qm-header-text: #e9dcf5;
+  --qm-background: #faf8fc;
   --qm-surface: #ffffff;
-  --qm-canvas: #f4f6fb;
-  --qm-border: #d5dcea;
-  --qm-text: #1b2333;
-  --qm-muted: #556070;              /* 6.2:1 against canvas */
-  --qm-radius: 0.5rem;
-  --qm-radius-sm: 0.375rem;
-  --qm-shadow: 0 1px 2px rgb(20 33 61 / 8%), 0 2px 8px rgb(20 33 61 / 6%);
-  --qm-focus: 0 0 0 0.2rem rgb(37 87 184 / 35%);
-  --qm-code-bg: #0f1a30;
-  --qm-code-text: #e7ecf7;
+  --qm-text: #21152d;
+  --qm-text-muted: #62586b;            /* 6.6:1 against the background */
+  --qm-border: #e6ddeb;
+  --qm-success: #146c43;
+  --qm-code-bg: #1d1033;
+  --qm-code-text: #f1ecf8;
+  --qm-code-keyword: #d2b0ff;
+  --qm-code-string: #a6e8b9;
+  --qm-code-number: #ffd28f;
+  --qm-code-comment: #a79bb9;
 
-  /* Map onto Bootstrap 5.3 */
+  /* type */
+  --qm-font-sm: 0.875rem;
+  --qm-font-base: 1rem;
+  --qm-font-lg: 1.125rem;
+  --qm-line: 1.55;
+
+  /* space, shape, layout */
+  --qm-space-1: 0.5rem;
+  --qm-space-2: 1rem;
+  --qm-space-3: 1.5rem;
+  --qm-space-4: 2rem;
+  --qm-radius-sm: 6px;
+  --qm-radius-md: 10px;
+  --qm-radius-lg: 14px;
+  --qm-shadow: 0 1px 2px rgb(43 11 69 / 8%), 0 2px 8px rgb(43 11 69 / 6%);
+  --qm-focus: 0 0 0 0.2rem rgb(111 0 168 / 30%);
+  --qm-content-max-width: 1200px;
+  --qm-gutter: 1rem;
+
+  /* Bootstrap 5.3 mapping */
   --bs-primary: var(--qm-primary);
-  --bs-primary-rgb: 37, 87, 184;
+  --bs-primary-rgb: 111, 0, 168;
   --bs-link-color: var(--qm-primary);
-  --bs-link-color-rgb: 37, 87, 184;
+  --bs-link-color-rgb: 111, 0, 168;
   --bs-link-hover-color: var(--qm-primary-hover);
-  --bs-link-hover-color-rgb: 28, 68, 148;
-  --bs-body-bg: var(--qm-canvas);
+  --bs-link-hover-color-rgb: 88, 0, 133;
+  --bs-body-bg: var(--qm-background);
   --bs-body-color: var(--qm-text);
-  --bs-secondary-color: var(--qm-muted);
+  --bs-body-line-height: var(--qm-line);
+  --bs-secondary-color: var(--qm-text-muted);
   --bs-border-color: var(--qm-border);
   --bs-border-radius: var(--qm-radius-sm);
-  --bs-border-radius-lg: var(--qm-radius);
-  --bs-focus-ring-color: rgb(37 87 184 / 35%);
+  --bs-border-radius-lg: var(--qm-radius-md);
+  --bs-focus-ring-color: rgb(111 0 168 / 30%);
 }
 
-/* ---- 2. Base --------------------------------------------------------------------------------------------- */
-body { font-size: 1rem; line-height: 1.55; }
-h1 { font-size: calc(1.3rem + 0.6vw); font-weight: 650; }
-h2 { font-size: 1.25rem; font-weight: 650; }
+/* ---- 2. Base and Bootstrap overrides ---------------------------------------------------------------------- */
+h1 { font-size: calc(1.3rem + 0.6vw); font-weight: 650; letter-spacing: -0.01em; }
+h2 { font-size: var(--qm-font-lg); font-weight: 650; }
 :focus-visible { outline: 3px solid var(--qm-primary); outline-offset: 2px; }
 .btn:focus-visible, .form-control:focus, .form-select:focus { box-shadow: var(--qm-focus); outline: 2px solid transparent; }
 .btn-primary { --bs-btn-bg: var(--qm-primary); --bs-btn-border-color: var(--qm-primary); --bs-btn-hover-bg: var(--qm-primary-hover);
@@ -50,66 +72,107 @@ h2 { font-size: 1.25rem; font-weight: 650; }
   --bs-btn-hover-border-color: var(--qm-primary); --bs-btn-active-bg: var(--qm-primary-hover); }
 .form-control, .form-select, .btn { min-height: 2.5rem; }
 .form-control, .form-select { background-color: var(--qm-surface); }
+.form-text, .small, small { font-size: var(--qm-font-sm); }
 
 /* ---- 3. Page shell ----------------------------------------------------------------------------------------- */
 .qm-page { min-height: 100vh; display: flex; flex-direction: column; }
-.qm-main { flex: 1 0 auto; padding-block: 1.5rem 2.5rem; }
+.qm-container { width: 100%; max-width: var(--qm-content-max-width); margin-inline: auto; padding-inline: var(--qm-gutter); }
+.qm-main { flex: 1 0 auto; padding-block: var(--qm-space-3) var(--qm-space-4); }
 .qm-skip { position: absolute; left: 0.5rem; top: -4rem; z-index: 2000; padding: 0.5rem 1rem; background: var(--qm-surface); border-radius: var(--qm-radius-sm); }
 .qm-skip:focus { top: 0.5rem; }
 
-.qm-navbar { background: var(--qm-navy); border-bottom: 1px solid var(--qm-navy-2); }
-.qm-navbar .navbar-brand { color: #fff; font-weight: 650; letter-spacing: 0.01em; }
-.qm-brand-mark { width: 1.75rem; height: 1.75rem; border-radius: 0.4rem; background: #fff; color: var(--qm-navy); font-weight: 700;
-  display: inline-flex; align-items: center; justify-content: center; margin-right: 0.5rem; }
-.qm-navbar .qm-tagline { color: #c5cee0; font-size: 0.85rem; }
-.qm-navbar .btn-outline-light { --bs-btn-border-color: rgb(255 255 255 / 55%); --bs-btn-hover-color: var(--qm-navy); }
-.qm-navbar .dropdown-menu { min-width: 16rem; }
-.qm-models { color: #c5cee0; font-size: 0.85rem; }
-.qm-models .qm-model-name { color: #fff; font-variant-numeric: tabular-nums; }
+.qm-navbar { background: var(--qm-header); padding-block: 0.5rem; }
+.qm-navbar .navbar-brand { color: #fff; font-weight: 650; padding: 0; margin-right: var(--qm-space-2); }
+.qm-brand-mark { flex: none; width: 2rem; height: 2rem; border-radius: var(--qm-radius-sm); background: #fff; color: var(--qm-header); font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; margin-right: 0.6rem; }
+.qm-tagline { color: var(--qm-header-text); font-size: 0.8125rem; font-weight: 400; }
+.qm-navbar .btn-outline-light { --bs-btn-border-color: rgb(255 255 255 / 55%); --bs-btn-hover-color: var(--qm-header); }
+.qm-nav-actions { gap: 0.5rem; }
+.qm-db-label { max-width: 12rem; }
+.qm-nav-actions .btn { min-height: 2.25rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; }
+.qm-models { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.qm-chip { display: inline-flex; align-items: center; gap: 0.4rem; max-width: 100%; padding: 0.2rem 0.65rem; border-radius: 999px;
+  background: rgb(255 255 255 / 10%); color: var(--qm-header-text); font-size: var(--qm-font-sm); }
+.qm-chip strong { color: #fff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 14rem; }
+.qm-conn-menu { width: min(21rem, calc(100vw - 2rem)); padding: var(--qm-space-2); }
+.qm-conn-menu dl { display: grid; grid-template-columns: 6.5rem 1fr; gap: 0.35rem 0.75rem; margin: 0; }
+.qm-conn-menu dt { color: var(--qm-text-muted); font-weight: 500; font-size: var(--qm-font-sm); }
+.qm-conn-menu dd { margin: 0; overflow-wrap: anywhere; }
+.qm-conn-menu .qm-conn-status { color: var(--qm-success); font-weight: 600; }
 
-.qm-footer { color: var(--qm-muted); font-size: 0.875rem; border-top: 1px solid var(--qm-border); background: var(--qm-surface); padding-block: 1rem; }
+.qm-footer { margin-top: auto; padding-block: var(--qm-space-2); text-align: center; color: var(--qm-text-muted); font-size: var(--qm-font-sm); }
 
-/* ---- 4. Cards ---------------------------------------------------------------------------------------------- */
-.qm-card { background: var(--qm-surface); border: 1px solid var(--qm-border); border-radius: var(--qm-radius); box-shadow: var(--qm-shadow); }
-.qm-card-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.875rem 1.25rem; border-bottom: 1px solid var(--qm-border); }
+/* ---- 4. Cards, status, alerts ------------------------------------------------------------------------------ */
+.qm-card { background: var(--qm-surface); border: 1px solid var(--qm-border); border-radius: var(--qm-radius-lg); box-shadow: var(--qm-shadow); }
+.qm-card-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem var(--qm-space-3); border-bottom: 1px solid var(--qm-border); }
 .qm-card-header h2 { margin: 0; }
-.qm-card-body { padding: 1.25rem; }
-.qm-status { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; color: var(--qm-muted); }
-.qm-status .bi { color: #146c43; }          /* icon + text, never colour alone */
+.qm-card-body { padding: var(--qm-space-3); }
+.qm-status { display: inline-flex; align-items: center; gap: 0.4rem; font-size: var(--qm-font-sm); color: var(--qm-text-muted); }
+.qm-status .bi { color: var(--qm-success); }                     /* always icon + text, never colour alone */
+.qm-alert { display: flex; gap: 0.75rem; align-items: flex-start; }
+.qm-alert .bi { font-size: 1.1rem; line-height: 1.4; }
+.qm-alert-text { min-width: 0; overflow-wrap: anywhere; }
 
 /* ---- 5. Login ---------------------------------------------------------------------------------------------- */
 .qm-feature { display: flex; gap: 0.75rem; align-items: flex-start; }
 .qm-feature .bi { color: var(--qm-primary); font-size: 1.25rem; line-height: 1.4; }
-.qm-login-card { max-width: 32rem; margin-inline: auto; }
-.qm-port { max-width: 8rem; }
+.qm-login-card { width: 100%; max-width: 32rem; margin-inline: auto; }
+.qm-port { max-width: 9rem; }
 
-/* ---- 6. Home: question and table list ----------------------------------------------------------------------- */
-.qm-question { resize: vertical; min-height: 7.5rem; font-size: 1.05rem; }
-.qm-table-list .list-group-item { display: flex; align-items: center; gap: 0.5rem; border-inline: 0; font-family: var(--bs-font-monospace); font-size: 0.9rem; }
-.qm-table-list .list-group-item:first-child { border-top: 0; }
-.qm-table-list .bi { color: var(--qm-muted); }
-.qm-modal-table th { white-space: nowrap; }
-.qm-key { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; background: #e3ebfa; color: #153a7a; }
+/* ---- 6. Home: question workspace and table explorer ---------------------------------------------------------- */
+.qm-question { resize: vertical; min-height: 9rem; padding: 0.9rem 1rem; font-size: var(--qm-font-lg); line-height: 1.5; }
+.qm-question::placeholder { color: var(--qm-text-muted); opacity: 1; }
+.qm-chip-btn { border-radius: 999px; border: 1px solid var(--qm-border); background: var(--qm-primary-soft); color: var(--qm-primary-hover);
+  font-size: var(--qm-font-sm); padding: 0.25rem 0.8rem; min-height: 2rem; }
+.qm-chip-btn:hover { border-color: var(--qm-primary); background: #e8d6f4; }
+.qm-processing { margin-top: var(--qm-space-2); }
+.qm-processing .progress { height: 0.35rem; }
+.qm-explorer-list { max-height: 26rem; overflow-y: auto; margin: 0; padding: 0; list-style: none; }
+.qm-table-btn { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem var(--qm-space-2); border: 0; background: transparent;
+  text-align: left; color: var(--qm-text); font-family: var(--bs-font-monospace); font-size: var(--qm-font-sm); }
+.qm-table-btn:hover { background: var(--qm-primary-soft); }
+.qm-table-btn[aria-expanded="true"] { background: var(--qm-primary-soft); font-weight: 600; }
+.qm-table-btn .qm-chevron { flex: none; transition: transform 0.15s ease; }
+.qm-table-btn[aria-expanded="true"] .qm-chevron { transform: rotate(90deg); }
+.qm-table-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qm-columns { margin: 0; padding: 0.25rem var(--qm-space-2) 0.75rem 2.4rem; list-style: none; font-size: var(--qm-font-sm); background: var(--qm-background); border-block: 1px solid var(--qm-border); }
+.qm-columns li { display: flex; flex-wrap: wrap; gap: 0.1rem 0.5rem; padding: 0.2rem 0; }
+.qm-col-name { font-family: var(--bs-font-monospace); }
+.qm-col-type { color: var(--qm-text-muted); font-family: var(--bs-font-monospace); }
+.qm-key { display: inline-block; padding: 0 0.45rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; background: #e5d0f3; color: #4a006f; }
 
-/* ---- 7. Results: SQL block, timing, table -------------------------------------------------------------------- */
-.qm-sql { margin: 0; padding: 1rem 1.25rem; max-height: 22rem; overflow: auto; background: var(--qm-code-bg); color: var(--qm-code-text);
-  font-family: var(--bs-font-monospace); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; border-radius: 0 0 var(--qm-radius) var(--qm-radius); }
-.qm-timing { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.75rem; margin: 0; }
-.qm-timing dt { font-size: 0.8rem; font-weight: 600; color: var(--qm-muted); }
-.qm-timing dd { margin: 0; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
-.qm-results { max-height: 32rem; overflow: auto; }
+/* ---- 7. Results -------------------------------------------------------------------------------------------- */
+.qm-question-summary { border-left: 4px solid var(--qm-primary); padding: 0.1rem 0 0.1rem var(--qm-space-2); }
+.qm-sql { margin: 0; padding: 1rem var(--qm-space-3); max-height: 24rem; overflow: auto; background: var(--qm-code-bg); color: var(--qm-code-text);
+  font-family: var(--bs-font-monospace); font-size: var(--qm-font-sm); line-height: 1.7; white-space: pre; tab-size: 4; border-radius: 0 0 var(--qm-radius-lg) var(--qm-radius-lg); }
+.qm-sql .qm-kw { color: var(--qm-code-keyword); font-weight: 600; }
+.qm-sql .qm-str { color: var(--qm-code-string); }
+.qm-sql .qm-num { color: var(--qm-code-number); }
+.qm-sql .qm-cmt { color: var(--qm-code-comment); font-style: italic; }
+.qm-metrics { display: flex; flex-wrap: wrap; margin: 0; background: var(--qm-surface); border: 1px solid var(--qm-border); border-radius: var(--qm-radius-md); }
+.qm-metrics > div { flex: 1 1 8rem; padding: 0.6rem var(--qm-space-2); border-left: 1px solid var(--qm-border); }
+.qm-metrics > div:first-child { border-left: 0; }
+.qm-metrics dt { font-size: var(--qm-font-sm); font-weight: 500; color: var(--qm-text-muted); }
+.qm-metrics dd { margin: 0; font-size: var(--qm-font-lg); font-variant-numeric: tabular-nums; }
+.qm-metric-total dd { font-weight: 700; color: var(--qm-primary); }
+.qm-results { max-height: 34rem; overflow: auto; }
 .qm-results table { margin: 0; }
-.qm-results thead th { position: sticky; top: 0; z-index: 1; background: #eaf0fb; white-space: nowrap; }
-.qm-results td { max-width: 24rem; overflow-wrap: anywhere; vertical-align: top; }
-.qm-null { color: var(--qm-muted); font-style: italic; }
-.qm-empty { text-align: center; padding: 2rem 1rem; color: var(--qm-muted); }
-.qm-empty .bi { display: block; font-size: 2rem; margin-bottom: 0.5rem; }
+.qm-results thead th { position: sticky; top: 0; z-index: 1; background: var(--qm-primary-soft); white-space: nowrap; }
+.qm-results td { max-width: 26rem; overflow-wrap: anywhere; vertical-align: top; }
+.qm-results .qm-num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+.qm-null { color: var(--qm-text-muted); font-style: italic; }
+.qm-empty { text-align: center; padding: var(--qm-space-3) var(--qm-space-2); color: var(--qm-text-muted); }
+.qm-empty .bi { display: block; font-size: 1.75rem; margin-bottom: 0.25rem; }
+.qm-empty strong { display: block; color: var(--qm-text); font-size: var(--qm-font-lg); }
 
-/* ---- 8. Motion and small screens ----------------------------------------------------------------------------- */
+/* ---- 8. Small screens, motion ------------------------------------------------------------------------------ */
 @media (max-width: 575.98px) {
-  .qm-main { padding-block: 1rem 2rem; }
-  .qm-card-body { padding: 1rem; }
+  :root { --qm-gutter: 0.875rem; }
+  .qm-main { padding-block: var(--qm-space-2) var(--qm-space-3); }
+  .qm-card-body { padding: var(--qm-space-2); }
   .qm-port { max-width: none; }
+  .qm-metrics > div { flex-basis: 45%; }
+  .qm-metrics > div:nth-child(odd) { border-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }

@@ -1,0 +1,23 @@
+{# alert(kind, message): one place that decides title, icon and colour for every error or notice.
+   Each kind has a distinct title so the status never depends on colour alone. #}
+{% macro alert(kind, message) %}
+{%- set styles = {
+    "validation": ("Check your input", "warning", "exclamation-circle-fill"),
+    "connection": ("Could not connect", "danger", "exclamation-triangle-fill"),
+    "unreachable": ("Database server unreachable", "danger", "plug-fill"),
+    "policy": ("Host not allowed", "danger", "slash-circle-fill"),
+    "privilege": ("Account not allowed", "danger", "shield-exclamation"),
+    "ratelimit": ("Too many attempts", "warning", "hourglass-split"),
+    "blocked": ("Query blocked for safety", "danger", "shield-x"),
+    "execution": ("The query could not run", "danger", "exclamation-triangle-fill"),
+    "llm": ("Language model problem", "danger", "cpu"),
+    "retrieval": ("Schema search problem", "danger", "diagram-3"),
+    "timeout": ("Timed out", "warning", "hourglass-bottom"),
+    "session": ("Notice", "info", "info-circle-fill")
+} -%}
+{%- set s = styles.get(kind, styles["connection"]) -%}
+<div class="alert alert-{{ s[1] }} qm-alert" role="{{ 'status' if kind == 'session' else 'alert' }}" data-qm="error" data-qm-kind="{{ kind }}">
+    <i class="bi bi-{{ s[2] }}" aria-hidden="true"></i>
+    <div class="qm-alert-text"><strong>{{ s[0] }}.</strong> {{ message[7:] if message.startswith("Error: ") else message }}</div>
+</div>
+{% endmacro %}

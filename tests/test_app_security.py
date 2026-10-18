@@ -1,5 +1,6 @@
 """Security regression tests for the Flask application (no database, no model: both are replaced by fakes)."""
 import base64
+import glob
 import json
 import os
 import re
@@ -375,10 +376,13 @@ class HeadersAndTemplatesTests(AppTestCase):
             self.assertEqual(response.headers["Cache-Control"], "no-store")
         self.assertNotEqual(nonce, re.search(r"'nonce-([^']+)'", client.get("/").headers["Content-Security-Policy"]).group(1))
 
-    def test_front_end_script_never_writes_html(self):
-        text = open(os.path.join(context.ROOT, "static", "js", "app.js"), encoding="utf-8").read()
-        for forbidden in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function", "localStorage", "sessionStorage"):
-            self.assertNotIn(forbidden, text, forbidden)
+    def test_front_end_scripts_never_write_html(self):
+        scripts = glob.glob(os.path.join(context.ROOT, "static", "js", "*.js"))
+        self.assertGreaterEqual(len(scripts), 3)
+        for path in scripts:
+            text = open(path, encoding="utf-8").read()
+            for forbidden in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function", "localStorage", "sessionStorage"):
+                self.assertNotIn(forbidden, text, f"{forbidden} in {os.path.basename(path)}")
 
     def test_static_assets_referenced_by_the_pages_exist(self):
         client, _ = self.login()
@@ -389,14 +393,15 @@ class HeadersAndTemplatesTests(AppTestCase):
 
     def test_templates_have_no_unsafe_rendering(self):
         directory = os.path.join(context.ROOT, "templates")
-        for name in os.listdir(directory):
-            text = open(os.path.join(directory, name), encoding="utf-8").read()
+        for path in glob.glob(os.path.join(directory, "**", "*.html"), recursive=True):
+            name = os.path.relpath(path, directory)
+            text = open(path, encoding="utf-8").read()
             self.assertNotIn("|safe", text, name)
             self.assertNotIn("innerHTML", text, name)
             self.assertNotIn("onclick=", text, name)
-            if name.endswith(".html"):
+            if True:
                 self.assertNotRegex(text, r"<script(?![^>]*\bsrc=)", name)
-                self.assertNotIn("style=", text.replace('style="display:contents"', ""), name)      # no inline styles
+                self.assertNotIn("style=", text, name)      # no inline styles (the CSP forbids them)
 
     def test_post_forms_carry_a_csrf_field(self):
         client, _ = self.login()
@@ -404,6 +409,156 @@ class HeadersAndTemplatesTests(AppTestCase):
             html = client.get(path).get_data(as_text=True)
             forms = len(re.findall(r'<form[^>]*method="post"', html))
             self.assertEqual(forms, html.count('name="csrf_token"'), path)
+
+
+class FakeCursorLog(FakeCursor):
+    statements = []
+
+    def execute(self, sql, *args):
+        FakeCursorLog.statements.append(sql)
+        super().execute(sql)
+
+
+class UserInterfaceTests(AppTestCase):
+    def ask(self, client, llm_output, question="list customers"):
+        token = csrf_of(client, "/")
+        with mock.patch.object(appmod, "ask_llm", lambda *a, **k: llm_output):
+            return client.post("/", data={"user_input": question, "csrf_token": token})
+
+    def test_login_messages_distinguish_validation_from_connection_problems(self):
+        html = self.login(db_port="99999")[1].get_data(as_text=True)
+        self.assertIn('data-qm-kind="validation"', html)
+        self.assertIn("port number", html)
+
+        def unreachable(**kw):
+            error = appmod.mariadb.Error("Can't connect to server on '10.1.2.3' (110)")
+            error.errno = 2003
+            raise error
+        with mock.patch.object(appmod.mariadb, "connect", unreachable):
+            body = self.login()[1].get_data(as_text=True)
+        self.assertIn('data-qm-kind="unreachable"', body)
+        self.assertNotIn("10.1.2.3", body)
+
+        def denied(**kw):
+            raise appmod.mariadb.Error("Access denied for user", 1045)
+        with mock.patch.object(appmod.mariadb, "connect", denied):
+            body = self.login()[1].get_data(as_text=True)
+        self.assertIn('data-qm-kind="connection"', body)
+
+    def test_failed_login_keeps_the_fields_but_never_the_password(self):
+        def denied(**kw):
+            raise appmod.mariadb.Error("Access denied", 1045)
+        with mock.patch.object(appmod.mariadb, "connect", denied):
+            body = self.login(user="carol")[1].get_data(as_text=True)
+        self.assertIn('value="carol"', body)
+        self.assertNotIn(PASSWORD, body)
+
+    def test_expired_session_redirects_to_login_with_a_notice(self):
+        client, _ = self.login()
+        with client.session_transaction() as s:
+            sid = s["sid"]
+        appmod.sessions.delete(sid)                        # the server forgets the session
+        response = client.get("/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("reason=expired", response.headers["Location"])
+        self.assertIn("session expired", client.get("/login?reason=expired").get_data(as_text=True).lower())
+        self.assertIn("signed out", client.get("/login?reason=loggedout").get_data(as_text=True).lower())
+        self.assertNotIn("anything", client.get("/login?reason=%3Cscript%3E").get_data(as_text=True))       # only known reasons are shown
+
+    def test_logout_shows_a_notice(self):
+        client, _ = self.login()
+        response = client.post("/logout", data={"csrf_token": csrf_of(client, "/")})
+        self.assertIn("reason=loggedout", response.headers["Location"])
+
+    def test_error_pages_are_friendly(self):
+        client = appmod.app.test_client()
+        response = client.get("/no-such-page")
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("Page not found", response.get_data(as_text=True))
+        self.assertNotIn("Traceback", response.get_data(as_text=True))
+        self.assertIn("Security token expired", client.post("/login", data={}).get_data(as_text=True))
+
+    def test_home_page_only_lists_tables_and_does_not_read_every_definition(self):
+        client, _ = self.login()
+        FakeCursorLog.statements = []
+        with mock.patch.object(FakeConn, "cursor", lambda self: FakeCursorLog()):
+            client.get("/")
+        self.assertTrue(any(sql.startswith("SHOW TABLES") for sql in FakeCursorLog.statements))
+        self.assertFalse(any(sql.startswith("SHOW CREATE TABLE") for sql in FakeCursorLog.statements))
+
+    def test_database_down_shows_a_connection_message_not_an_empty_schema(self):
+        client, _ = self.login()
+        with mock.patch.object(appmod.mariadb, "connect", side_effect=RuntimeError("boom 10.0.0.9")):
+            body = client.get("/").get_data(as_text=True)
+        self.assertIn('data-qm-kind="connection"', body)
+        self.assertNotIn("10.0.0.9", body)
+
+    def test_examples_come_from_the_connected_schema(self):
+        client, _ = self.login()
+        body = client.get("/").get_data(as_text=True)
+        self.assertIn('data-qm-example="How many records are in customers?"', body)
+        self.assertIn('data-qm-example="Show the first 10 rows of orders"', body)
+
+    def test_table_names_in_the_explorer_are_escaped(self):
+        client, _ = self.login()
+        evil = ['x"><img src=x onerror=alert(1)>']
+        with mock.patch.object(appmod, "TABLES_FOR_TEST", evil, create=True), \
+                mock.patch.object(appmod, "load_tables_from_session", lambda: evil):
+            body = client.get("/").get_data(as_text=True)
+        self.assertNotIn("<img src=x", body)
+
+    def test_model_problems_are_explained_without_raw_exceptions(self):
+        client, _ = self.login()
+        cases = [("LLM Error: model 'llama3.1:8b' not found (status code: 404)", "not installed", "llm"),
+                 ("LLM Error: [Errno 111] Connection refused to 10.0.0.7", "Ollama service", "llm"),
+                 ("LLM Error: request timed out", "too long", "timeout"),
+                 ("Error: ERROR: Schema not indexed", "not indexed", "retrieval"),
+                 ("Error: Error retrieving schema context: HTTPConnectionPool(host='10.0.0.7')", "search the database schema", "retrieval")]
+        for output, phrase, kind in cases:
+            html = self.ask(client, output).get_data(as_text=True)
+            self.assertIn(phrase, html, output)
+            self.assertIn(f'data-qm-kind="{kind}"', html, output)
+            self.assertNotIn("10.0.0.7", html)
+
+    def test_exceptions_from_the_model_do_not_crash_the_page(self):
+        client, _ = self.login()
+        token = csrf_of(client, "/")
+        with mock.patch.object(appmod, "ask_llm", side_effect=RuntimeError("boom")):
+            response = client.post("/", data={"user_input": "list customers", "csrf_token": token})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Ollama service", response.get_data(as_text=True))
+        with mock.patch.object(appmod, "retrieve_schema_context", side_effect=RuntimeError("boom")):
+            response = self.ask(client, "SELECT 1")
+        self.assertEqual(response.status_code, 200)
+
+    def test_result_page_states(self):
+        client, _ = self.login()
+        with mock.patch.object(security, "run_query_guarded", lambda *a, **k: "No records."):
+            html = self.ask(client, "SELECT * FROM customers").get_data(as_text=True)
+        self.assertIn("No matching records", html)
+        self.assertIn('data-qm="no-records"', html)
+        table = {"columns": ["id", "name", "note"], "rows": [(1, "A", None), (2, "<b>x</b>", "ok")]}
+        with mock.patch.object(security, "run_query_guarded", lambda *a, **k: table):
+            html = self.ask(client, "SELECT * FROM customers").get_data(as_text=True)
+        self.assertIn('data-qm="results-table"', html)
+        self.assertIn("&lt;b&gt;x&lt;/b&gt;", html)
+        self.assertIn('class="qm-null">NULL', html)
+        self.assertIn('class="qm-num-cell"', html)
+        self.assertIn("2 rows", html)
+        for message, kind in (("Error: Blocked - the query tried to change 3 row(s). The change was rolled back.", "blocked"),
+                              ("Error: Query execution was interrupted (max_statement_time exceeded)", "timeout"),
+                              ("Error: Unknown column 'zzz' in 'field list'", "execution")):
+            with mock.patch.object(security, "run_query_guarded", lambda *a, _m=message, **k: _m):
+                html = self.ask(client, "SELECT * FROM customers").get_data(as_text=True)
+            self.assertIn(f'data-qm-kind="{kind}"', html, message)
+
+    def test_large_results_are_limited_in_the_page_but_say_so(self):
+        client, _ = self.login()
+        table = {"columns": ["n"], "rows": [(i,) for i in range(2500)]}
+        with mock.patch.object(security, "run_query_guarded", lambda *a, **k: table):
+            html = self.ask(client, "SELECT n FROM customers").get_data(as_text=True)
+        self.assertEqual(html.count("<tr>") - 1, appmod.DISPLAY_ROWS)           # minus the header row
+        self.assertIn(f"Showing the first {appmod.DISPLAY_ROWS} of 2500 rows", html)
 
 
 class StartupTests(unittest.TestCase):

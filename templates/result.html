@@ -1,71 +1,87 @@
 {% extends "base.html" %}
+{% from "components/alerts.html" import alert %}
 {% block title %}QueryMind - Results{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4" data-qm="result-page">
+<div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 mb-4" data-qm="result-page">
     <h1 class="mb-0">Results</h1>
     <a class="btn btn-primary" href="{{ url_for('home') }}"><i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Ask another question</a>
 </div>
 
 <div class="d-grid gap-4">
     {% if user_input %}
-    <section class="qm-card" aria-labelledby="question-heading">
-        <div class="qm-card-header"><h2 id="question-heading" class="fs-6">Your question</h2></div>
-        <div class="qm-card-body text-break">{{ user_input }}</div>
+    <section class="qm-question-summary" aria-labelledby="question-heading">
+        <h2 id="question-heading" class="small text-body-secondary fw-medium mb-1">Your question</h2>
+        <p class="fs-5 mb-0 text-break">{{ user_input }}</p>
     </section>
     {% endif %}
 
     <section class="qm-card" aria-labelledby="sql-heading">
         <div class="qm-card-header">
-            <h2 id="sql-heading" class="fs-6">Generated SQL</h2>
+            <h2 id="sql-heading" class="fs-6 mb-0">Generated SQL</h2>
             <button type="button" class="btn btn-sm btn-outline-primary" data-qm-copy="sql-text">
                 <i class="bi bi-clipboard" aria-hidden="true"></i> <span class="qm-copy-label">Copy</span>
             </button>
         </div>
-        <pre class="qm-sql" tabindex="0" aria-label="Generated SQL query"><code id="sql-text">{{ sql_query }}</code></pre>
+        <pre class="qm-sql" tabindex="0" aria-label="Generated SQL query"><code id="sql-text" data-qm-sql>{{ sql_query }}</code></pre>
         <div class="visually-hidden" role="status" aria-live="polite" data-qm-live></div>
     </section>
 
-    <section class="qm-card" aria-labelledby="timing-heading">
-        <div class="qm-card-header"><h2 id="timing-heading" class="fs-6">Processing time</h2></div>
-        <div class="qm-card-body">
-            <dl class="qm-timing">
-                <div><dt>Schema retrieval</dt><dd>{{ time_rag }} s</dd></div>
-                <div><dt>SQL generation</dt><dd>{{ time_llm }} s</dd></div>
-                <div><dt>Query execution</dt><dd>{{ time_execution }} s</dd></div>
-                <div><dt>Total</dt><dd><strong>{{ (time_generation + time_execution)|round(3) }} s</strong></dd></div>
-            </dl>
-        </div>
+    <section aria-labelledby="timing-heading">
+        <h2 id="timing-heading" class="visually-hidden">Processing time</h2>
+        <dl class="qm-metrics">
+            <div><dt>Schema retrieval</dt><dd>{{ '%.3f'|format(time_rag) }} s</dd></div>
+            <div><dt>SQL generation</dt><dd>{{ '%.3f'|format(time_llm) }} s</dd></div>
+            <div><dt>Query execution</dt><dd>{{ '%.3f'|format(time_execution) }} s</dd></div>
+            <div class="qm-metric-total"><dt>Total</dt><dd>{{ '%.3f'|format(time_generation + time_execution) }} s</dd></div>
+        </dl>
     </section>
 
     <section class="qm-card" aria-labelledby="results-heading">
         <div class="qm-card-header">
-            <h2 id="results-heading" class="fs-6">Query results</h2>
-            {% if results is mapping %}<span class="badge text-bg-secondary">{{ results.rows|length }} row{{ '' if results.rows|length == 1 else 's' }}</span>{% endif %}
+            <h2 id="results-heading" class="fs-6 mb-0">Query results</h2>
+            {% if results is mapping %}
+            {% set total = results.rows|length %}
+            <span class="badge text-bg-secondary">{{ total }} row{{ '' if total == 1 else 's' }}</span>
+            {% endif %}
         </div>
         {% if error %}
-        <div class="qm-card-body">
-            <div class="alert alert-danger d-flex gap-2 mb-0" role="alert" data-qm="error">
-                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-                <div><strong>The query did not return results.</strong> {{ error[7:] if error.startswith("Error: ") else error }}</div>
-            </div>
+        <div class="qm-card-body">{{ alert(error_kind, error) }}
+            <a class="btn btn-outline-primary btn-sm" href="{{ url_for('home') }}">Try a different question</a>
         </div>
         {% elif results is mapping %}
+        {% set shown = results.rows[:display_rows] %}
+        {% set first = results.rows|first %}
+        {% set numeric = [] %}
+        {% for value in first %}{% if value is number and value is not sameas true and value is not sameas false %}{% set _ = numeric.append(loop.index0) %}{% endif %}{% endfor %}
+        {% if results.rows|length > shown|length %}
+        <p class="small text-body-secondary px-3 pt-3 mb-0" role="status">
+            <i class="bi bi-info-circle" aria-hidden="true"></i>
+            Showing the first {{ shown|length }} of {{ results.rows|length }} rows. The query returned all {{ results.rows|length }}; ask a narrower question to see fewer.
+        </p>
+        {% endif %}
         <div class="qm-results table-responsive">
             <table class="table table-hover table-sm align-middle" data-qm="results-table" aria-labelledby="results-heading">
                 <thead>
-                    <tr>{% for col in results.columns %}<th scope="col">{{ col }}</th>{% endfor %}</tr>
+                    <tr>{% for col in results.columns %}<th scope="col"{% if loop.index0 in numeric %} class="text-end"{% endif %}>{{ col }}</th>{% endfor %}</tr>
                 </thead>
                 <tbody>
-                    {% for row in results.rows %}
-                    <tr>{% for cell in row %}<td>{% if cell is none %}<span class="qm-null">NULL</span>{% else %}{{ cell }}{% endif %}</td>{% endfor %}</tr>
+                    {% for row in shown %}
+                    <tr>{% for cell in row %}<td{% if loop.index0 in numeric %} class="qm-num-cell"{% endif %}>{% if cell is none %}<span class="qm-null">NULL</span>{% else %}{{ cell }}{% endif %}</td>{% endfor %}</tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         {% else %}
-        <div class="qm-empty" data-qm="no-records"><i class="bi bi-inbox" aria-hidden="true"></i>No records found.</div>
+        <div class="qm-empty" data-qm="no-records">
+            <i class="bi bi-inbox" aria-hidden="true"></i>
+            <strong>No matching records</strong>
+            The query ran successfully, but no rows matched your question.
+            <div class="mt-3"><a class="btn btn-outline-primary btn-sm" href="{{ url_for('home') }}">Ask another question</a></div>
+        </div>
         {% endif %}
     </section>
 </div>
 {% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/results.js') }}"></script>{% endblock %}

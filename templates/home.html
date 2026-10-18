@@ -1,35 +1,46 @@
 {% extends "base.html" %}
+{% from "components/alerts.html" import alert %}
 {% block title %}QueryMind{% endblock %}
 
 {% block content %}
 <div class="mb-4">
     <h1 class="mb-1">Ask your database</h1>
-    <p class="text-body-secondary mb-2">Type a question in plain English about <strong>{{ db_name }}</strong>. QueryMind writes a read-only SQL query and shows the result.</p>
-    <p class="qm-status mb-0"><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Connected to <strong>{{ db_name }}</strong> as {{ db_user }}</span></p>
+    <p class="text-body-secondary mb-2">Ask questions in plain English and explore your data using read-only SQL.</p>
+    <p class="qm-status mb-0"><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Connected to <strong>{{ db_name }}</strong></span></p>
 </div>
 
 <div class="row g-4">
     <div class="col-lg-4 col-xl-3 order-2 order-lg-1">
         <section class="qm-card" aria-labelledby="tables-heading">
             <div class="qm-card-header">
-                <h2 id="tables-heading" class="fs-6">Database tables</h2>
-                {% if tables %}<span class="badge text-bg-secondary">{{ tables|length }}</span>{% endif %}
+                <h2 id="tables-heading" class="fs-6 mb-0">Database tables</h2>
+                <span class="badge text-bg-secondary" aria-label="{{ tables|length }} tables">{{ tables|length }}</span>
             </div>
             {% if tables %}
-            <ul class="list-group list-group-flush qm-table-list">
+            <div class="p-2 border-bottom">
+                <label for="table-filter" class="visually-hidden">Filter tables</label>
+                <input type="search" id="table-filter" class="form-control form-control-sm" placeholder="Filter tables" autocomplete="off" data-qm-filter>
+                <p class="visually-hidden" role="status" aria-live="polite" data-qm-filter-status></p>
+            </div>
+            <ul class="qm-explorer-list" data-qm-explorer>
                 {% for table in tables %}
-                <li class="list-group-item p-0">
-                    <button type="button" class="btn btn-link text-decoration-none text-start w-100 d-flex align-items-center gap-2 px-3 py-2"
-                            data-bs-toggle="modal" data-bs-target="#table-modal" data-qm-table="{{ table }}"
-                            aria-label="View columns of table {{ table }}">
-                        <i class="bi bi-table" aria-hidden="true"></i><span class="text-body">{{ table }}</span>
+                <li data-qm-item data-qm-name="{{ table|lower }}">
+                    <button type="button" class="qm-table-btn" data-bs-toggle="collapse" data-bs-target="#columns-{{ loop.index }}"
+                            aria-expanded="false" aria-controls="columns-{{ loop.index }}" data-qm-table="{{ table }}" title="{{ table }}">
+                        <i class="bi bi-chevron-right qm-chevron" aria-hidden="true"></i>
+                        <i class="bi bi-table" aria-hidden="true"></i>
+                        <span class="qm-table-name">{{ table }}</span>
                     </button>
+                    <div class="collapse" id="columns-{{ loop.index }}">
+                        <ul class="qm-columns" aria-label="Columns of {{ table }}"><li class="text-body-secondary">Loading&hellip;</li></ul>
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
+            <p class="qm-empty small mb-0" data-qm-no-match hidden>No tables match your filter.</p>
             <p class="small text-body-secondary px-3 py-2 mb-0">Select a table to see its columns.</p>
             {% else %}
-            <div class="qm-empty"><i class="bi bi-table" aria-hidden="true"></i>No tables are visible to this account.</div>
+            <div class="qm-empty"><i class="bi bi-table" aria-hidden="true"></i><strong>No tables to show</strong>This account cannot see any tables in {{ db_name }}.</div>
             {% endif %}
         </section>
     </div>
@@ -38,57 +49,39 @@
         <section class="qm-card" aria-labelledby="question-heading">
             <div class="qm-card-header"><h2 id="question-heading">Your question</h2></div>
             <div class="qm-card-body">
-                {% if error %}
-                <div class="alert alert-danger d-flex gap-2" role="alert" data-qm="error">
-                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-                    <div><strong>Error.</strong> {{ error[7:] if error.startswith("Error: ") else error }}</div>
-                </div>
-                {% endif %}
+                {% if error %}{{ alert(error_kind, error) }}{% endif %}
 
-                <form method="post" action="{{ url_for('home') }}" id="question-form" data-qm-loading="Generating query&hellip;">
+                <form method="post" action="{{ url_for('home') }}" id="question-form" data-qm-loading="Generating query&hellip;" data-qm-processing="processing-status">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                    <label for="user_input" class="form-label">What would you like to know?</label>
-                    <textarea class="form-control qm-question" id="user_input" name="user_input" rows="4" required
-                              aria-describedby="question-help" placeholder="For example: List customers in Bahrain">{{ user_input }}</textarea>
+                    <label for="user_input" class="form-label fw-semibold">What would you like to know?</label>
+                    <textarea class="form-control qm-question" id="user_input" name="user_input" rows="5" required maxlength="2000"
+                              aria-describedby="question-help" placeholder="Describe the data you want, for example: how many rows are in a table?">{{ user_input }}</textarea>
                     <div id="question-help" class="form-text">Only SELECT queries are supported. Press Ctrl+Enter to submit.</div>
 
-                    <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                    {% if tables %}
+                    <div class="d-flex flex-wrap align-items-center gap-2 mt-3" role="group" aria-label="Example questions">
                         <span class="small text-body-secondary">Try:</span>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-qm-example="List customers in Bahrain">List customers in Bahrain</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-qm-example="Show orders from 2024">Show orders from 2024</button>
+                        <button type="button" class="qm-chip-btn" data-qm-example="How many records are in {{ tables[0] }}?">How many records are in <span class="font-monospace">{{ tables[0] }}</span>?</button>
+                        <button type="button" class="qm-chip-btn" data-qm-example="Show the first 10 rows of {{ tables[-1] }}">Show the first 10 rows of <span class="font-monospace">{{ tables[-1] }}</span></button>
                     </div>
+                    {% endif %}
 
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary btn-lg px-4">
                             <i class="bi bi-magic me-1" aria-hidden="true"></i><span class="qm-btn-label">Generate SQL</span>
                         </button>
                     </div>
-                    <div class="visually-hidden" role="status" aria-live="polite" data-qm-live></div>
+                    <div id="processing-status" class="qm-processing" role="status" aria-live="polite" hidden>
+                        <div class="progress" aria-hidden="true">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div>
+                        </div>
+                        <p class="small text-body-secondary mt-2 mb-0" data-qm-processing-text>Working on your question. Local models can take up to a minute; keep this page open.</p>
+                    </div>
                 </form>
             </div>
         </section>
     </div>
 </div>
-
-<div class="modal fade" id="table-modal" tabindex="-1" aria-labelledby="table-modal-title" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title fs-5 font-monospace" id="table-modal-title">Table</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="table-modal-status" class="text-body-secondary mb-2" role="status" aria-live="polite">Loading&hellip;</p>
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover align-middle qm-modal-table mb-0" aria-labelledby="table-modal-title">
-                        <thead>
-                            <tr><th scope="col">Column</th><th scope="col">Type</th><th scope="col">Null</th><th scope="col">Key</th><th scope="col">Default</th></tr>
-                        </thead>
-                        <tbody id="table-modal-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/home.js') }}"></script>{% endblock %}

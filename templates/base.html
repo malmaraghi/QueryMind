@@ -11,61 +11,16 @@
 </head>
 <body class="qm-page">
     <a class="qm-skip" href="#main">Skip to main content</a>
+    {% include "components/navbar.html" %}
 
-    <header>
-        <nav class="navbar navbar-expand-md qm-navbar" aria-label="Main" data-bs-theme="dark">
-            <div class="container-xl">
-                <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
-                    <span class="qm-brand-mark" aria-hidden="true">Q</span>QueryMind
-                </a>
-                {% if db_user is defined %}
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav-menu"
-                        aria-controls="nav-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="nav-menu">
-                    <p class="qm-models mb-2 mb-md-0 ms-md-3 me-md-auto" aria-label="Models in use">
-                        <span>LLM:</span> <span class="qm-model-name">{{ llm_model }}</span>
-                        <span aria-hidden="true">&nbsp;|&nbsp;</span>
-                        <span>Embeddings:</span> <span class="qm-model-name">{{ embedding_model }}</span>
-                    </p>
-                    <div class="d-flex flex-column flex-md-row gap-2 align-items-md-center">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-light btn-sm dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle" aria-hidden="true"></i> {{ db_user }}
-                            </button>
-                            <dl class="dropdown-menu dropdown-menu-md-end p-3 mb-0" aria-label="Connection details">
-                                <dt class="small text-body-secondary">User</dt><dd class="mb-2">{{ db_user }}</dd>
-                                <dt class="small text-body-secondary">Host</dt><dd class="mb-2">{{ db_host }}:{{ db_port }}</dd>
-                                <dt class="small text-body-secondary">Database</dt><dd class="mb-0">{{ db_name }}</dd>
-                            </dl>
-                        </div>
-                        <form method="post" action="{{ url_for('logout') }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                            <button type="submit" class="btn btn-outline-light btn-sm w-100" title="Sign out">
-                                <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                {% else %}
-                <span class="qm-tagline d-none d-sm-inline">Natural-language querying for your own database</span>
-                {% endif %}
-            </div>
-        </nav>
-    </header>
-
-    <main id="main" class="qm-main container-xl" tabindex="-1">
+    <main id="main" class="qm-main qm-container" tabindex="-1">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="qm-footer">
-        <div class="container-xl">
-            &copy; 2026 QueryMind &middot; Final Year Project &middot; College of IT, University of Bahrain
-        </div>
-    </footer>
+    {% include "components/footer.html" %}
 
     <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

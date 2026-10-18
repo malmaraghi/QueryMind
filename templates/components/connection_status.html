@@ -1,0 +1,14 @@
+<div class="dropdown d-flex">
+    <button class="btn btn-outline-light btn-sm dropdown-toggle flex-fill" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="conn-menu">
+        <i class="bi bi-database-check" aria-hidden="true"></i><span class="text-truncate qm-db-label">{{ db_name }}</span>
+    </button>
+    <div class="dropdown-menu dropdown-menu-lg-end qm-conn-menu" id="conn-menu" data-bs-theme="light">
+        <h2 class="visually-hidden">Connection details</h2>
+        <dl>
+            <dt>Status</dt><dd class="qm-conn-status"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Connected</dd>
+            <dt>Database</dt><dd>{{ db_name }}</dd>
+            <dt>User</dt><dd>{{ db_user }}</dd>
+            <dt>Server</dt><dd>{{ db_host }}:{{ db_port }}</dd>
+        </dl>
+    </div>
+</div>

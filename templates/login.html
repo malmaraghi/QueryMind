@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% from "components/alerts.html" import alert %}
 {% block title %}QueryMind - Database Login{% endblock %}
 
 {% block content %}
-<div class="row g-4 g-lg-5 align-items-center py-lg-4">
+<div class="row g-4 g-lg-5 align-items-center py-lg-3">
     <div class="col-lg-6 order-2 order-lg-1">
         <h1 class="mb-3">Ask your database questions in plain English</h1>
         <p class="lead text-body-secondary mb-4">Connect an existing MySQL or MariaDB database. QueryMind turns your question into a read-only SQL query and shows the result.</p>
@@ -21,38 +22,33 @@
         <section class="qm-card qm-login-card" aria-labelledby="login-heading">
             <div class="qm-card-header"><h2 id="login-heading">Connect to a database</h2></div>
             <div class="qm-card-body">
-                <p class="text-body-secondary">Use a dedicated account that has only SELECT privileges.</p>
+                {% if error %}{{ alert(error_kind, error) }}{% elif notice %}{{ alert('session', notice) }}{% endif %}
 
-                {% if error %}
-                <div class="alert alert-danger d-flex gap-2" role="alert" data-qm="error">
-                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-                    <div><strong>Could not connect.</strong> {{ error }}</div>
-                </div>
-                {% endif %}
-
-                <form method="post" action="{{ url_for('login') }}" class="needs-validation" novalidate data-qm-loading="Connecting&hellip;">
+                <form method="post" action="{{ url_for('login') }}" class="needs-validation" novalidate data-qm-loading="Connecting&hellip;" data-qm-processing="connect-status">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <div class="row g-3">
                         <div class="col-sm-8">
                             <label for="db_host" class="form-label">Host</label>
-                            <input type="text" class="form-control" id="db_host" name="db_host" value="localhost" required
-                                   autocomplete="off" spellcheck="false" aria-describedby="db_host_help">
+                            <input type="text" class="form-control" id="db_host" name="db_host" value="{{ form.db_host or 'localhost' }}" required
+                                   autocomplete="off" spellcheck="false" placeholder="localhost or 127.0.0.1" aria-describedby="db_host_help">
                             <div id="db_host_help" class="form-text">Server name or IP address.</div>
                             <div class="invalid-feedback">Enter the database host.</div>
                         </div>
                         <div class="col-sm-4">
                             <label for="db_port" class="form-label">Port</label>
-                            <input type="number" class="form-control" id="db_port" name="db_port" value="3306" min="1" max="65535" required inputmode="numeric">
+                            <input type="number" class="form-control" id="db_port" name="db_port" value="{{ form.db_port or '3306' }}" min="1" max="65535" required inputmode="numeric">
                             <div class="invalid-feedback">Enter a port from 1 to 65535.</div>
                         </div>
                         <div class="col-12">
                             <label for="db_name" class="form-label">Database name</label>
-                            <input type="text" class="form-control" id="db_name" name="db_name" required autocomplete="off" spellcheck="false">
+                            <input type="text" class="form-control" id="db_name" name="db_name" value="{{ form.db_name or '' }}" required
+                                   autocomplete="off" spellcheck="false" placeholder="Name of the existing database">
                             <div class="invalid-feedback">Enter the database name.</div>
                         </div>
                         <div class="col-sm-6">
                             <label for="db_user" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="db_user" name="db_user" required autocomplete="username" spellcheck="false" autofocus>
+                            <input type="text" class="form-control" id="db_user" name="db_user" value="{{ form.db_user or '' }}" required
+                                   autocomplete="username" spellcheck="false" placeholder="Read-only account" autofocus>
                             <div class="invalid-feedback">Enter the username.</div>
                         </div>
                         <div class="col-sm-6">
@@ -70,7 +66,7 @@
                     <button type="submit" class="btn btn-primary w-100 mt-4">
                         <i class="bi bi-plug me-1" aria-hidden="true"></i><span class="qm-btn-label">Connect to database</span>
                     </button>
-                    <div class="visually-hidden" role="status" aria-live="polite" data-qm-live></div>
+                    <p id="connect-status" class="qm-processing small text-body-secondary mb-0" role="status" aria-live="polite" hidden></p>
                 </form>
             </div>
         </section>

@@ -1,0 +1,32 @@
+<header>
+    <nav class="navbar navbar-expand-lg qm-navbar" aria-label="Main" data-bs-theme="dark">
+        <div class="qm-container d-flex flex-wrap align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
+                <span class="qm-brand-mark" aria-hidden="true">Q</span>
+                <span class="d-flex flex-column lh-sm">
+                    <span>QueryMind</span>
+                    <span class="qm-tagline d-none d-sm-block">Natural-language querying for your own database</span>
+                </span>
+            </a>
+            {% if db_user is defined %}
+            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#nav-menu"
+                    aria-controls="nav-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse mt-2 mt-lg-0" id="nav-menu">
+                <ul class="qm-models mx-lg-auto mb-2 mb-lg-0" aria-label="Models in use">
+                    <li class="qm-chip" title="Language model: {{ llm_model }}"><i class="bi bi-cpu" aria-hidden="true"></i>LLM <strong>{{ llm_model }}</strong></li>
+                    <li class="qm-chip" title="Embedding model: {{ embedding_model }}"><i class="bi bi-diagram-3" aria-hidden="true"></i>Embeddings <strong>{{ embedding_model }}</strong></li>
+                </ul>
+                <div class="qm-nav-actions d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center">
+                    {% include "components/connection_status.html" %}
+                    <form method="post" action="{{ url_for('logout') }}" class="d-flex">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" class="btn btn-outline-light btn-sm flex-fill"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Logout</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+</header>

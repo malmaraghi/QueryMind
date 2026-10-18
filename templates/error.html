@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}QueryMind - {{ title }}{% endblock %}
+{% block content %}
+<section class="qm-card mx-auto" aria-labelledby="error-heading">
+    <div class="qm-card-body text-center py-5">
+        <p class="text-body-secondary mb-1">Error {{ status }}</p>
+        <h1 id="error-heading" class="mb-3">{{ title }}</h1>
+        <p class="mb-4">{{ message }}</p>
+        <a class="btn btn-primary" href="{{ url_for('home') }}"><i class="bi bi-house me-1" aria-hidden="true"></i>Back to QueryMind</a>
+    </div>
+</section>
+{% endblock %}
