@@ -1,0 +1,33 @@
+{
+  "display_name": "Defog llama-3-sqlcoder-8b (Q4_K_M)",
+  "role": "external Text-to-SQL baseline (primary), approved by the supervisor-selected plan",
+  "defog_model": {
+    "repo": "defog/llama-3-sqlcoder-8b",
+    "url": "https://huggingface.co/defog/llama-3-sqlcoder-8b",
+    "revision": "0f96d32e16737bda1bbe0d8fb13a932a8a3fa0bb",
+    "base_model": "Meta-Llama-3-8B-Instruct",
+    "license_on_card": "CC-BY-SA-4.0 (the card does not mention Meta's Llama 3 license terms; not verified)",
+    "official_prompt": "https://huggingface.co/defog/llama-3-sqlcoder-8b (section 'Prompt'), temperature 0, no sampling"
+  },
+  "gguf": {
+    "source_repo": "QuantFactory/llama-3-sqlcoder-8b-GGUF",
+    "source_url": "https://huggingface.co/QuantFactory/llama-3-sqlcoder-8b-GGUF",
+    "revision": "11fb499426cb250b6e7cc189345bbac06f343498",
+    "filename": "llama-3-sqlcoder-8b.Q4_K_M.gguf",
+    "quantization": "Q4_K_M",
+    "size_bytes": 4920733952,
+    "sha256": "9c05b22878eb9883de60d7aa5961793541d2b040fc07a3ba61456149351eb5b1",
+    "sha256_verified_locally": true,
+    "published_by": "QuantFactory (community quantizer; Defog publishes no GGUF)",
+    "download_url": "https://huggingface.co/QuantFactory/llama-3-sqlcoder-8b-GGUF/resolve/11fb499426cb250b6e7cc189345bbac06f343498/llama-3-sqlcoder-8b.Q4_K_M.gguf",
+    "downloaded_utc": "2026-10-18",
+    "conversion_fidelity": "not independently verified"
+  },
+  "ollama_import": {
+    "model_name": "sqlcoder-llama3-8b:q4_k_m",
+    "modelfile": "FROM <local directory>/llama-3-sqlcoder-8b.Q4_K_M.gguf\nTEMPLATE \"{{ .Prompt }}\"\nPARAMETER stop <|eot_id|>\n",
+    "ollama_version": "0.12.1",
+    "ollama_manifest_digest": "d23f446e02e8b3d1d0f1f8b9c9dfdf3d6340a9328d0e2f75ce7daf7b50711df8",
+    "note": "TEMPLATE is the bare prompt; requests use /api/generate with raw=true so Ollama applies no chat template"
+  }
+}

@@ -27,7 +27,9 @@ from statistics import mean, quantiles
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-sys.path.insert(0, HERE)
+for _path in (ROOT, HERE):   # evaluation.py imports the shared grant parser from the project root
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
 
 import metrics  # noqa: E402
 import resilience  # noqa: E402
