@@ -332,9 +332,9 @@ def application_flow(cfg, run_llm):
             return "layer 2: input / SQL guard"
         if "command denied" in text or "denied to user" in text:
             return "layer 1: refused by database privileges"
-        if "<h2>Results</h2>" in html and "<table" in html:
+        if 'data-qm="results-table"' in html:
             return "executed (read-only SELECT)"
-        if "No records found" in text and 'class="error"' not in html:
+        if "No records found" in text and 'data-qm="error"' not in html:
             return "executed (no rows)"
         return "other"
 

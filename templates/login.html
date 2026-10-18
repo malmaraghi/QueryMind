@@ -1,112 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>QueryMind - Database Login</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23bb23fe' rx='20'/><text x='50' y='72' font-size='65' font-weight='bold' text-anchor='middle' fill='white' font-family='Arial, sans-serif'>Q</text></svg>">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="navbar-login">
-        <div class="nav-box">
-            <div class="nav-title">QueryMind</div>
-            <div class="subtitle">Intelligent Database Querying Through Natural Language</div>
-        </div>
+{% extends "base.html" %}
+{% block title %}QueryMind - Database Login{% endblock %}
+
+{% block content %}
+<div class="row g-4 g-lg-5 align-items-center py-lg-4">
+    <div class="col-lg-6 order-2 order-lg-1">
+        <h1 class="mb-3">Ask your database questions in plain English</h1>
+        <p class="lead text-body-secondary mb-4">Connect an existing MySQL or MariaDB database. QueryMind turns your question into a read-only SQL query and shows the result.</p>
+        <ul class="list-unstyled d-grid gap-3 mb-4">
+            <li class="qm-feature"><i class="bi bi-shield-lock" aria-hidden="true"></i>
+                <div><strong>Read-only by design.</strong> Only SELECT queries run, and the account must be SELECT-only.</div></li>
+            <li class="qm-feature"><i class="bi bi-pc-display" aria-hidden="true"></i>
+                <div><strong>Runs locally.</strong> The language model and schema index stay on this machine.</div></li>
+            <li class="qm-feature"><i class="bi bi-diagram-3" aria-hidden="true"></i>
+                <div><strong>Schema-aware.</strong> Only the relevant table definitions are given to the model.</div></li>
+        </ul>
+        <p class="mb-0"><a href="https://querymind-text2sql.com" target="_blank" rel="noopener noreferrer">Project website<i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden"> (opens in a new tab)</span></a></p>
     </div>
-    
-    <div class="login-container">
-        <div class="login-split">
-            <div class="login-info">
-                <h2>Welcome to QueryMind</h2>
-                <p class="info-intro">Connect your database and start converting natural language questions to SQL queries instantly.</p>
-                
-                <div class="feature-list">
-                    <div class="feature-item">
-                        <span class="feature-icon">✓</span>
-                        <div class="feature-text">
-                            <strong>Natural Language Processing</strong>
-                            <p>Ask questions in plain English</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">✓</span>
-                        <div class="feature-text">
-                            <strong>RAG-Enhanced Accuracy</strong>
-                            <p>Retrieval-Augmented Generation for precise queries</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">✓</span>
-                        <div class="feature-text">
-                            <strong>Secure & Read-Only</strong>
-                            <p>Only SELECT queries allowed</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">✓</span>
-                        <div class="feature-text">
-                            <strong>Real-Time Results</strong>
-                            <p>See query execution time and results instantly</p>
-                        </div>
-                    </div>
+
+    <div class="col-lg-6 order-1 order-lg-2">
+        <section class="qm-card qm-login-card" aria-labelledby="login-heading">
+            <div class="qm-card-header"><h2 id="login-heading">Connect to a database</h2></div>
+            <div class="qm-card-body">
+                <p class="text-body-secondary">Use a dedicated account that has only SELECT privileges.</p>
+
+                {% if error %}
+                <div class="alert alert-danger d-flex gap-2" role="alert" data-qm="error">
+                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                    <div><strong>Could not connect.</strong> {{ error }}</div>
                 </div>
-                
-                <div class="website-link-banner">
-                    <p>Want to learn more about our project?</p>
-                    <a href="https://querymind-text2sql.com" target="_blank" class="website-link">
-                        Visit Our Website <span class="arrow">→</span>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="login-form-section">
-                <div class="login-card-compact">
-                    <h3>Database Connection</h3>
-                    <p class="form-subtitle">Enter your credentials to connect</p>
-                    
-                    <form method="post" action="/login">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                        <div class="form-row">
-                            <div class="form-group-compact">
-                                <label for="db_host">Host</label>
-                                <input type="text" id="db_host" name="db_host" placeholder="e.g., localhost" required>
-                            </div>
-                            <div class="form-group-compact form-group-small">
-                                <label for="db_port">Port</label>
-                                <input type="number" id="db_port" name="db_port" placeholder="3306" required>
+                {% endif %}
+
+                <form method="post" action="{{ url_for('login') }}" class="needs-validation" novalidate data-qm-loading="Connecting&hellip;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <div class="row g-3">
+                        <div class="col-sm-8">
+                            <label for="db_host" class="form-label">Host</label>
+                            <input type="text" class="form-control" id="db_host" name="db_host" value="localhost" required
+                                   autocomplete="off" spellcheck="false" aria-describedby="db_host_help">
+                            <div id="db_host_help" class="form-text">Server name or IP address.</div>
+                            <div class="invalid-feedback">Enter the database host.</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="db_port" class="form-label">Port</label>
+                            <input type="number" class="form-control" id="db_port" name="db_port" value="3306" min="1" max="65535" required inputmode="numeric">
+                            <div class="invalid-feedback">Enter a port from 1 to 65535.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="db_name" class="form-label">Database name</label>
+                            <input type="text" class="form-control" id="db_name" name="db_name" required autocomplete="off" spellcheck="false">
+                            <div class="invalid-feedback">Enter the database name.</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="db_user" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="db_user" name="db_user" required autocomplete="username" spellcheck="false" autofocus>
+                            <div class="invalid-feedback">Enter the username.</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="db_password" class="form-label">Password</label>
+                            <div class="input-group has-validation">
+                                <input type="password" class="form-control" id="db_password" name="db_password" required autocomplete="current-password">
+                                <button type="button" class="btn btn-outline-secondary" data-qm-toggle-password="db_password"
+                                        aria-label="Show password" aria-pressed="false">
+                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                </button>
+                                <div class="invalid-feedback">Enter the password.</div>
                             </div>
                         </div>
-                        
-                        <div class="form-group-compact">
-                            <label for="db_user">Username</label>
-                            <input type="text" id="db_user" name="db_user" required autofocus>
-                        </div>
-                        
-                        <div class="form-group-compact">
-                            <label for="db_password">Password</label>
-                            <input type="password" id="db_password" name="db_password" required>
-                        </div>
-                        
-                        <div class="form-group-compact">
-                            <label for="db_name">Database Name</label>
-                            <input type="text" id="db_name" name="db_name" required>
-                        </div>
-                        
-                        {% if error %}
-                            <div class="error-compact">{{ error }}</div>
-                        {% endif %}
-                        
-                        <button type="submit" class="login-button-compact">Connect to Database</button>
-                    </form>
-                </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-4">
+                        <i class="bi bi-plug me-1" aria-hidden="true"></i><span class="qm-btn-label">Connect to database</span>
+                    </button>
+                    <div class="visually-hidden" role="status" aria-live="polite" data-qm-live></div>
+                </form>
             </div>
-        </div>
+        </section>
     </div>
-    
-    <div class="footer">
-        © 2026 QueryMind | Final Year Project - Semester 1 (2025/2026) | <span style="color: #4a90e2; font-weight: bold;">College of IT, University of Bahrain</span>
-    </div>
-    
-</body>
-</html>
+</div>
+{% endblock %}

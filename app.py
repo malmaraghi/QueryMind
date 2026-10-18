@@ -79,7 +79,8 @@ def _before():
 
 @app.context_processor
 def _context():
-    return {"csrf_token": _csrf_token(), "csp_nonce": g.get("nonce", "")}
+    return {"csrf_token": _csrf_token(), "csp_nonce": g.get("nonce", ""),
+            "llm_model": MAIN_LLM_MODEL, "embedding_model": EMBEDDING_MODEL}
 
 
 @app.after_request

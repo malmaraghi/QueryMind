@@ -303,7 +303,7 @@ def purge_stale_index_dirs(base: str, max_age_seconds: float) -> int:
 def apply_headers(response, nonce: str, https: bool, static: bool = False):
     """Security headers. The CSP allows only this server's own scripts (nonce) and styles; inline scripts need the nonce."""
     response.headers["Content-Security-Policy"] = (
-        "default-src 'none'; script-src 'self' 'nonce-{}'; style-src 'self' 'unsafe-inline'; "
+        "default-src 'none'; script-src 'self' 'nonce-{}'; style-src 'self'; "
         "img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; "
         "base-uri 'none'; frame-ancestors 'none'".format(nonce))
     response.headers["X-Content-Type-Options"] = "nosniff"

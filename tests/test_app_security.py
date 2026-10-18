@@ -223,7 +223,7 @@ class QueryFlowTests(AppTestCase):
         with mock.patch.object(security, "run_query_guarded", guarded):
             html = self.ask(client, "SELECT * FROM customers")
         self.assertEqual(calls, ["SELECT * FROM customers"])
-        self.assertIn("SQL Query Executed", html)
+        self.assertIn('data-qm="result-page"', html)
 
     def test_unauthorized_sql_is_still_blocked_before_execution(self):
         client, _ = self.login()
@@ -232,7 +232,7 @@ class QueryFlowTests(AppTestCase):
             for sql in ("DELETE FROM customers", "SELECT * FROM mysql.user", "UPDATE customers SET name='x'",
                         "SELECT SLEEP(5)", "SELECT * FROM customers INTO OUTFILE '/tmp/x'"):
                 html = self.ask(client, sql)
-                self.assertNotIn("SQL Query Executed", html, sql)
+                self.assertNotIn('data-qm="result-page"', html, sql)
         self.assertEqual(executed, [])
 
     def test_stacked_statement_never_reaches_the_database_intact(self):
@@ -247,7 +247,7 @@ class QueryFlowTests(AppTestCase):
         with mock.patch.object(appmod, "ask_llm", side_effect=AssertionError("model must not be called")):
             token = csrf_of(client, "/")
             html = client.post("/", data={"user_input": "x" * 5000, "csrf_token": token}).get_data(as_text=True)
-        self.assertIn('class="error"', html)
+        self.assertIn('data-qm="error"', html)
 
     def test_error_text_is_escaped_not_rendered(self):
         client, _ = self.login()
@@ -334,7 +334,7 @@ class LoginProtectionTests(AppTestCase):
         with mock.patch.object(appmod.mariadb, "connect", lambda **kw: attempts.append(kw)):
             for host in ("169.254.169.254", "10.0.0.5", "192.168.1.1", "0.0.0.0", "metadata.invalid"):
                 body = self.login(host=host)[1].get_data(as_text=True)
-                self.assertIn("class=\"error-compact\"", body, host)
+                self.assertIn('data-qm="error"', body, host)
         self.assertEqual(attempts, [])
 
     def test_allowlisted_private_host_is_accepted_and_pinned(self):
@@ -369,12 +369,23 @@ class HeadersAndTemplatesTests(AppTestCase):
             response = client.get(path)
             csp = response.headers["Content-Security-Policy"]
             nonce = re.search(r"'nonce-([^']+)'", csp).group(1)
-            if path == "/":
-                self.assertIn(f'<script nonce="{nonce}">', response.get_data(as_text=True))
+            self.assertNotRegex(response.get_data(as_text=True), r"<script(?![^>]*\bsrc=)")      # no inline scripts at all
             self.assertEqual(response.headers["X-Frame-Options"], "DENY")
             self.assertEqual(response.headers["X-Content-Type-Options"], "nosniff")
             self.assertEqual(response.headers["Cache-Control"], "no-store")
         self.assertNotEqual(nonce, re.search(r"'nonce-([^']+)'", client.get("/").headers["Content-Security-Policy"]).group(1))
+
+    def test_front_end_script_never_writes_html(self):
+        text = open(os.path.join(context.ROOT, "static", "js", "app.js"), encoding="utf-8").read()
+        for forbidden in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function", "localStorage", "sessionStorage"):
+            self.assertNotIn(forbidden, text, forbidden)
+
+    def test_static_assets_referenced_by_the_pages_exist(self):
+        client, _ = self.login()
+        for path in ("/login", "/"):
+            html = client.get(path).get_data(as_text=True)
+            for url in re.findall(r'(?:href|src)="(/static/[^"]+)"', html):
+                self.assertEqual(client.get(url).status_code, 200, url)
 
     def test_templates_have_no_unsafe_rendering(self):
         directory = os.path.join(context.ROOT, "templates")
@@ -383,7 +394,9 @@ class HeadersAndTemplatesTests(AppTestCase):
             self.assertNotIn("|safe", text, name)
             self.assertNotIn("innerHTML", text, name)
             self.assertNotIn("onclick=", text, name)
-            self.assertNotRegex(text, r"<script(?![^>]*nonce)", name)
+            if name.endswith(".html"):
+                self.assertNotRegex(text, r"<script(?![^>]*\bsrc=)", name)
+                self.assertNotIn("style=", text.replace('style="display:contents"', ""), name)      # no inline styles
 
     def test_post_forms_carry_a_csrf_field(self):
         client, _ = self.login()
