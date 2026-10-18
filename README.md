@@ -1,78 +1,128 @@
 # QueryMind
 
-**A schema-aware, locally hosted Text-to-SQL system for MySQL/MariaDB.** Ask a question in plain English; QueryMind retrieves the relevant table definitions, asks a local language model to write a SQL `SELECT`, checks the statement, runs it read-only against your database and shows the result.
+**Secure, privacy-conscious Text-to-SQL using schema-aware retrieval and locally hosted language models.**
 
-Website: [querymind-text2sql.com](https://querymind-text2sql.com)
+QueryMind is a research project developed at the **University of Bahrain**. It allows users to ask questions about an existing relational database in everyday English, automatically generates a SQL `SELECT` query, and displays the results. QueryMind connects directly to an existing database: **no database import or model training on its records is required**.
 
-QueryMind is a research prototype developed at the University of Bahrain. This repository contains the application, the evaluation framework and the code behind the experiments reported in the accompanying paper (under revision). It is not a hardened production service; see [Known security limitations](#known-security-limitations).
+The system combines **Retrieval-Augmented Generation (RAG)**, **ChromaDB**, and local models running through **Ollama**. Schema metadata is used to provide the language model with relevant table definitions; database records are not included in the model prompt.
 
-## Contents
+**[Project website](https://querymind-text2sql.com)** · **[Watch the demo video](https://drive.google.com/file/d/1P1yun3DS4n5BoiAbfR6Dis9DOnm5SHRc/view?usp=drivesdk)**
 
-- [Demo video](#project-demo-video) · [Research objectives](#research-objectives) · [Key features](#key-features) · [How it works](#how-it-works)
-- [Security architecture](#security-architecture-three-layers) · [Installation](#installation) · [Connecting a database](#connecting-your-database)
-- [Running](#running-the-application) · [Tests](#running-the-tests) · [Reproducing the experiments](#reproducing-the-experiments)
-- [Results](#verified-results) · [Hardware and limitations](#hardware-and-research-limitations) · [Known security limitations](#known-security-limitations)
-- [Project structure](#project-structure) · [Data and licensing](#data-and-licensing-notes) · [Citation](#citation)
+## Research paper
 
-## Project Demo Video
+**QueryMind: Design and Evaluation of Secure and Privacy-Preserving Text-to-SQL Using Schema-Aware RAG and LLMs**
 
-This video demonstrates QueryMind in use: connecting to an existing MySQL/MariaDB database, asking questions in natural language, and viewing the SQL queries QueryMind generates and runs.
+**Authors:** Mohamed Almaraghi, Ali Alsowaidi, Abdulrahman Bumeajib, and Dr. Abdulla K. Aldoseri.  
+**Status:** Manuscript under revision for **3ICT 2026**; not yet published.
 
-**[Watch the QueryMind Demo](https://drive.google.com/file/d/1P1yun3DS4n5BoiAbfR6Dis9DOnm5SHRc/view?usp=drivesdk)**
+QueryMind investigates whether relatively small, locally hosted language models can generate useful read-only SQL without depending on a hosted AI service. The research evaluates three aspects:
 
-## Research objectives
+- **Accuracy:** How reliably can schema-aware retrieval and local LLMs translate natural-language questions into SQL that produces the correct results?
+- **Model selection and efficiency:** How do different language models and embedding models affect accuracy, retrieval performance, and response time on modest hardware?
+- **Security:** How much protection can layered database privileges, input/SQL validation, and transaction rollback provide, and where are their limits?
 
-1. How accurately can a schema-aware retrieval-augmented pipeline with a *small, locally hosted* LLM translate natural-language questions into read-only SQL?
-2. How do the choice of LLM and embedding model affect accuracy and latency on modest hardware?
-3. Can execution be kept read-only by layering database privileges, application-level validation and a post-execution guard, and how far does each layer go?
+The original work began as a senior project in the College of Information Technology at the University of Bahrain. The repository contains the prototype application and the code used for its experimental evaluation.
 
-## Key features
+## Project demonstration
 
-- **Runs locally.** Embeddings and SQL generation use [Ollama](https://ollama.com); QueryMind makes no calls to external AI services.
-- **Works on your existing MySQL/MariaDB database.** It reads table definitions; it does not import or copy your data.
-- **Schema-aware RAG.** Each table's `CREATE TABLE` statement is embedded in ChromaDB; only the tables relevant to the question (top 5) are put in the prompt.
-- **Three SELECT-only layers** (account privileges, input and SQL validation, a never-committed transaction with a modified-row check). See [docs/SECURITY_LAYERS.md](docs/SECURITY_LAYERS.md).
-- **Reproducible evaluation.** A 32-question benchmark, an execution-result scorer, repeated trials with model digests, versions and database fingerprints recorded for every run ([docs/EVALUATION.md](docs/EVALUATION.md)).
+The demonstration shows a user connecting to an existing database, asking natural-language questions, and viewing the generated SQL and query results.
 
-## How it works
+**▶ [Watch the QueryMind project demo](https://drive.google.com/file/d/1P1yun3DS4n5BoiAbfR6Dis9DOnm5SHRc/view?usp=drivesdk)**
 
+## How QueryMind works
+
+```text
+Existing MySQL / MariaDB database
+               |
+        Read schema metadata
+               |
+   Embed table definitions in ChromaDB
+               |
+         Natural-language question
+               |
+      Retrieve relevant tables (top 5)
+               |
+       Local LLM through Ollama
+               |
+        Generate candidate SQL
+               |
+     Validate and execute read-only
+               |
+          Display query results
 ```
-question ─► input screening ─► embed question ─► retrieve top-5 table definitions (ChromaDB, cosine)
-        ─► prompt (schema text + question) ─► local LLM (Ollama) ─► candidate SQL
-        ─► SQL extraction + validation ─► read-only transaction + modified-row check ─► result table
-```
 
-1. **Login.** You give a host, port, database, user and password. The account's privileges are checked (see below); the application reads `SHOW CREATE TABLE` for every table and indexes each statement in a local ChromaDB collection (`~/.querymind_chromadb/<id>`, rebuilt at each login) using the embedding model.
-2. **Question.** The question is embedded and the five most similar table definitions are retrieved.
-3. **Generation.** The LLM receives the retrieved definitions and the question only and returns one SQL statement. Table definitions can contain default values, column comments and `ENUM` values; **no schema masking is implemented**, so review what your schema text contains before use.
-4. **Checks and execution.** The statement is extracted from the model output, validated, and run inside a transaction that is rolled back; the result is shown in the browser. Table rows are fetched only to display the answer to you; they are not sent to the model.
+QueryMind indexes table definitions rather than copying database contents into the vector store. At query time, it retrieves the most relevant schema definitions and uses them to construct a prompt for the local language model. Generated SQL is checked before execution against the connected database.
 
-**Models.** `config.py` selects the defaults: `llama3.1:8b` for generation and `mxbai-embed-large:latest` for embeddings. The experiments compared Llama 3.1 8B, Qwen3 1.7B and Gemma3 1B (all Q4_K_M GGUF in Ollama) with the embedding models `mxbai-embed-large` (1024 dimensions) and `all-minilm` (384 dimensions). Change the two constants in `config.py` to use another installed Ollama model.
+**Privacy qualification:** Table definitions can contain column comments, default values, and `ENUM` values. Schema masking is **not implemented**. Users should review the metadata and database privileges they make available to QueryMind.
 
-## Security architecture (three layers)
+## Main features
 
-| Layer | What it does |
-|---|---|
-| **1. Database** | At login the account must hold only `SELECT` (plus `USAGE`/`SHOW VIEW`); otherwise login is refused (`QUERYMIND_PRIVILEGE_POLICY=enforce`, the default; `warn` and `off` exist). Privileges are what actually stop writes. |
-| **2. Application** | Input screening and a SQL validator: one read-only `SELECT`, only tables of the connected schema, no `INTO`, locks, variables, file/delay functions or system schemas. Statement-time and result-size limits. |
-| **3. Post-execution** | Each statement runs in a transaction that is never committed; the server's modified-row count (`ROW_COUNT()`, not the size of a result) is checked and any change is rolled back and reported. |
+- **Natural-language querying:** Ask database questions without writing SQL manually.
+- **Connect an existing database:** No import of database records is necessary.
+- **Local AI processing:** SQL generation and embeddings run through Ollama on the user's machine.
+- **Schema-aware RAG:** ChromaDB retrieves relevant table definitions for each question.
+- **Read-only execution safeguards:** A dedicated least-privilege database account, input and SQL validation, and a never-committed transaction with a modified-row check.
+- **Research evaluation tools:** Reproducible benchmark, scoring, baseline comparison, and security-test scripts.
 
-These layers reduce risk; they do **not** make QueryMind "secure" in any absolute sense. The validator is lexical, not a full SQL parser; rolling back cannot undo DDL or changes to non-transactional tables; reads inside the tables you grant remain possible; the model itself is not a security boundary (in our tests it complied with 6 of 10 injection-style prompts, all of which were stopped by a layer). Details, guarantees and demonstrated limitations: [docs/SECURITY_LAYERS.md](docs/SECURITY_LAYERS.md).
+## Research evaluation at a glance
 
-## Installation
+The expanded evaluation used **32 questions**, **three repetitions**, and **five model/embedding configurations**, totaling **480 QueryMind trials** on the `classicmodels_gold` sample database.
 
-Developed and tested on Ubuntu 24.04 with Python 3.12.3, MariaDB 10.11, Ollama server 0.12.1 (other versions were not tested).
+| Local LLM | Embedding model | Execution-result accuracy | Mean response time |
+|---|---|---:|---:|
+| Gemma3 1B | mxbai-embed-large | 25.0% | 5.9 s |
+| Gemma3 1B | all-minilm | 28.1% | 5.9 s |
+| Qwen3 1.7B | mxbai-embed-large | **92.7%** | 26.7 s |
+| Qwen3 1.7B | all-minilm | 89.6% | 28.1 s |
+| Llama 3.1 8B | mxbai-embed-large | 90.6% | 43.2 s |
+
+An external comparison evaluated **Defog SQLCoder-8B** on the same database and questions. QueryMind's Llama 3.1 configuration achieved **90.6%**, versus **53.1%** for the original SQLCoder run. Most SQLCoder failures arose from PostgreSQL-specific ordering syntax unsupported by MariaDB. A **secondary, post-hoc exploratory** translation of that syntax raised SQLCoder to **86.5%**; this adjusted result is not a replacement for the original comparison. It does not establish that QueryMind is universally more accurate.
+
+The security evaluation recorded **103/103 checks passed** in its original test suite. These results describe tested behaviors, not a guarantee against all attacks. The original five-question pilot used a different evaluation method and is **not directly comparable** to the expanded results.
+
+For the full methodology, statistical analysis, security test scope, and reproducibility details, see **[Evaluation documentation](docs/EVALUATION.md)** and **[Security documentation](docs/SECURITY_LAYERS.md)**.
+
+---
+
+## Run QueryMind locally
+
+The instructions below are for someone who wants to run QueryMind on their own computer and connect a supported database. The project was developed and tested on **Ubuntu 24.04**, **Python 3.12.3**, **MariaDB 10.11**, and **Ollama server 0.12.1**. Other versions and operating systems may require adjustments.
+
+### 1. Prerequisites
+
+You will need Python, Git, Ollama, the MariaDB Connector/C development library, and access to an existing MySQL/MariaDB database. A dedicated GPU is helpful but not required for every model; larger models may run slowly or require CPU offloading.
+
+On Ubuntu/Debian:
 
 ```bash
-# 1. System packages (Ubuntu/Debian): MariaDB client library for the Python connector and a build toolchain
-sudo apt install libmariadb-dev gcc python3-dev
-# (a MariaDB/MySQL server is only needed if you do not already have one to connect to: sudo apt install mariadb-server)
+sudo apt update
+sudo apt install git python3 python3-venv python3-dev gcc libmariadb-dev openssl
+```
 
-# 2. Ollama: install from https://ollama.com, then pull the default models
+Install **[Ollama](https://ollama.com/download)** using its official instructions, then confirm that the Ollama service is running.
+
+### 2. Download the local AI models
+
+The default QueryMind configuration uses **Llama 3.1 8B** for SQL generation and **mxbai-embed-large** for schema embeddings:
+
+```bash
 ollama pull llama3.1:8b
 ollama pull mxbai-embed-large
+```
 
-# 3. Python environment
+Optional models used in the research include:
+
+```bash
+ollama pull qwen3:1.7b
+ollama pull gemma3:1b
+ollama pull all-minilm
+```
+
+To switch models, edit the model settings in `config.py` to match models installed in Ollama. The default settings are sufficient to try the application.
+
+### 3. Download and install QueryMind
+
+```bash
 git clone https://github.com/malmaraghi/QueryMind.git
 cd QueryMind
 python3 -m venv venv
@@ -80,127 +130,74 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-`requirements.txt` pins the four direct dependencies (Flask 3.1.2, mariadb 1.1.14, ollama 0.6.1, chromadb 1.4.0). Note that `ollama` there is the **Python client library**; its version (0.6.1) is unrelated to the version of the **Ollama server** program (0.12.1 was used for the experiments).
+`requirements.txt` specifies the tested Python client libraries. The `ollama` Python package and the Ollama server are separate components and have different version numbers.
 
-## Connecting your database
+### 4. Prepare a read-only database account
 
-QueryMind connects to a database you already have; nothing is imported. Create a dedicated read-only account instead of using an administrator account:
+QueryMind connects directly to a database that already exists. **You do not need to upload or import its records into QueryMind.**
+
+Create a separate account with only the permissions needed to read the selected database. For example, run the following using an appropriately authorized database administrator account, replacing the placeholders:
 
 ```sql
-CREATE USER 'querymind'@'localhost' IDENTIFIED BY '<choose a strong password>';
+CREATE USER 'querymind'@'localhost' IDENTIFIED BY 'REPLACE_WITH_A_STRONG_PASSWORD';
 GRANT SELECT ON your_database.* TO 'querymind'@'localhost';
 ```
 
-Use only the tables you are comfortable exposing to the model: tables the account cannot see are never read or indexed. Granting more than `SELECT` (and `SHOW VIEW`) makes the login refuse the account by default. The connection uses the Python `mariadb` connector; the system was tested against MariaDB 10.11 only, so MySQL compatibility is expected but unverified.
+Avoid using a database administrator account. QueryMind's default privilege policy rejects accounts with write or administrative permissions. Remote database hosts must also be explicitly authorized through `QUERYMIND_ALLOWED_DB_HOSTS`; loopback connections are allowed by default.
 
-## Running the application
+### 5. Start the application
+
+From the activated Python environment, run:
 
 ```bash
 SECRET_KEY="$(openssl rand -hex 32)" flask --app app run --host 127.0.0.1 --port 5000 --no-debugger --no-reload
 ```
 
-Open <http://127.0.0.1:5000>, sign in with the database credentials, and ask a question. Stop with Ctrl-C. `SECRET_KEY` is **mandatory** (at least 16 characters): the application refuses to start without it, and also refuses to start in Flask debug mode (`--debug`, `FLASK_DEBUG=1`). `python app.py` is safe too (debug off, loopback only). Bind to `127.0.0.1` only; the application is not designed to be exposed to a network. Behind HTTPS set `QUERYMIND_HTTPS=1` so cookies are marked `Secure` and HSTS is sent. The first question after a login can take tens of seconds on a small GPU while Ollama loads the model.
+Open **http://127.0.0.1:5000** in your browser. Enter your database host, port, database name, read-only username, and password. QueryMind will index the accessible table definitions and then let you ask questions in natural language.
 
-Optional environment variables: `QUERYMIND_PRIVILEGE_POLICY` (`enforce`|`warn`|`off`), `QUERYMIND_STATEMENT_TIMEOUT` (seconds, default 60), `QUERYMIND_MAX_RESULT_ROWS` (default 50000), `QUERYMIND_MAX_QUESTION_CHARS` (default 2000). Web-layer variables: `QUERYMIND_HTTPS` (`1` behind HTTPS), `QUERYMIND_ALLOWED_DB_HOSTS` (comma-separated host names, IP addresses or CIDR ranges of non-loopback database servers that users may connect to; default none, so only `localhost`/loopback), `QUERYMIND_LOGIN_MAX_FAILURES` (default 5 per account within `QUERYMIND_LOGIN_WINDOW` = 300 s; 4x that per client address), `QUERYMIND_SESSION_IDLE` (1800 s) and `QUERYMIND_SESSION_MAX` (28800 s), `QUERYMIND_CONNECT_TIMEOUT` (10 s), `QUERYMIND_INDEX_DIR` (default `~/.querymind_chromadb`), `QUERYMIND_HOST` / `QUERYMIND_PORT` (only for `python app.py`). Connecting to a database server on another machine requires listing it in `QUERYMIND_ALLOWED_DB_HOSTS`.
+The secret key is mandatory. The example generates a new key for each launch, so existing sessions will not survive a restart. Keep the application bound to loopback; it is not intended for direct exposure to an untrusted network.
 
-## Running the tests
+**Connecting to a database on another machine?** Set `QUERYMIND_ALLOWED_DB_HOSTS` to the specific trusted hostname, IP address, or CIDR range before starting QueryMind. See the README's companion security documentation for the host policy and other environment settings.
+
+### 6. Run the tests (optional)
 
 ```bash
 python -m unittest discover -s tests
 ```
 
-205 unit tests (including the web-security regression tests); they use only the standard library plus the installed requirements and do not need a database or Ollama.
+The last reported local test suite passed **205 tests**. The number may change as the project evolves.
 
-## Reproducing the experiments
+## Security and practical limitations
 
-Prerequisites: the *classic models* sample database restored into a database named `classicmodels_gold` (obtained from its publisher, see [Data and licensing](#data-and-licensing-notes)), a read-only account, the Ollama models (`llama3.1:8b`, `qwen3:1.7b`, `gemma3:1b`, `mxbai-embed-large`, `all-minilm`) and credentials in `~/.config/querymind/eval.env` (mode 600, outside the repository; see [docs/EVALUATION.md](docs/EVALUATION.md)).
+QueryMind uses three complementary safeguards: a read-only database account, application-level input and SQL checks, and transactional execution with rollback. The web layer also uses server-side sessions, CSRF protection, restricted database hosts, and security headers. These controls **reduce risk but do not guarantee complete security**.
 
-```bash
-experiment/run_paper_benchmark.sh            # 5 configurations x 32 questions x 3 repeats (480 trials), temperature 0, seed 42, top_k 5
-python experiment/analyze_results.py exp_runs/*paper-v1-P*
-```
+- The SQL validator is lexical rather than a complete SQL parser; transaction rollback cannot undo every kind of database change.
+- Schema metadata is provided to the local model without masking. A user who can query a table may still infer information from authorized results.
+- Sessions and rate-limit state are in-memory and designed for a **single application worker**. Database credentials remain in server memory during an active session.
+- The local development server is not a production deployment; do not expose it directly to the public internet.
+- Experiments used one sample schema, 32 questions, and a machine with an **NVIDIA RTX 3050 (4 GB VRAM)**. Accuracy and latency may differ on other schemas or hardware. Hosted solutions were not evaluated directly; their performance should not be inferred from these results.
 
-Each run writes `trials.jsonl`, `run_metadata.json` and a summary to `exp_runs/` (not tracked in Git); interrupted runs can be resumed. The external baseline, the MariaDB dialect follow-up, the latency control and the security evidence run are described in [docs/EVALUATION.md](docs/EVALUATION.md) and [docs/SECURITY_LAYERS.md](docs/SECURITY_LAYERS.md).
+See **[Security architecture and limitations](docs/SECURITY_LAYERS.md)** for technical details.
 
-## Verified results
+## Repository guide
 
-Benchmark: 32 questions in 19 SQL categories over the classic models sample database; every reference result was generated and verified on the database. A trial is correct when the executed SQL returns the reference result set (execution-result equivalence; failures count as wrong). Three repeats per question; 95% intervals are question-level bootstrap intervals. All figures come from runs stored with their metadata.
+| Path | Purpose |
+|---|---|
+| `app.py`, `webguard.py`, `security.py` | Web application, web-layer protection, and SQL safeguards |
+| `chroma_rag.py`, `llm_engine.py`, `query_executor.py` | Schema retrieval, local model integration, and SQL extraction |
+| `config.py` | Model configuration |
+| `templates/`, `static/` | Browser interface |
+| `experiment/` | Benchmark runners, scoring, statistical analysis, and baseline evaluation |
+| `tests/` | Unit and regression tests |
+| `docs/` | Evaluation and security methodology |
+| `exp_com_res/`, `archive/legacy-runner/` | Historical pilot results and legacy evaluation tooling |
 
-**QueryMind configurations (96 trials each):**
+## Data, model licenses, and citation
 
-| LLM | Embedding | Accuracy (95% CI) | SQL executed | Hallucinated identifiers | Mean latency per question |
-|---|---|---|---|---|---|
-| Gemma3 1B | mxbai-embed-large | 25.0% (9.4-40.6) | 71.9% | 25.0% | 5.9 s |
-| Gemma3 1B | all-minilm | 28.1% (12.5-43.8) | 75.0% | 18.8% | 5.9 s |
-| Qwen3 1.7B | mxbai-embed-large | 92.7% (84.4-99.0) | 97.9% | 0.0% | 26.7 s |
-| Qwen3 1.7B | all-minilm | 89.6% (79.2-97.9) | 94.8% | 2.1% | 28.1 s |
-| Llama 3.1 8B | mxbai-embed-large | 90.6% (78.1-100) | 96.9% | 3.1% | 43.2 s |
+The sample database used for evaluation is **not bundled** with QueryMind. Obtain it from its publisher and verify applicable redistribution terms. Model weights are also not bundled; each downloaded model is subject to its own license. A license for this repository has **not yet been selected**.
 
-Qwen3 1.7B and Llama 3.1 8B are not significantly different (paired exact McNemar p = 1.0); both are significantly above Gemma3 1B. The two embedding models did not differ significantly. Retrieval recall of the required tables was 0.729 / 0.974 / 1.000 (recall@1/3/5) with mxbai-embed-large and 0.698 / 0.984 / 0.992 with all-minilm; with only 8 tables, recall@5 is near its ceiling. Qwen3's latency has a long tail (up to about 130 s) because it reasons before answering.
+**Manuscript:** M. Almaraghi, A. Alsowaidi, A. Bumeajib, and A. K. Aldoseri, *“QueryMind: Design and Evaluation of Secure and Privacy-Preserving Text-to-SQL Using Schema-Aware RAG and LLMs.”* Under revision for 3ICT 2026; publication details pending.
 
-**External baseline** (Defog llama-3-sqlcoder-8b, Q4_K_M, same runtime, database and scorer, official prompt with the full schema and a MariaDB dialect sentence, 96 trials):
-
-| System | Accuracy (95% CI) | SQL executed |
-|---|---|---|
-| QueryMind (Llama 3.1 8B + mxbai-embed-large) | 90.6% (78.1-100) | 96.9% |
-| SQLCoder-8B, as specified in advance (primary) | 53.1% (37.5-71.9) | 59.4% |
-| SQLCoder-8B after a MariaDB dialect fix (secondary, exploratory) | 86.5% (74.0-96.9) | 92.7% |
-
-Primary comparison: 14 questions solved only by QueryMind versus 2 only by SQLCoder (exact McNemar p = 0.004). 34 of SQLCoder's 39 database errors were one PostgreSQL ordering modifier (`NULLS LAST`) that MariaDB rejects. In a secondary analysis fixed before it was run, a validated, semantics-preserving translation of that modifier applied to the saved SQL (no regeneration) brings SQLCoder to 86.5%, and the difference to QueryMind is then not significant (-4.2 points, CI -17.7 to +9.4, p = 1.0). This adjusted figure favours the baseline by construction and does not replace the primary result. On first exposure to a prompt SQLCoder needed 49.7 s per question against QueryMind's 43.2 s on this machine; Ollama's prompt caching makes repeated identical prompts much faster, so latency must be compared per first exposure.
-
-**Security evaluation** (disposable private MariaDB, no administrator rights): 103 of 103 checks passed (re-run without the live-model prompts after the web hardening: 93 of 93), including attack statements for each layer, rollback of 1-, 2-, 4- and 5-row modifications, and demonstrated limitations. The validator rejected 0 of 386 correct statements generated in the benchmark runs.
-
-**Historical pilot.** The original five-question evaluation reported in [`exp_com_res/`](exp_com_res/) (match rates of 40-100%) used Ollama's default sampling, one run per question and an older scoring method, and is **not directly comparable** with the figures above. Re-running those five questions with the current framework gave 14-15 of 15 correct for every configuration ([`archive/legacy-runner/`](archive/legacy-runner/README.md) explains the differences).
-
-## Hardware and research limitations
-
-- **Hardware used:** Ubuntu 24.04, AMD Ryzen 7 5800H, 15 GiB RAM, NVIDIA RTX 3050 Laptop GPU (4 GB). 8B-class models (about 4.9 GB at Q4_K_M) exceed the VRAM and run with partial CPU offload; the same-size SQLCoder model ran 38% CPU / 62% GPU. On this GPU the embedding model and the LLM evict each other, which cost QueryMind's Llama configuration about 6.7 s of model loading per question. **All latencies are specific to this machine** and should not be generalised.
-- **One schema and 32 questions** written by the authors: the results do not show how QueryMind behaves on other schemas, larger databases, many concurrent users or other languages. Concurrency and scalability were not evaluated.
-- Accuracy means execution-result equivalence on one database state, not proof of semantic correctness.
-- The SQLCoder comparison pits a SQL-specialised model without retrieval against a general model with retrieval, uses a community quantization and greedy decoding, and no comparison with hosted commercial services was made. Latency and accuracy of other systems and hardware may differ.
-- Determinism is not guaranteed even at temperature 0 (Qwen3 repeated its SQL in only 56-59% of cases).
-
-## Known security limitations
-
-QueryMind is a research prototype. The web application was hardened after the evaluation (see [`docs/SECURITY_LAYERS.md`](docs/SECURITY_LAYERS.md#web-application-hardening)): server-side sessions (no credentials in cookies), mandatory `SECRET_KEY`, no debug mode, CSRF tokens on every POST (login and logout included), `HttpOnly`/`SameSite=Lax`/optional `Secure` cookies, a nonce-based Content-Security-Policy and other security headers, no `|safe`/`innerHTML`, validated table names and generic error messages, a database-host policy, login rate limiting, and a private search index per login. Remaining limitations:
-
-- Sessions, rate-limit counters and indexes live in the memory/disk of **one** process: run a single worker; a restart logs everyone out. Database passwords are kept in that process's memory while a session is active (not encrypted at rest).
-- The application serves plain HTTP and has no user accounts of its own; terminate TLS in front of it and keep it on a trusted network. Behind a reverse proxy all clients share the proxy's address for rate limiting.
-- The database-host policy checks the address when a user logs in; it is not a firewall. A host that the administrator allows (`QUERYMIND_ALLOWED_DB_HOSTS`) is trusted.
-- Database error messages produced by the generated query (for example an unknown column) are still shown to the signed-in user; schema text is sent to the model unmasked (no masking is implemented).
-- The SQL validator is lexical and cannot judge intent; the post-execution guard cannot undo DDL or non-transactional changes.
-- Use a dedicated read-only account, run locally, and do not expose the application to untrusted networks. No independent security audit has been performed.
-
-## Project structure
-
-```
-QueryMind/
-├── app.py                 Flask application (login, question, table metadata)
-├── config.py              default LLM and embedding model
-├── chroma_rag.py          schema indexing and retrieval (ChromaDB + Ollama embeddings)
-├── llm_engine.py          prompt construction and generation (Ollama)
-├── query_executor.py      SQL extraction from model output
-├── security.py            the three SELECT-only layers
-├── webguard.py            web-layer protections: server-side sessions, rate limiting, DB host policy, CSRF, headers
-├── requirements.txt       pinned direct dependencies
-├── templates/  static/    web interface
-├── experiment/            benchmark definition, runners, scoring, analysis, baseline, security evidence
-├── tests/                 unit tests (205)
-├── docs/                  EVALUATION.md, SECURITY_LAYERS.md (+ architecture diagram)
-├── exp_com_res/           original five-question results (historical, unchanged)
-└── archive/legacy-runner/ scripts that produced those results (historical, not maintained)
-```
-
-## Data and licensing notes
-
-- **Sample database.** Experiments use the *classic models* sample database. It is not distributed with this repository; obtain it from its publisher and check its terms. The benchmark files store reference result rows derived from it; confirm that the dataset's terms allow you to redistribute them before republishing.
-- **Models.** QueryMind does not include model weights. Each model you pull (Llama, Qwen, Gemma, mxbai-embed-large, all-minilm; Defog's SQLCoder for the baseline, whose model card states CC-BY-SA-4.0) is subject to its own license.
-- **This project's license.** The authors have not yet selected a license, and no `LICENSE` file is included.
-
-## Citation
-
-A paper describing QueryMind is under revision for 3ICT 2026 and is not yet published; citation details will be added when available.
-
-> M. Almaraghi, A. Alsowaidi, A. Bumeajib and A. Aldoseri, "QueryMind: Design and Evaluation of Secure and Privacy-Preserving Text-to-SQL Using Schema-Aware RAG and LLMs", manuscript under revision.
-
-QueryMind began as a University of Bahrain (College of Information Technology) senior project in 2025-2026 by Mohamed Almaraghi, Abdulrahman Bumeajib and Ali Alsowaidi, supervised by Dr. Abdulla K. Aldoseri.
+**Project team:** Mohamed Almaraghi, Ali Alsowaidi, and Abdulrahman Bumeajib.  
+**Supervisor:** Dr. Abdulla K. Aldoseri.  
+**Institution:** University of Bahrain, College of Information Technology.
