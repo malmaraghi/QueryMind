@@ -40,7 +40,7 @@ An optional `read_only_transaction=True` makes the server refuse writes outright
 
 ## Evidence (disposable private MariaDB server, `experiment/security_evaluation.py`)
 
-103 of 103 checks passed on 2026-10-18 (`exp_runs/security_20261018T070742Z/results.{json,md}`):
+103 of 103 checks passed on 2026-10-18 (raw results are kept locally in `exp_runs/security_20261018T070742Z/`, which is not tracked in Git):
 
 | Group | Checks | Result |
 |---|---|---|
