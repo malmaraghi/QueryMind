@@ -3,10 +3,12 @@ import time
 import mariadb
 
 from flask import Flask, render_template, request, session, redirect, url_for
+from markupsafe import escape
 from chroma_rag import index_schema_in_chroma, retrieve_schema_context
 from llm_engine import ask_llm
-from query_executor import extract_sql, run_query
+from query_executor import extract_sql
 from config import MAIN_LLM_MODEL, EMBEDDING_MODEL
+import security
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecret_change_in_production")
@@ -79,8 +81,15 @@ def login():
                 password=db_password,
                 database=db_name
             )
+            # Security layer 1: the account must be SELECT-only (QUERYMIND_PRIVILEGE_POLICY=enforce|warn|off)
+            privileges = security.check_select_only_account(test_conn) if security.PRIVILEGE_POLICY != "off" else None
             test_conn.close()
-            
+            if privileges and not privileges["read_only"]:
+                print("Security: database account is not SELECT-only: " + "; ".join(privileges["problems"]))
+                if security.PRIVILEGE_POLICY == "enforce":
+                    error = "This database account has more than read-only (SELECT) privileges. QueryMind requires a SELECT-only account."
+                    return render_template("login.html", error=error)
+
             session['db_host'] = db_host
             session['db_port'] = db_port
             session['db_user'] = db_user
@@ -167,6 +176,20 @@ def home():
     if request.method == "POST":
         user_input = request.form.get("user_input", "").strip()
 
+        # Security layer 2a: screen the input before it reaches retrieval or the model
+        input_ok, input_problem = security.validate_question(user_input)
+        if not input_ok:
+            return render_template(
+                "home.html",
+                user_input=user_input,
+                error=input_problem,
+                db_name=session['db_name'],
+                db_user=session['db_user'],
+                db_host=session['db_host'],
+                db_port=session['db_port'],
+                tables=accessible_tables
+            )
+
         time_start_rag = time.time()
         rag_context = retrieve_schema_context(
             user_input, 
@@ -211,6 +234,21 @@ def home():
                 tables=accessible_tables
             )
 
+        # Security layer 2b: validate the generated SQL (single read-only SELECT on known tables) before execution
+        sql_check = security.validate_sql(sql_query, accessible_tables or [], session['db_name'])
+        if not sql_check.ok:
+            print(f"Security: generated SQL blocked ({sql_check.rule})")
+            return render_template(
+                "home.html",
+                user_input=user_input,
+                error=f"Error: {sql_check.message}",
+                db_name=session['db_name'],
+                db_user=session['db_user'],
+                db_host=session['db_host'],
+                db_port=session['db_port'],
+                tables=accessible_tables
+            )
+
         conn = connect_to_db()
         if not conn:
             error = "Could not connect to the database."
@@ -227,7 +265,11 @@ def home():
         
         try:
             time_start_exec = time.time()
-            results = run_query(sql_query, conn)
+            # Security layer 3: run inside a never-committed transaction and check the modified-row count
+            results = security.run_query_guarded(sql_query, conn)
+            if isinstance(results, str) and results.startswith("Error:"):
+                # show the message (the result template only displays `error`); escaped because it is rendered with |safe
+                error, results = str(escape(results)), ""
             time_end_exec = time.time()
             time_execution = round(time_end_exec - time_start_exec, 3)
         except Exception as e:

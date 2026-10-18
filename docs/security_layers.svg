@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 720" font-family="Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+  <title id="t">QueryMind three-layer SELECT-only protection</title>
+  <desc id="d">A question flows through input screening, the language model, SQL validation, a post-execution transaction guard and a SELECT-only database account. Any layer can block the request and show an error message; otherwise the result is returned.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#374151"/></marker>
+    <marker id="arrowred" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b42318"/></marker>
+    <marker id="arrowgreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#067647"/></marker>
+  </defs>
+  <rect width="1100" height="720" fill="#ffffff"/>
+  <text x="550" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#111827">QueryMind: three independent layers keep execution read-only</text>
+
+  <rect x="30" y="55" width="600" height="44" rx="8" fill="#f3f4f6" stroke="#6b7280"/>
+  <text x="330" y="83" text-anchor="middle" font-size="14" fill="#111827">User question (natural language, web browser)</text>
+  <line x1="330" y1="99" x2="330" y2="118" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="30" y="120" width="600" height="82" rx="8" fill="#e1f4f1" stroke="#1f7a6f" stroke-width="2"/>
+  <text x="46" y="145" font-size="14" font-weight="bold" fill="#0f4f47">LAYER 2a · Input screening (application)</text>
+  <text x="46" y="167" font-size="12.5" fill="#111827">Keyword filter for write/DDL words · length limit · control characters</text>
+  <text x="46" y="191" font-size="12" font-style="italic" fill="#374151">Limit: the word list is lexical: false positives, and it cannot judge intent</text>
+  <line x1="330" y1="202" x2="330" y2="226" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="30" y="228" width="600" height="58" rx="8" fill="#f3f4f6" stroke="#6b7280" stroke-dasharray="6 4"/>
+  <text x="330" y="253" text-anchor="middle" font-size="14" fill="#111827">Schema-aware RAG (ChromaDB) + local LLM (Ollama)</text>
+  <text x="330" y="273" text-anchor="middle" font-size="12.5" font-style="italic" fill="#374151">The output is a candidate SQL statement: untrusted until validated</text>
+  <line x1="330" y1="286" x2="330" y2="312" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="30" y="314" width="600" height="112" rx="8" fill="#e1f4f1" stroke="#1f7a6f" stroke-width="2"/>
+  <text x="46" y="339" font-size="14" font-weight="bold" fill="#0f4f47">LAYER 2b · SQL validation before execution (application)</text>
+  <text x="46" y="361" font-size="12.5" fill="#111827">Single read-only SELECT; no INTO, locks, variables, file or delay functions</text>
+  <text x="46" y="381" font-size="12.5" fill="#111827">Every table must belong to the connected schema (no mysql, information_schema)</text>
+  <text x="46" y="401" font-size="12.5" fill="#111827">Statement time limit and result-size limit</text>
+  <text x="46" y="418" font-size="12" font-style="italic" fill="#374151">Limit: lexical check, not a full SQL parser; columns are checked by the database</text>
+  <line x1="330" y1="426" x2="330" y2="452" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="30" y="454" width="600" height="104" rx="8" fill="#fdf1db" stroke="#b7791f" stroke-width="2"/>
+  <text x="46" y="479" font-size="14" font-weight="bold" fill="#7a4b06">LAYER 3 · Post-execution guard (application)</text>
+  <text x="46" y="501" font-size="12.5" fill="#111827">START TRANSACTION → execute → ROW_COUNT() = rows modified (not result size)</text>
+  <text x="46" y="521" font-size="12.5" fill="#111827">Always ROLLBACK, never COMMIT; modified rows &gt; 0 → error reported</text>
+  <text x="46" y="545" font-size="12" font-style="italic" fill="#374151">Limit: cannot undo DDL (implicit commit) or non-transactional (MyISAM) tables</text>
+  <line x1="330" y1="558" x2="330" y2="584" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="30" y="586" width="600" height="106" rx="8" fill="#e3eefb" stroke="#2b6cb0" stroke-width="2"/>
+  <text x="46" y="611" font-size="14" font-weight="bold" fill="#1a365d">LAYER 1 · Database privileges (the enforcing layer)</text>
+  <text x="46" y="633" font-size="12.5" fill="#111827">MariaDB account holds SELECT only; the server refuses writes and schema changes</text>
+  <text x="46" y="653" font-size="12.5" fill="#111827">Checked at login: SHOW GRANTS may list only SELECT, USAGE, SHOW VIEW (policy: enforce)</text>
+  <text x="46" y="679" font-size="12" font-style="italic" fill="#374151">Limit: reads inside granted tables stay possible; relies on correct account setup</text>
+
+  <!-- blocked bus -->
+  <path d="M 630 160 H 670 M 630 370 H 670 M 630 506 H 670 M 630 626 H 670" fill="none" stroke="#b42318" stroke-width="2"/>
+  <path d="M 670 160 V 626" fill="none" stroke="#b42318" stroke-width="2"/>
+  <path d="M 670 355 H 708" fill="none" stroke="#b42318" stroke-width="2" marker-end="url(#arrowred)"/>
+  <rect x="710" y="300" width="360" height="110" rx="8" fill="#fdecea" stroke="#b42318" stroke-width="2"/>
+  <text x="890" y="328" text-anchor="middle" font-size="14" font-weight="bold" fill="#7a1b12">Request blocked</text>
+  <text x="890" y="352" text-anchor="middle" font-size="12.5" fill="#111827">A clear message is shown to the user.</text>
+  <text x="890" y="372" text-anchor="middle" font-size="12.5" fill="#111827">Nothing runs, or the change is rolled back,</text>
+  <text x="890" y="392" text-anchor="middle" font-size="12.5" fill="#111827">or the database refuses the statement.</text>
+
+  <!-- success -->
+  <path d="M 630 668 H 708" fill="none" stroke="#067647" stroke-width="2" marker-end="url(#arrowgreen)"/>
+  <rect x="710" y="620" width="360" height="72" rx="8" fill="#ecfdf3" stroke="#067647" stroke-width="2"/>
+  <text x="890" y="648" text-anchor="middle" font-size="14" font-weight="bold" fill="#054f31">Result shown to the user</text>
+  <text x="890" y="670" text-anchor="middle" font-size="12.5" fill="#111827">Rows of a valid read-only SELECT only</text>
+
+  <text x="710" y="470" font-size="12" fill="#374151">Each layer works on its own: the evidence run bypasses the</text>
+  <text x="710" y="488" font-size="12" fill="#374151">other layers and checks that this one still protects the data.</text>
+</svg>

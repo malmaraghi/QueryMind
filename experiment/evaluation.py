@@ -211,28 +211,5 @@ def recall_at_k(required: Sequence[str], retrieved: Sequence[str], k: int) -> Op
     return len(required_set & top) / len(required_set)
 
 
-def parse_grants(grant_lines: Iterable[str]) -> dict:
-    """Decide whether ``SHOW GRANTS`` output is strictly read-only.
-
-    Allowed privileges: SELECT, USAGE, SHOW VIEW. Anything else, GRANT OPTION,
-    or a role grant (whose privileges are not visible here) fails verification.
-    """
-    allowed = {"SELECT", "USAGE", "SHOW VIEW"}
-    problems = []
-    seen = []
-    for line in grant_lines:
-        seen.append(line)
-        match = re.match(r"^\s*GRANT\s+(.*?)\s+ON\s+(.*?)\s+TO\s+(.*)$", line, re.IGNORECASE | re.DOTALL)
-        if not match:
-            problems.append(f"unparseable or role grant: {line}")
-            continue
-        column_free = re.sub(r"\([^)]*\)", "", match.group(1))  # SELECT (a, b) -> SELECT
-        privileges = [p.strip().upper() for p in column_free.split(",")]
-        extra = [p for p in privileges if p not in allowed]
-        if extra:
-            problems.append(f"write-capable privileges {extra} on {match.group(2)}")
-        if re.search(r"WITH\s+GRANT\s+OPTION", match.group(3), re.IGNORECASE):
-            problems.append(f"GRANT OPTION on {match.group(2)}")
-    if not seen:
-        problems.append("no grants returned")
-    return {"read_only": not problems, "problems": problems, "grants": seen}
+# One implementation of the read-only privilege check, shared with the application (Layer 1 in security.py).
+from security import parse_grants  # noqa: E402,F401
