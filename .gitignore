@@ -1,45 +1,59 @@
-# Python
+# --- Python
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
 .Python
 venv/
-env/
 .venv/
+env/
 ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 
-# IDE
+# --- Secrets and local configuration (database credentials live OUTSIDE the repository,
+#     e.g. ~/.config/querymind/eval.env with mode 600)
+.env
+.env.*
+*.env
+*.pem
+*.key
+secrets*
+credentials*
+
+# --- Local model weights and database dumps/files (never commit)
+*.gguf
+*.safetensors
+*.bin
+models/
+*.sql
+*.sql.gz
+*.dump
+*.sqlite
+*.sqlite3
+*.db
+
+# --- Vector indexes created by the application and the experiments
+chroma_db/
+chroma_db_*/
+.querymind_chromadb/
+chroma.sqlite3
+
+# --- Generated experiment output (per-run metadata, trials, indexes, console logs) and run locks
+exp_runs/
+*.lock
+*.log
+*.tmp
+
+# --- Private working notes: never published
+revision_log/
+private/
+
+# --- Editors and operating systems
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# ChromaDB local storage
-chroma_db/
-chroma_db_*/
-.querymind_chromadb/
-
-# Environment variables
-.env
-.env.local
-
-# Logs
-*.log
-
-# OS files
 .DS_Store
 Thumbs.db
-
-# Experiment results (optional - remove if you want to include)
-# exp_com_res/
-
-# Output of experiment/run_benchmark.py (per-run metadata, trials, ChromaDB indexes)
-exp_runs/
-
-# Local database credentials for experiments (keep outside the repo; see experiment/EVALUATION.md)
-eval.env
-*.env
-
-# Jupyter
-.ipynb_checkpoints/

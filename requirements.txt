@@ -1,6 +1,14 @@
-flask
-mariadb
-mysql-connector-python
-ollama
-chromadb
-mysql-connector-python>=8.0.0
+# Direct dependencies, pinned to the versions the research results were produced with.
+# Everything else (httpx, numpy, markupsafe, jinja2, ...) is installed transitively.
+#
+# System requirements (not installable with pip):
+#   - Python 3.12 (developed and tested with 3.12.3)
+#   - MariaDB Connector/C for the `mariadb` package (Ubuntu/Debian: sudo apt install libmariadb-dev gcc python3-dev)
+#   - A running Ollama server (a separate program, tested with server version 0.12.1)
+#
+# Note: `ollama` below is the Python client library (0.6.1); its version is unrelated to the
+# version of the Ollama server (0.12.1 was used for the experiments).
+flask==3.1.2
+mariadb==1.1.14
+ollama==0.6.1
+chromadb==1.4.0

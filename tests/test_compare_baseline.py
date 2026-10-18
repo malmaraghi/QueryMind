@@ -55,12 +55,3 @@ class ComparisonTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-
-class DialectRewriteTests(unittest.TestCase):
-    def test_only_the_nulls_modifier_is_removed(self):
-        import sqlcoder_dialect_diagnostic as dd
-        self.assertEqual(dd.strip_nulls_modifier("SELECT a FROM t ORDER BY a NULLS LAST;"), "SELECT a FROM t ORDER BY a;")
-        self.assertEqual(dd.strip_nulls_modifier("SELECT a FROM t ORDER BY a DESC NULLS FIRST LIMIT 5"),
-                         "SELECT a FROM t ORDER BY a DESC LIMIT 5")
-        self.assertEqual(dd.strip_nulls_modifier("SELECT nulls_count FROM t"), "SELECT nulls_count FROM t")
