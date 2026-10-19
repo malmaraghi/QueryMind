@@ -183,39 +183,68 @@ See **[Security architecture and limitations](docs/SECURITY_LAYERS.md)** for tec
 
 ```text
 QueryMind/
-├── app.py                  Flask application: login, question, results, table-metadata API
-├── webguard.py             Web protections: server-side sessions, CSRF, rate limiting, database-host policy, security headers
-├── security.py             The three SELECT-only layers (privilege check, SQL validation, rollback guard)
-├── chroma_rag.py           Schema indexing and retrieval with ChromaDB and Ollama embeddings
-├── llm_engine.py           Prompt construction and SQL generation through Ollama
-├── query_executor.py       Extracts the SQL statement from the model's output
-├── config.py               Default language model and embedding model
-├── requirements.txt        Pinned Python dependencies
-├── templates/              Jinja pages (login, home, results, error) and shared components
-├── static/                 Stylesheet, scripts, icon, and locally bundled Bootstrap
-├── tests/                  Unit and regression tests
-├── docs/                   Evaluation guide, security documentation, project structure
-├── experiment/             Research code and benchmark data
-│   ├── benchmark/          32-question benchmark, runner, scoring, the five configurations
-│   ├── analysis/           Statistical analysis and latency control
-│   ├── baseline/           SQLCoder baseline, comparison, MariaDB dialect follow-up
-│   ├── security_eval/      103-check security evaluation and its disposable database server
-│   ├── common/             Provenance recording and run resilience
-│   └── pilot/              The original five questions (bridge set)
-├── research/               Sanitized evidence for the paper, results workbook, rebuild and check scripts
-└── archive/pilot-evaluation/   2025 five-question pilot: results and legacy scripts (historical)
+│
+├── app.py                        Flask application: login, question, results, table-columns API, error pages
+├── webguard.py                   Web protections: server-side sessions, CSRF, login rate limiting, database-host policy, security headers
+├── security.py                   The three SELECT-only layers: privilege check, SQL validation, rollback guard
+├── chroma_rag.py                 Schema indexing and retrieval (ChromaDB + Ollama embeddings)
+├── llm_engine.py                 Prompt construction and SQL generation through Ollama
+├── query_executor.py             Extracts the SQL statement from the model's output
+├── config.py                     Default language model and embedding model
+├── requirements.txt              Pinned Python dependencies
+│
+├── templates/                    Web pages (Jinja)
+│   ├── base.html                 Shared layout: header, footer, scripts
+│   ├── login.html                Database connection page
+│   ├── home.html                 Question page with the table explorer
+│   ├── result.html               Generated SQL, timings and query results
+│   ├── error.html                Friendly error pages (404, 500, expired token)
+│   └── components/               Navbar, footer, connection menu, alert messages
+│
+├── static/                       Browser assets, all served locally (no external requests)
+│   ├── css/main.css              The single stylesheet and design tokens
+│   ├── js/                       common.js (all pages), home.js (table explorer), results.js (SQL view, copy)
+│   ├── img/favicon.svg           Icon
+│   └── vendor/                   Bootstrap 5.3.3 and Bootstrap Icons, with checksums
+│
+├── tests/                        220 offline unit and regression tests (no database or Ollama needed)
+│
+├── docs/
+│   ├── EVALUATION.md             How to reproduce the experiments
+│   ├── SECURITY_LAYERS.md        The safeguards, their evidence and limits
+│   ├── PROJECT_STRUCTURE.md      Full project map and where files moved
+│   └── security_layers.pdf/.svg  Architecture diagram
+│
+├── experiment/                   Research code and benchmark data (run from the repository root)
+│   ├── benchmark/                32-question benchmark, difficulty tiers, the five configurations,
+│   │                             runner, five-configuration launcher, scoring, reference-row generator
+│   ├── analysis/                 Statistical analysis (intervals, McNemar tests) and latency control
+│   ├── baseline/                 SQLCoder-8B baseline, comparison with QueryMind, MariaDB dialect follow-up
+│   ├── security_eval/            103-check security evaluation and its disposable test database server
+│   ├── common/                   Provenance recording, resume and run locking
+│   └── pilot/                    The original five questions (used as the "bridge" set)
+│
+├── research/                     Evidence for the paper (start with research/README.md)
+│   ├── evidence/
+│   │   ├── benchmark/            Five runs, 480 trials: metadata, summaries, reference checks, trial records
+│   │   ├── bridge/               Five runs, 75 trials, on the original five questions
+│   │   ├── baseline/             SQLCoder baseline, dialect diagnosis, validation, follow-up, comparison
+│   │   ├── statistics/           Final analysis of the benchmark and bridge runs
+│   │   ├── latency/              QueryMind latency-control run
+│   │   ├── security/             103/103 evaluation, 93/93 re-run, superseded 91/92 run
+│   │   └── logs/                 Console output of the main runs
+│   ├── artifacts/                Results workbook (QueryMind_Research_Results.xlsx) and the scripts that rebuild it
+│   ├── reproduction/             build_evidence.py: rebuilds and verifies evidence/ from the raw runs
+│   ├── MANIFEST.sha256           SHA-256 of every evidence file
+│   └── SOURCES.tsv              Source file, sanitization flag and checksums for every copy
+│
+└── archive/
+    └── pilot-evaluation/         The 2025 five-question pilot (historical, not comparable with the benchmark)
+        ├── results/              Original pilot output (per-configuration results and summary)
+        └── scripts/              The legacy runner that produced it
 ```
 
-| Folder | What it contains |
-|---|---|
-| `templates/`, `static/` | `base.html` plus the login, home, result and error pages with shared `components/`; `css/main.css`, three small scripts, and Bootstrap served locally so the app makes no external requests. |
-| `experiment/` | Everything that produced the paper's numbers, grouped by purpose (see [`experiment/README.md`](experiment/README.md)). Run from the repository root. |
-| `research/` | Where the evidence is: sanitized copies of the saved runs, a manifest, the Excel results workbook and a map from each reported result to its files ([`research/README.md`](research/README.md)). |
-| `tests/` | Offline unit tests; they need neither a database nor Ollama. |
-| `docs/` | [`EVALUATION.md`](docs/EVALUATION.md) (how to reproduce), [`SECURITY_LAYERS.md`](docs/SECURITY_LAYERS.md) (safeguards, evidence, limits) and [`PROJECT_STRUCTURE.md`](docs/PROJECT_STRUCTURE.md) (the full map and where files moved). |
-| `archive/` | The original five-question pilot, kept for the record. Not comparable with the current benchmark. |
-
-Raw run output (`exp_runs/`), the Python environment and private notes are created locally and are not part of the repository.
+Not in the repository: the raw run output (`exp_runs/`), the Python environment and private working notes. They are created locally and git-ignored. See [`docs/PROJECT_STRUCTURE.md`](docs/PROJECT_STRUCTURE.md) for details and for where each file moved, and [`research/README.md`](research/README.md) for the result-to-file map.
 
 ## Data, model licenses, and citation
 
