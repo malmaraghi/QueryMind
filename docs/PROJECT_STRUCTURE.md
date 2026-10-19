@@ -10,7 +10,7 @@ QueryMind/
 ├── experiment/              research code and benchmark data
 ├── research/                evidence for the paper (sanitized copies), results workbook, rebuild scripts
 ├── archive/                 historical pilot evaluation
-└── (local only, git-ignored)  exp_runs/  revision_log/  venv/
+└── (generated locally, not included)  exp_runs/
 ```
 
 ## Application (repository root)
@@ -56,8 +56,7 @@ import these modules by name, and saved runs record the SHA-256 of `llm_engine.p
 |---|---|
 | `research/` | Sanitized evidence, manifest and checksums, the results workbook, the evidence rebuild script; start with `research/README.md` |
 | `archive/pilot-evaluation/` | Results and scripts of the 2025 five-question pilot (not comparable with the current benchmark) |
-| `exp_runs/` | Raw output of every run (local, git-ignored; never edited) |
-| `revision_log/` | Private working notes (local, git-ignored) |
+| `exp_runs/` | Raw output of every run (generated locally when experiments are run; not included) |
 
 ## Where files moved (reorganisation)
 

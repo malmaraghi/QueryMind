@@ -47,7 +47,7 @@ exp_runs/
 !research/evidence/logs/*.log
 *.tmp
 
-# --- Private working notes: never published
+# --- Local notes
 revision_log/
 private/
 

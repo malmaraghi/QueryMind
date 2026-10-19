@@ -2,7 +2,7 @@
 
 This folder holds what a reader needs to check the paper's numbers: sanitized copies of the saved experimental evidence,
 the Excel workbook of results, and the scripts that rebuild and verify them. The original raw records stay untouched in
-`exp_runs/` (git-ignored, local only).
+`exp_runs/`, which is generated when the experiments are run and is not included in the repository.
 
 ```text
 research/
@@ -63,7 +63,7 @@ Nothing in `exp_runs/` was moved, edited or deleted.
   hash of `dialect_translation.py` and of its protocol; both are unchanged, so the lock still passes.
 - **One exception, explained.** The SQLCoder run records the hash of `run_baseline.py` as it was then
   (`b1d081a2...`, commit `e2f530d`, path `experiment/run_baseline.py`). The file was later moved to
-  `experiment/baseline/` and only its path set-up and default data-path lines changed. Check out tag `pre-restructure` (or commit `e2f530d`)
+  `experiment/baseline/` and only its path set-up and default data-path lines changed. Check out commit `e2f530d`
   to obtain the exact version.
 - **Dirty working trees.** Several runs record `git.dirty: true` with uncommitted files, because the framework was being
   built while the experiments ran. The hashes above are the reliable link between a run and the code.
@@ -105,6 +105,6 @@ lock files and the model weights are not included.
 - **Ollama internal timings** (load, prompt evaluation) were not recorded for the 480 QueryMind trials, only for SQLCoder
   and the 8-question control.
 
-## Publication status
+## Shareable subset
 
-Nothing here has been pushed publicly without review. `exp_runs/` stays git-ignored; `evidence/` is the shareable subset.
+`evidence/` is the shareable subset of the raw runs: sanitized copies of the files that support the published results, each with a checksum.

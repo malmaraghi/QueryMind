@@ -38,5 +38,5 @@ python experiment/exp_comp.py --llm llama3.1:8b --embedding mxbai-embed-large:la
 ```
 
 Do not commit credentials. Note that `exp_comp.py` was adjusted once (imports and a timestamped output
-directory under `exp_runs/`); the originals are in git history (tag `pre-cleanup` and the commit
+directory under `exp_runs/`); the originals are in git history (commit
 `19531f7`).

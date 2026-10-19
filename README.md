@@ -244,7 +244,7 @@ QueryMind/
         └── scripts/              The legacy runner that produced it
 ```
 
-Not in the repository: the raw run output (`exp_runs/`), the Python environment and private working notes. They are created locally and git-ignored. See [`docs/PROJECT_STRUCTURE.md`](docs/PROJECT_STRUCTURE.md) for details and for where each file moved, and [`research/README.md`](research/README.md) for the result-to-file map.
+Raw run output (`exp_runs/`) is generated when the experiments are run and is not included here; the evidence behind the published results is in `research/`. See [`docs/PROJECT_STRUCTURE.md`](docs/PROJECT_STRUCTURE.md) for details and for where each file moved, and [`research/README.md`](research/README.md) for the result-to-file map.
 
 ## Data, model licenses, and citation
 
