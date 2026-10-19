@@ -1,0 +1,19 @@
+Table chunks found:
+customers
+employees
+offices
+orderdetails
+orders
+payments
+productlines
+products
+✓ Schema indexed: 8 tables.
+[control] q101: executed correct=True retrieval=5.63s generation=36.23s (ollama load 6.846465361s)
+[control] q105: executed correct=True retrieval=5.40s generation=38.32s (ollama load 6.917526036s)
+[control] q110: executed correct=True retrieval=5.38s generation=38.28s (ollama load 6.639475863s)
+[control] q117: executed correct=True retrieval=5.52s generation=46.74s (ollama load 6.576949862s)
+[control] q121: executed correct=True retrieval=5.38s generation=43.87s (ollama load 6.851061304s)
+[control] q125: executed correct=True retrieval=5.38s generation=38.16s (ollama load 6.758688048s)
+[control] q128: executed correct=True retrieval=5.41s generation=43.36s (ollama load 6.710105048s)
+[control] q131: executed correct=True retrieval=5.38s generation=41.16s (ollama load 6.401386818s)
+control run written to <repo>/exp_runs/20261018T081645Z_qm-latency-control [completed]

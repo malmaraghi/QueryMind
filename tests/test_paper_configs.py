@@ -17,12 +17,12 @@ def load(path):
 class PaperConfigurationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.configs = load(os.path.join(EXP, "paper_configs.json"))
-        cls.summary = {item["file"]: item for item in load(os.path.join(ROOT, "exp_com_res", "summary_report.json"))}
+        cls.configs = load(os.path.join(EXP, "benchmark", "paper_configs.json"))
+        cls.summary = {item["file"]: item for item in load(os.path.join(ROOT, "archive", "pilot-evaluation", "results", "summary_report.json"))}
 
     def test_exactly_the_historical_configurations(self):
         historical = set()
-        for path in glob.glob(os.path.join(ROOT, "exp_com_res", "results_*.json")):
+        for path in glob.glob(os.path.join(ROOT, "archive", "pilot-evaluation", "results", "results_*.json")):
             row = load(path)[0]
             historical.add((row["main_llm"], row["embedding_model"]))
         declared = {(c["llm"], c["embedding"]) for c in self.configs["paper_configurations"]}
@@ -51,7 +51,7 @@ class PaperConfigurationTests(unittest.TestCase):
         self.assertIn("Not in the paper", extra[0]["note"])
 
     def test_script_covers_paper_configs_and_never_embeds_secrets(self):
-        with open(os.path.join(EXP, "run_paper_benchmark.sh"), encoding="utf-8") as handle:
+        with open(os.path.join(EXP, "benchmark", "run_paper_benchmark.sh"), encoding="utf-8") as handle:
             script = handle.read()
         self.assertIn("--repeats", script)
         self.assertIn("benchmark_30.json", script)

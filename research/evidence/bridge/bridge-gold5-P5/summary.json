@@ -1,0 +1,116 @@
+{
+  "configs": {
+    "llama3.1:8b + mxbai-embed-large:latest": {
+      "n_trials": 15,
+      "n_questions": 5,
+      "n_repeats": 3,
+      "status_counts": {
+        "retrieval_error": 0,
+        "generation_error": 0,
+        "validation_failure": 0,
+        "db_error": 0,
+        "executed": 15
+      },
+      "execution_result_accuracy": 1.0,
+      "sql_execution_success_rate": 1.0,
+      "executed_but_incorrect": 0,
+      "accuracy_by_repeat": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0
+      },
+      "accuracy_stdev_across_repeats": 0.0,
+      "legacy_result_match_rate": 0.8,
+      "retrieval": {
+        "mean_recall_at_1": 0.8,
+        "mean_recall_at_3": 1.0,
+        "mean_recall_at_5": 1.0,
+        "mean_recall_at_configured_top_k": 1.0,
+        "full_recall_rate": 1.0
+      },
+      "latency_seconds": {
+        "retrieval": {
+          "n": 15,
+          "mean": 5.372682268066273,
+          "median": 5.371462515999156,
+          "stdev": 0.0151173903173745,
+          "min": 5.351860316000966,
+          "max": 5.399247984001704
+        },
+        "generation": {
+          "n": 15,
+          "mean": 39.078525401399624,
+          "median": 38.01009712400264,
+          "stdev": 3.3831143612497137,
+          "min": 35.250791701997514,
+          "max": 44.97327813799711
+        },
+        "db_execution": {
+          "n": 15,
+          "mean": 0.0004942458666240176,
+          "median": 0.0004673039984481875,
+          "stdev": 9.522905183838468e-05,
+          "min": 0.0003694589977385476,
+          "max": 0.0006627219991059974
+        },
+        "end_to_end": {
+          "n": 15,
+          "mean": 44.452005933066296,
+          "median": 43.375531330999365,
+          "stdev": 3.3946275825682366,
+          "min": 40.616116204997525,
+          "max": 50.360756510999636
+        }
+      },
+      "per_question": {
+        "1": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "2": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "3": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "4": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "5": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        }
+      }
+    }
+  },
+  "unverified_question_ids": [],
+  "status": "completed"
+}

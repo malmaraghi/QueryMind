@@ -44,6 +44,7 @@ chroma.sqlite3
 exp_runs/
 *.lock
 *.log
+!research/evidence/logs/*.log
 *.tmp
 
 # --- Private working notes: never published

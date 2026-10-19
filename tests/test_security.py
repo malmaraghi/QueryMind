@@ -16,7 +16,7 @@ def check(sql):
 
 class SqlValidatorAcceptTests(unittest.TestCase):
     def test_every_reference_query_of_both_benchmarks_is_accepted(self):
-        for name in ("benchmark_30.json", "gold_questions.json"):
+        for name in ("benchmark/benchmark_30.json", "pilot/gold_questions.json"):
             with open(os.path.join(context.EXPERIMENT, name), encoding="utf-8") as handle:
                 data = json.load(handle)
             for q in (data["questions"] if isinstance(data, dict) else data):

@@ -1,0 +1,381 @@
+{
+  "status": "completed",
+  "kind": "external_baseline",
+  "started_utc": "2026-10-18T07:43:39+00:00",
+  "command": [
+    "experiment/run_baseline.py",
+    "--repeats",
+    "3",
+    "--tag",
+    "sqlcoder-8b-baseline"
+  ],
+  "settings": {
+    "model": "sqlcoder-llama3-8b:q4_k_m",
+    "manifest": "<repo>/experiment/baseline_model_manifest.json",
+    "questions": "<repo>/experiment/benchmark_30.json",
+    "question_ids": null,
+    "max_questions": null,
+    "repeats": 3,
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 1024,
+    "generation_timeout": 300,
+    "instructions": "Write the query in MariaDB (MySQL-compatible) SQL.",
+    "tag": "sqlcoder-8b-baseline",
+    "no_warmup": false
+  },
+  "configs": [
+    {
+      "llm": "Defog llama-3-sqlcoder-8b (Q4_K_M)",
+      "embedding": "none (full schema, no retrieval)"
+    }
+  ],
+  "git": {
+    "commit": "20b775016d4cff1de3c8ed798dc15fa863a060a8",
+    "branch": "main",
+    "dirty": true,
+    "uncommitted_files": [
+      "?? experiment/baseline_model_manifest.json",
+      "?? experiment/compare_baseline.py",
+      "?? experiment/latency_control.py",
+      "?? experiment/run_baseline.py",
+      "?? tests/test_baseline.py",
+      "?? tests/test_compare_baseline.py"
+    ]
+  },
+  "python": {
+    "version": "3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]",
+    "executable": "<repo>/venv/bin/python",
+    "implementation": "CPython"
+  },
+  "dependencies": {
+    "annotated-types": "0.7.0",
+    "anyio": "4.12.1",
+    "attrs": "25.4.0",
+    "backoff": "2.2.1",
+    "bcrypt": "5.0.0",
+    "blinker": "1.9.0",
+    "build": "1.4.0",
+    "certifi": "2026.1.4",
+    "charset-normalizer": "3.4.4",
+    "chromadb": "1.4.0",
+    "click": "8.3.1",
+    "coloredlogs": "15.0.1",
+    "distro": "1.9.0",
+    "durationpy": "0.10",
+    "filelock": "3.20.3",
+    "Flask": "3.1.2",
+    "flatbuffers": "25.12.19",
+    "fsspec": "2026.1.0",
+    "google-auth": "2.47.0",
+    "googleapis-common-protos": "1.72.0",
+    "grpcio": "1.76.0",
+    "h11": "0.16.0",
+    "hf-xet": "1.2.0",
+    "httpcore": "1.0.9",
+    "httptools": "0.7.1",
+    "httpx": "0.28.1",
+    "huggingface_hub": "1.3.1",
+    "humanfriendly": "10.0",
+    "idna": "3.11",
+    "importlib_metadata": "8.7.1",
+    "importlib_resources": "6.5.2",
+    "itsdangerous": "2.2.0",
+    "Jinja2": "3.1.6",
+    "jsonschema": "4.26.0",
+    "jsonschema-specifications": "2025.9.1",
+    "kubernetes": "34.1.0",
+    "mariadb": "1.1.14",
+    "markdown-it-py": "4.0.0",
+    "MarkupSafe": "3.0.3",
+    "mdurl": "0.1.2",
+    "mmh3": "5.2.0",
+    "mpmath": "1.3.0",
+    "mysql-connector-python": "9.5.0",
+    "numpy": "2.4.1",
+    "oauthlib": "3.3.1",
+    "ollama": "0.6.1",
+    "onnxruntime": "1.23.2",
+    "opentelemetry-api": "1.39.1",
+    "opentelemetry-exporter-otlp-proto-common": "1.39.1",
+    "opentelemetry-exporter-otlp-proto-grpc": "1.39.1",
+    "opentelemetry-proto": "1.39.1",
+    "opentelemetry-sdk": "1.39.1",
+    "opentelemetry-semantic-conventions": "0.60b1",
+    "orjson": "3.11.5",
+    "overrides": "7.7.0",
+    "packaging": "25.0",
+    "pip": "24.0",
+    "posthog": "5.4.0",
+    "protobuf": "6.33.4",
+    "pyasn1": "0.6.1",
+    "pyasn1_modules": "0.4.2",
+    "pybase64": "1.4.3",
+    "pydantic": "2.12.5",
+    "pydantic_core": "2.41.5",
+    "Pygments": "2.19.2",
+    "PyPika": "0.48.9",
+    "pyproject_hooks": "1.2.0",
+    "python-dateutil": "2.9.0.post0",
+    "python-dotenv": "1.2.1",
+    "PyYAML": "6.0.3",
+    "referencing": "0.37.0",
+    "requests": "2.32.5",
+    "requests-oauthlib": "2.0.0",
+    "rich": "14.2.0",
+    "rpds-py": "0.30.0",
+    "rsa": "4.9.1",
+    "shellingham": "1.5.4",
+    "six": "1.17.0",
+    "sympy": "1.14.0",
+    "tenacity": "9.1.2",
+    "tokenizers": "0.22.2",
+    "tqdm": "4.67.1",
+    "typer": "0.21.1",
+    "typer-slim": "0.21.1",
+    "typing-inspection": "0.4.2",
+    "typing_extensions": "4.15.0",
+    "urllib3": "2.3.0",
+    "uvicorn": "0.40.0",
+    "uvloop": "0.22.1",
+    "watchfiles": "1.1.1",
+    "websocket-client": "1.9.0",
+    "websockets": "16.0",
+    "Werkzeug": "3.1.5",
+    "zipp": "3.23.0"
+  },
+  "ollama_version": "0.12.1",
+  "hardware": {
+    "platform": "Linux-6.14.0-35-generic-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cpu_count_logical": 16,
+    "cpu_model": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "memory_total_kb": 15757728,
+    "gpu": [
+      "NVIDIA GeForce RTX 3050 Laptop GPU, 4096 MiB, 535.274.02"
+    ]
+  },
+  "generation": {
+    "options": {
+      "temperature": 0.0,
+      "seed": 42,
+      "num_ctx": 4096,
+      "num_predict": 1024,
+      "stop": [
+        "<|eot_id|>",
+        "```"
+      ]
+    },
+    "timeout_s": 300,
+    "mode": "raw /api/generate",
+    "determinism_note": "temperature=0 and a fixed seed reduce, but do not guarantee, identical outputs: results can still differ across Ollama/llama.cpp versions, GPU vs CPU execution, quantization, batching and hardware. Use repeated trials and report the spread instead of assuming determinism."
+  },
+  "baseline": {
+    "ollama_model": "sqlcoder-llama3-8b:q4_k_m",
+    "model_manifest": {
+      "display_name": "Defog llama-3-sqlcoder-8b (Q4_K_M)",
+      "role": "external Text-to-SQL baseline (primary), approved by the supervisor-selected plan",
+      "defog_model": {
+        "repo": "defog/llama-3-sqlcoder-8b",
+        "url": "https://huggingface.co/defog/llama-3-sqlcoder-8b",
+        "revision": "0f96d32e16737bda1bbe0d8fb13a932a8a3fa0bb",
+        "base_model": "Meta-Llama-3-8B-Instruct",
+        "license_on_card": "CC-BY-SA-4.0 (the card does not mention Meta's Llama 3 license terms; not verified)",
+        "official_prompt": "https://huggingface.co/defog/llama-3-sqlcoder-8b (section 'Prompt'), temperature 0, no sampling"
+      },
+      "gguf": {
+        "source_repo": "QuantFactory/llama-3-sqlcoder-8b-GGUF",
+        "source_url": "https://huggingface.co/QuantFactory/llama-3-sqlcoder-8b-GGUF",
+        "revision": "11fb499426cb250b6e7cc189345bbac06f343498",
+        "filename": "llama-3-sqlcoder-8b.Q4_K_M.gguf",
+        "quantization": "Q4_K_M",
+        "size_bytes": 4920733952,
+        "sha256": "9c05b22878eb9883de60d7aa5961793541d2b040fc07a3ba61456149351eb5b1",
+        "sha256_verified_locally": true,
+        "published_by": "QuantFactory (community quantizer; Defog publishes no GGUF)",
+        "download_url": "https://huggingface.co/QuantFactory/llama-3-sqlcoder-8b-GGUF/resolve/11fb499426cb250b6e7cc189345bbac06f343498/llama-3-sqlcoder-8b.Q4_K_M.gguf",
+        "downloaded_utc": "2026-10-18",
+        "conversion_fidelity": "not independently verified"
+      },
+      "ollama_import": {
+        "model_name": "sqlcoder-llama3-8b:q4_k_m",
+        "modelfile": "FROM <models>/qm-baseline/llama-3-sqlcoder-8b.Q4_K_M.gguf\nTEMPLATE \"{{ .Prompt }}\"\nPARAMETER stop <|eot_id|>\n",
+        "ollama_version": "0.12.1",
+        "ollama_manifest_digest": "d23f446e02e8b3d1d0f1f8b9c9dfdf3d6340a9328d0e2f75ce7daf7b50711df8",
+        "note": "TEMPLATE is the bare prompt; requests use /api/generate with raw=true so Ollama applies no chat template"
+      }
+    },
+    "prompt_template": "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nGenerate a SQL query to answer this question: `{user_question}`\n{instructions}\n\nDDL statements:\n{create_table_statements}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nThe following SQL query best answers the question `{user_question}`:\n```sql\n",
+    "prompt_template_sha256": "31127eca79b4b05035926e7bc6c78bd9bf46e8f3af41edd916e5a06633b03527",
+    "instructions": "Write the query in MariaDB (MySQL-compatible) SQL.",
+    "deviations_from_official_setup": [
+      "Prompt: official template; {instructions} filled with one MariaDB dialect sentence (the slot is empty in the card).",
+      "Schema: the same CREATE TABLE statements QueryMind indexes (SHOW CREATE TABLE), all 8 tables, joined by blank lines.",
+      "Decoding: greedy (temperature 0, seed 42); Defog's benchmarks use beam search, which Ollama/llama.cpp do not offer.",
+      "Raw mode: the official prompt is sent unchanged to /api/generate with raw=true (no Ollama chat template).",
+      "Stop sequences <|eot_id|> and the closing code fence, and num_predict capped at 1024 (QueryMind sets neither).",
+      "Quantization: community GGUF Q4_K_M (QuantFactory, plain llama.cpp quantization); Defog publishes no GGUF.",
+      "Context: num_ctx set explicitly (QueryMind's runs used Ollama's default)."
+    ],
+    "schema_supplied": "all CREATE TABLE statements of the connected database (same text QueryMind indexes)",
+    "answers_or_expected_results_in_prompt": false,
+    "gguf_blob_sha256_in_ollama": "9c05b22878eb9883de60d7aa5961793541d2b040fc07a3ba61456149351eb5b1",
+    "schema_ddl_sha256": "1ae2f1848aa768074281d98adb6f5d1e6790e210896390535f0b036395542bd3",
+    "schema_ddl_chars": 4300,
+    "warmup_seconds": 0.73,
+    "ollama_ps_after_warmup": "NAME                         ID              SIZE      PROCESSOR          CONTEXT    UNTIL              \nsqlcoder-llama3-8b:q4_k_m    d23f446e02e8    6.5 GB    38%/62% CPU/GPU    4096       4 minutes from now"
+  },
+  "evaluation": {
+    "primary_metric": "execution_result_accuracy",
+    "note": "result_correct means execution-result equivalence with the reference query on this one database state. It is not a proof of semantic correctness: different SQL can return identical rows on this data.",
+    "legacy_metric_enabled": false,
+    "max_rows": 100000,
+    "statement_timeout_s": 60
+  },
+  "repeats": 3,
+  "files": {
+    "questions": {
+      "path": "experiment/benchmark_30.json",
+      "sha256": "99561a263a0641afed67445d47bcfc83e6ca5d0af0798311bcf188e531f9caa3"
+    },
+    "run_baseline_py": "b1d081a25de1134a839fa1496d2825d2e5777ffc27e23df0e4b5ef72303766c3",
+    "query_executor_py": "025ddc92c69d2f7db3a110fe8508e8b8956b1b8738b6ec7af4049e34575cab61",
+    "llm_engine_py": "12ea0cf03c046b5984e5329920f30e12138c488f25dbef9a6f742e3dcda33902"
+  },
+  "question_ids": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132
+  ],
+  "models": {
+    "sqlcoder-llama3-8b:q4_k_m": {
+      "name": "sqlcoder-llama3-8b:q4_k_m",
+      "digest": "d23f446e02e8b3d1d0f1f8b9c9dfdf3d6340a9328d0e2f75ce7daf7b50711df8",
+      "size_bytes": 4920734412,
+      "family": "llama",
+      "parameter_size": "8.0B",
+      "quantization_level": "Q4_K_M",
+      "format": "gguf"
+    }
+  },
+  "database_access": {
+    "grants": [
+      "GRANT USAGE ON *.* TO `querymind_eval`@`localhost` IDENTIFIED BY PASSWORD '<redacted>'",
+      "GRANT SELECT ON `classicmodels_gold`.* TO `querymind_eval`@`localhost`",
+      "GRANT SELECT ON `<other_database>`.* TO `querymind_eval`@`localhost`"
+    ],
+    "session_guards": {
+      "transaction_read_only": true,
+      "max_statement_time_s": 60
+    }
+  },
+  "dataset": {
+    "database": "classicmodels_gold",
+    "server_version": "10.11.13-MariaDB-0ubuntu0.24.04.1",
+    "tables": {
+      "customers": {
+        "rows": 122,
+        "checksum": 3143500898
+      },
+      "employees": {
+        "rows": 23,
+        "checksum": 1700262141
+      },
+      "offices": {
+        "rows": 7,
+        "checksum": 371848451
+      },
+      "orderdetails": {
+        "rows": 2996,
+        "checksum": 2289934279
+      },
+      "orders": {
+        "rows": 326,
+        "checksum": 2681462334
+      },
+      "payments": {
+        "rows": 273,
+        "checksum": 1730910113
+      },
+      "productlines": {
+        "rows": 7,
+        "checksum": 1524606903
+      },
+      "products": {
+        "rows": 110,
+        "checksum": 4002619112
+      }
+    },
+    "schema_sha256": "f1fbff5e16cca4ed2d82a4dd79a79f5fb2dac9a1015aea9f4d84cd394931853e"
+  },
+  "reference_verification": {
+    "verified_ids": [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132
+    ],
+    "unverified_ids": []
+  },
+  "database_reconnects": 0,
+  "updated_utc": "2026-10-18T08:16:33+00:00",
+  "finished_utc": "2026-10-18T08:16:33+00:00"
+}

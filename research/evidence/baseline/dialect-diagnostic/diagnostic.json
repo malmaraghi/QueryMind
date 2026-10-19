@@ -1,0 +1,477 @@
+{
+  "kind": "post_hoc_diagnostic_not_a_primary_result",
+  "baseline_run": "exp_runs/20261018T074339Z_sqlcoder-8b-baseline",
+  "querymind_run": "exp_runs/20261017T131359Z_paper-v1-P5",
+  "rewrite": "removed the PostgreSQL-only modifier NULLS FIRST/LAST from SQL that failed with a syntax error",
+  "trials_rewritten": 34,
+  "rewritten_outcomes": {
+    "still fails: Table 'classicmodels_gold.Products' doesn't exist": 1,
+    "correct": 33
+  },
+  "baseline_correct_before": 51,
+  "baseline_correct_after": 84,
+  "baseline_accuracy_before": 0.53125,
+  "baseline_accuracy_after": 0.875,
+  "paired_vs_querymind_after_rewrite": {
+    "questions_compared": 32,
+    "accuracy": {
+      "querymind": 0.90625,
+      "baseline": 0.875,
+      "difference_baseline_minus_querymind": -0.03125,
+      "difference_ci95_paired_bootstrap": [
+        -0.15625,
+        0.09375
+      ]
+    },
+    "paired_questions": {
+      "solved_by_both": 26,
+      "only_querymind": 3,
+      "only_baseline": 2,
+      "solved_by_neither": 1,
+      "exact_mcnemar_p": 1.0
+    },
+    "mean_end_to_end_latency_s": {
+      "querymind": 43.156036368427124,
+      "baseline": 20.546239748239902,
+      "difference_baseline_minus_querymind": -22.609796620187222,
+      "difference_ci95_paired_bootstrap": [
+        -23.201520956760266,
+        -21.984728981822894
+      ]
+    },
+    "per_question": {
+      "101": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 40.20032468933399,
+        "baseline_e2e_s": 17.345842910000403
+      },
+      "102": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 45.94791735366683,
+        "baseline_e2e_s": 22.80959975866669
+      },
+      "103": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 37.534304537332595,
+        "baseline_e2e_s": 17.644913106665626
+      },
+      "104": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 37.394106738332994,
+        "baseline_e2e_s": 18.494146434998886
+      },
+      "105": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 42.285966071999304,
+        "baseline_e2e_s": 17.71574837733351
+      },
+      "106": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 42.06779224000032,
+        "baseline_e2e_s": 19.174634319332352
+      },
+      "107": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 0.0,
+        "querymind_e2e_s": 43.847151500332984,
+        "baseline_e2e_s": 22.999128782666958
+      },
+      "108": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 44.34133613733502,
+        "baseline_e2e_s": 18.043047805001454
+      },
+      "109": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 43.83002465733322,
+        "baseline_e2e_s": 20.082212988333293
+      },
+      "110": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 41.55777406933339,
+        "baseline_e2e_s": 21.216806139667217
+      },
+      "111": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 45.880007895999974,
+        "baseline_e2e_s": 21.68411665633418
+      },
+      "112": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 44.30654321033338,
+        "baseline_e2e_s": 20.855158389332548
+      },
+      "113": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 48.312608108667824,
+        "baseline_e2e_s": 25.7992945749999
+      },
+      "114": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 40.4369387446665,
+        "baseline_e2e_s": 19.52828920766721
+      },
+      "115": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 48.145920700999945,
+        "baseline_e2e_s": 25.6516870893344
+      },
+      "116": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 41.201579571335365,
+        "baseline_e2e_s": 16.628897307000443
+      },
+      "117": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 49.683146974001524,
+        "baseline_e2e_s": 25.204595808668575
+      },
+      "118": {
+        "querymind_accuracy": 0.0,
+        "baseline_accuracy": 0.0,
+        "querymind_e2e_s": 44.28419179199894,
+        "baseline_e2e_s": 21.029271067001293
+      },
+      "119": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 44.05600077666653,
+        "baseline_e2e_s": 21.438039011334087
+      },
+      "120": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 43.00081653866558,
+        "baseline_e2e_s": 20.314864909333362
+      },
+      "121": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 46.40577672066623,
+        "baseline_e2e_s": 23.595535530000536
+      },
+      "122": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 38.48631573733413,
+        "baseline_e2e_s": 20.035628239331952
+      },
+      "123": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 43.65565616366681,
+        "baseline_e2e_s": 19.071439221335215
+      },
+      "124": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 43.800061180666184,
+        "baseline_e2e_s": 19.95724785366595
+      },
+      "125": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 0.0,
+        "querymind_e2e_s": 41.304880898000796,
+        "baseline_e2e_s": 18.945089628334244
+      },
+      "126": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 40.66543285533165,
+        "baseline_e2e_s": 18.160392245665815
+      },
+      "127": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 37.47763863533328,
+        "baseline_e2e_s": 17.608848560001206
+      },
+      "128": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 46.13825431533284,
+        "baseline_e2e_s": 21.99246260566603
+      },
+      "129": {
+        "querymind_accuracy": 0.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 45.755760874999396,
+        "baseline_e2e_s": 23.21249829066801
+      },
+      "130": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 0.0,
+        "querymind_e2e_s": 42.29913451733349,
+        "baseline_e2e_s": 20.639863910000713
+      },
+      "131": {
+        "querymind_accuracy": 1.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 44.77411046099951,
+        "baseline_e2e_s": 22.19862856866651
+      },
+      "132": {
+        "querymind_accuracy": 0.0,
+        "baseline_accuracy": 1.0,
+        "querymind_e2e_s": 41.915689121667434,
+        "baseline_e2e_s": 18.40174264666833
+      }
+    }
+  },
+  "changes": [
+    {
+      "question_id": 101,
+      "repeat": 1,
+      "original_sql": "SELECT e.firstName, e.lastName FROM employees e ORDER BY e.lastName NULLS LAST;",
+      "rewritten_sql": "SELECT e.firstName, e.lastName FROM employees e ORDER BY e.lastName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 101,
+      "repeat": 2,
+      "original_sql": "SELECT e.firstName, e.lastName FROM employees e ORDER BY e.lastName NULLS LAST;",
+      "rewritten_sql": "SELECT e.firstName, e.lastName FROM employees e ORDER BY e.lastName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 101,
+      "repeat": 3,
+      "original_sql": "SELECT e.firstName, e.lastName FROM employees e ORDER BY e.lastName NULLS LAST;",
+      "rewritten_sql": "SELECT e.firstName, e.lastName FROM employees e ORDER BY e.lastName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 104,
+      "repeat": 1,
+      "original_sql": "SELECT p.productCode, p.productName, p.buyPrice FROM products p WHERE p.buyPrice > 100 ORDER BY p.buyPrice DESC NULLS LAST;",
+      "rewritten_sql": "SELECT p.productCode, p.productName, p.buyPrice FROM products p WHERE p.buyPrice > 100 ORDER BY p.buyPrice DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 104,
+      "repeat": 2,
+      "original_sql": "SELECT p.productCode, p.productName, p.buyPrice FROM products p WHERE p.buyPrice > 100 ORDER BY p.buyPrice DESC NULLS LAST;",
+      "rewritten_sql": "SELECT p.productCode, p.productName, p.buyPrice FROM products p WHERE p.buyPrice > 100 ORDER BY p.buyPrice DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 104,
+      "repeat": 3,
+      "original_sql": "SELECT p.productCode, p.productName, p.buyPrice FROM products p WHERE p.buyPrice > 100 ORDER BY p.buyPrice DESC NULLS LAST;",
+      "rewritten_sql": "SELECT p.productCode, p.productName, p.buyPrice FROM products p WHERE p.buyPrice > 100 ORDER BY p.buyPrice DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 109,
+      "repeat": 1,
+      "original_sql": "SELECT e.firstName, e.lastName, o.city FROM employees e JOIN offices o ON e.officeCode = o.officeCode ORDER BY e.employeeNumber NULLS LAST;",
+      "rewritten_sql": "SELECT e.firstName, e.lastName, o.city FROM employees e JOIN offices o ON e.officeCode = o.officeCode ORDER BY e.employeeNumber;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 109,
+      "repeat": 2,
+      "original_sql": "SELECT e.firstName, e.lastName, o.city FROM employees e JOIN offices o ON e.officeCode = o.officeCode ORDER BY e.employeeNumber NULLS LAST;",
+      "rewritten_sql": "SELECT e.firstName, e.lastName, o.city FROM employees e JOIN offices o ON e.officeCode = o.officeCode ORDER BY e.employeeNumber;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 109,
+      "repeat": 3,
+      "original_sql": "SELECT e.firstName, e.lastName, o.city FROM employees e JOIN offices o ON e.officeCode = o.officeCode ORDER BY e.employeeNumber NULLS LAST;",
+      "rewritten_sql": "SELECT e.firstName, e.lastName, o.city FROM employees e JOIN offices o ON e.officeCode = o.officeCode ORDER BY e.employeeNumber;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 112,
+      "repeat": 1,
+      "original_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN payments p ON c.customerNumber = p.customerNumber WHERE p.amount > 100000 ORDER BY c.customerName NULLS LAST;",
+      "rewritten_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN payments p ON c.customerNumber = p.customerNumber WHERE p.amount > 100000 ORDER BY c.customerName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 112,
+      "repeat": 2,
+      "original_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN payments p ON c.customerNumber = p.customerNumber WHERE p.amount > 100000 ORDER BY c.customerName NULLS LAST;",
+      "rewritten_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN payments p ON c.customerNumber = p.customerNumber WHERE p.amount > 100000 ORDER BY c.customerName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 112,
+      "repeat": 3,
+      "original_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN payments p ON c.customerNumber = p.customerNumber WHERE p.amount > 100000 ORDER BY c.customerName NULLS LAST;",
+      "rewritten_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN payments p ON c.customerNumber = p.customerNumber WHERE p.amount > 100000 ORDER BY c.customerName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 114,
+      "repeat": 1,
+      "original_sql": "SELECT c.country, COUNT(c.customerNumber) AS customer_count FROM customers c GROUP BY c.country ORDER BY customer_count DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.country, COUNT(c.customerNumber) AS customer_count FROM customers c GROUP BY c.country ORDER BY customer_count DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 114,
+      "repeat": 2,
+      "original_sql": "SELECT c.country, COUNT(c.customerNumber) AS customer_count FROM customers c GROUP BY c.country ORDER BY customer_count DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.country, COUNT(c.customerNumber) AS customer_count FROM customers c GROUP BY c.country ORDER BY customer_count DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 114,
+      "repeat": 3,
+      "original_sql": "SELECT c.country, COUNT(c.customerNumber) AS customer_count FROM customers c GROUP BY c.country ORDER BY customer_count DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.country, COUNT(c.customerNumber) AS customer_count FROM customers c GROUP BY c.country ORDER BY customer_count DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 115,
+      "repeat": 1,
+      "original_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber JOIN products p ON od.productCode = p.productCode WHERE LOWER(p.productLine) = 'planes' ORDER BY c.customerName NULLS LAST;",
+      "rewritten_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber JOIN products p ON od.productCode = p.productCode WHERE LOWER(p.productLine) = 'planes' ORDER BY c.customerName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 115,
+      "repeat": 2,
+      "original_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber JOIN products p ON od.productCode = p.productCode WHERE LOWER(p.productLine) = 'planes' ORDER BY c.customerName NULLS LAST;",
+      "rewritten_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber JOIN products p ON od.productCode = p.productCode WHERE LOWER(p.productLine) = 'planes' ORDER BY c.customerName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 115,
+      "repeat": 3,
+      "original_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber JOIN products p ON od.productCode = p.productCode WHERE LOWER(p.productLine) = 'planes' ORDER BY c.customerName NULLS LAST;",
+      "rewritten_sql": "SELECT DISTINCT c.customerName FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber JOIN products p ON od.productCode = p.productCode WHERE LOWER(p.productLine) = 'planes' ORDER BY c.customerName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 117,
+      "repeat": 1,
+      "original_sql": "SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.country ORDER BY total_sales DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.country ORDER BY total_sales DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 117,
+      "repeat": 2,
+      "original_sql": "SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.country ORDER BY total_sales DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.country ORDER BY total_sales DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 117,
+      "repeat": 3,
+      "original_sql": "SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.country ORDER BY total_sales DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber JOIN orderdetails od ON o.orderNumber = od.orderNumber GROUP BY c.country ORDER BY total_sales DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 118,
+      "repeat": 1,
+      "original_sql": "SELECT p.MSRP, row_number() OVER (ORDER BY p.MSRP DESC) AS rank FROM Products p ORDER BY rank NULLS LAST;",
+      "rewritten_sql": "SELECT p.MSRP, row_number() OVER (ORDER BY p.MSRP DESC) AS rank FROM Products p ORDER BY rank;",
+      "outcome": "still fails: Table 'classicmodels_gold.Products' doesn't exist"
+    },
+    {
+      "question_id": 119,
+      "repeat": 1,
+      "original_sql": "SELECT o.city, COUNT(e.employeeNumber) AS employee_count FROM offices o JOIN employees e ON o.officeCode = e.officeCode GROUP BY o.city ORDER BY employee_count DESC NULLS LAST;",
+      "rewritten_sql": "SELECT o.city, COUNT(e.employeeNumber) AS employee_count FROM offices o JOIN employees e ON o.officeCode = e.officeCode GROUP BY o.city ORDER BY employee_count DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 119,
+      "repeat": 2,
+      "original_sql": "SELECT o.city, COUNT(e.employeeNumber) AS employee_count FROM offices o JOIN employees e ON o.officeCode = e.officeCode GROUP BY o.city ORDER BY employee_count DESC NULLS LAST;",
+      "rewritten_sql": "SELECT o.city, COUNT(e.employeeNumber) AS employee_count FROM offices o JOIN employees e ON o.officeCode = e.officeCode GROUP BY o.city ORDER BY employee_count DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 119,
+      "repeat": 3,
+      "original_sql": "SELECT o.city, COUNT(e.employeeNumber) AS employee_count FROM offices o JOIN employees e ON o.officeCode = e.officeCode GROUP BY o.city ORDER BY employee_count DESC NULLS LAST;",
+      "rewritten_sql": "SELECT o.city, COUNT(e.employeeNumber) AS employee_count FROM offices o JOIN employees e ON o.officeCode = e.officeCode GROUP BY o.city ORDER BY employee_count DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 121,
+      "repeat": 1,
+      "original_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName HAVING COUNT(o.orderNumber) > 5 ORDER BY orderCount DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName HAVING COUNT(o.orderNumber) > 5 ORDER BY orderCount DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 121,
+      "repeat": 2,
+      "original_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName HAVING COUNT(o.orderNumber) > 5 ORDER BY orderCount DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName HAVING COUNT(o.orderNumber) > 5 ORDER BY orderCount DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 121,
+      "repeat": 3,
+      "original_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName HAVING COUNT(o.orderNumber) > 5 ORDER BY orderCount DESC NULLS LAST;",
+      "rewritten_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName HAVING COUNT(o.orderNumber) > 5 ORDER BY orderCount DESC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 127,
+      "repeat": 1,
+      "original_sql": "SELECT pl.productLine FROM productlines pl ORDER BY pl.productLine ASC NULLS LAST;",
+      "rewritten_sql": "SELECT pl.productLine FROM productlines pl ORDER BY pl.productLine ASC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 127,
+      "repeat": 2,
+      "original_sql": "SELECT pl.productLine FROM productlines pl ORDER BY pl.productLine ASC NULLS LAST;",
+      "rewritten_sql": "SELECT pl.productLine FROM productlines pl ORDER BY pl.productLine ASC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 127,
+      "repeat": 3,
+      "original_sql": "SELECT pl.productLine FROM productlines pl ORDER BY pl.productLine ASC NULLS LAST;",
+      "rewritten_sql": "SELECT pl.productLine FROM productlines pl ORDER BY pl.productLine ASC;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 131,
+      "repeat": 1,
+      "original_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName ORDER BY orderCount NULLS LAST;",
+      "rewritten_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName ORDER BY orderCount;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 131,
+      "repeat": 2,
+      "original_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName ORDER BY c.customerName NULLS LAST;",
+      "rewritten_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName ORDER BY c.customerName;",
+      "outcome": "correct"
+    },
+    {
+      "question_id": 131,
+      "repeat": 3,
+      "original_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName ORDER BY c.customerName NULLS LAST;",
+      "rewritten_sql": "SELECT c.customerName, COUNT(o.orderNumber) AS orderCount FROM customers c LEFT JOIN orders o ON c.customerNumber = o.customerNumber GROUP BY c.customerName ORDER BY c.customerName;",
+      "outcome": "correct"
+    }
+  ]
+}

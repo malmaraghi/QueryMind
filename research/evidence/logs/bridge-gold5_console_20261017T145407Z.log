@@ -1,0 +1,158 @@
+Running 5 configuration(s), 3 repeat(s) each, questions experiment/gold_questions.json, group bridge-gold5
+=== P1: gemma3:1b + mxbai-embed-large:latest ===
+5 question(s) x 3 repeat(s) x 1 configuration(s) = 15 trials
+Table chunks found:
+customers
+employees
+offices
+orderdetails
+orders
+payments
+productlines
+products
+✓ Schema indexed: 8 tables.
+[gemma3:1b + mxbai-embed-large:latest] q1 r1: executed correct=True total=5.58s (1/15)
+[gemma3:1b + mxbai-embed-large:latest] q1 r2: executed correct=True total=5.29s (2/15)
+[gemma3:1b + mxbai-embed-large:latest] q1 r3: executed correct=True total=5.92s (3/15)
+[gemma3:1b + mxbai-embed-large:latest] q2 r1: executed correct=True total=5.87s (4/15)
+[gemma3:1b + mxbai-embed-large:latest] q2 r2: executed correct=True total=5.30s (5/15)
+[gemma3:1b + mxbai-embed-large:latest] q2 r3: executed correct=True total=5.22s (6/15)
+[gemma3:1b + mxbai-embed-large:latest] q3 r1: executed correct=True total=4.67s (7/15)
+[gemma3:1b + mxbai-embed-large:latest] q3 r2: executed correct=True total=4.71s (8/15)
+[gemma3:1b + mxbai-embed-large:latest] q3 r3: executed correct=True total=5.17s (9/15)
+[gemma3:1b + mxbai-embed-large:latest] q4 r1: executed correct=True total=7.50s (10/15)
+[gemma3:1b + mxbai-embed-large:latest] q4 r2: executed correct=True total=7.23s (11/15)
+[gemma3:1b + mxbai-embed-large:latest] q4 r3: executed correct=True total=7.60s (12/15)
+[gemma3:1b + mxbai-embed-large:latest] q5 r1: executed correct=True total=7.11s (13/15)
+[gemma3:1b + mxbai-embed-large:latest] q5 r2: executed correct=True total=6.54s (14/15)
+[gemma3:1b + mxbai-embed-large:latest] q5 r3: executed correct=True total=6.77s (15/15)
+
+gemma3:1b + mxbai-embed-large:latest: execution-result accuracy=1.000  SQL success=1.000  legacy=0.8  mean e2e=6.03s  (n=15)
+
+Results written to <repo>/exp_runs/20261017T145407Z_bridge-gold5-P1  [status: completed]
+=== P2: gemma3:1b + all-minilm:latest ===
+5 question(s) x 3 repeat(s) x 1 configuration(s) = 15 trials
+Table chunks found:
+customers
+employees
+offices
+orderdetails
+orders
+payments
+productlines
+products
+✓ Schema indexed: 8 tables.
+[gemma3:1b + all-minilm:latest] q1 r1: executed correct=False total=5.44s (1/15)
+[gemma3:1b + all-minilm:latest] q1 r2: executed correct=True total=5.36s (2/15)
+[gemma3:1b + all-minilm:latest] q1 r3: executed correct=True total=5.70s (3/15)
+[gemma3:1b + all-minilm:latest] q2 r1: executed correct=True total=5.07s (4/15)
+[gemma3:1b + all-minilm:latest] q2 r2: executed correct=True total=5.66s (5/15)
+[gemma3:1b + all-minilm:latest] q2 r3: executed correct=True total=5.97s (6/15)
+[gemma3:1b + all-minilm:latest] q3 r1: executed correct=True total=6.04s (7/15)
+[gemma3:1b + all-minilm:latest] q3 r2: executed correct=True total=5.88s (8/15)
+[gemma3:1b + all-minilm:latest] q3 r3: executed correct=True total=5.56s (9/15)
+[gemma3:1b + all-minilm:latest] q4 r1: executed correct=True total=7.79s (10/15)
+[gemma3:1b + all-minilm:latest] q4 r2: executed correct=True total=7.62s (11/15)
+[gemma3:1b + all-minilm:latest] q4 r3: executed correct=True total=7.49s (12/15)
+[gemma3:1b + all-minilm:latest] q5 r1: executed correct=True total=6.63s (13/15)
+[gemma3:1b + all-minilm:latest] q5 r2: executed correct=True total=6.71s (14/15)
+[gemma3:1b + all-minilm:latest] q5 r3: executed correct=True total=6.48s (15/15)
+
+gemma3:1b + all-minilm:latest: execution-result accuracy=0.933  SQL success=1.000  legacy=0.7333333333333333  mean e2e=6.23s  (n=15)
+
+Results written to <repo>/exp_runs/20261017T145550Z_bridge-gold5-P2  [status: completed]
+=== P3: qwen3:1.7b + mxbai-embed-large:latest ===
+5 question(s) x 3 repeat(s) x 1 configuration(s) = 15 trials
+Table chunks found:
+customers
+employees
+offices
+orderdetails
+orders
+payments
+productlines
+products
+✓ Schema indexed: 8 tables.
+[qwen3:1.7b + mxbai-embed-large:latest] q1 r1: executed correct=True total=23.30s (1/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q1 r2: executed correct=True total=25.43s (2/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q1 r3: executed correct=True total=25.58s (3/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q2 r1: executed correct=True total=85.81s (4/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q2 r2: executed correct=True total=33.06s (5/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q2 r3: executed correct=True total=32.36s (6/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q3 r1: executed correct=True total=27.25s (7/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q3 r2: executed correct=True total=24.02s (8/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q3 r3: executed correct=True total=22.33s (9/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q4 r1: executed correct=True total=31.81s (10/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q4 r2: executed correct=True total=16.04s (11/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q4 r3: executed correct=True total=16.06s (12/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q5 r1: executed correct=True total=30.64s (13/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q5 r2: executed correct=True total=26.79s (14/15)
+[qwen3:1.7b + mxbai-embed-large:latest] q5 r3: executed correct=True total=26.71s (15/15)
+
+qwen3:1.7b + mxbai-embed-large:latest: execution-result accuracy=1.000  SQL success=1.000  legacy=0.0  mean e2e=29.81s  (n=15)
+
+Results written to <repo>/exp_runs/20261017T145725Z_bridge-gold5-P3  [status: completed]
+=== P4: qwen3:1.7b + all-minilm:latest ===
+5 question(s) x 3 repeat(s) x 1 configuration(s) = 15 trials
+Table chunks found:
+customers
+employees
+offices
+orderdetails
+orders
+payments
+productlines
+products
+✓ Schema indexed: 8 tables.
+[qwen3:1.7b + all-minilm:latest] q1 r1: executed correct=True total=19.95s (1/15)
+[qwen3:1.7b + all-minilm:latest] q1 r2: executed correct=True total=17.24s (2/15)
+[qwen3:1.7b + all-minilm:latest] q1 r3: executed correct=True total=17.26s (3/15)
+[qwen3:1.7b + all-minilm:latest] q2 r1: executed correct=False total=26.00s (4/15)
+[qwen3:1.7b + all-minilm:latest] q2 r2: executed correct=True total=15.82s (5/15)
+[qwen3:1.7b + all-minilm:latest] q2 r3: executed correct=True total=15.89s (6/15)
+[qwen3:1.7b + all-minilm:latest] q3 r1: executed correct=True total=23.48s (7/15)
+[qwen3:1.7b + all-minilm:latest] q3 r2: executed correct=True total=18.12s (8/15)
+[qwen3:1.7b + all-minilm:latest] q3 r3: executed correct=True total=18.17s (9/15)
+[qwen3:1.7b + all-minilm:latest] q4 r1: executed correct=True total=28.99s (10/15)
+[qwen3:1.7b + all-minilm:latest] q4 r2: executed correct=True total=21.77s (11/15)
+[qwen3:1.7b + all-minilm:latest] q4 r3: executed correct=True total=20.87s (12/15)
+[qwen3:1.7b + all-minilm:latest] q5 r1: executed correct=True total=22.10s (13/15)
+[qwen3:1.7b + all-minilm:latest] q5 r2: executed correct=True total=41.14s (14/15)
+[qwen3:1.7b + all-minilm:latest] q5 r3: executed correct=True total=41.07s (15/15)
+
+qwen3:1.7b + all-minilm:latest: execution-result accuracy=0.933  SQL success=1.000  legacy=0.0  mean e2e=23.19s  (n=15)
+
+Results written to <repo>/exp_runs/20261017T150519Z_bridge-gold5-P4  [status: completed]
+=== P5: llama3.1:8b + mxbai-embed-large:latest ===
+5 question(s) x 3 repeat(s) x 1 configuration(s) = 15 trials
+Table chunks found:
+customers
+employees
+offices
+orderdetails
+orders
+payments
+productlines
+products
+✓ Schema indexed: 8 tables.
+[llama3.1:8b + mxbai-embed-large:latest] q1 r1: executed correct=True total=40.62s (1/15)
+[llama3.1:8b + mxbai-embed-large:latest] q1 r2: executed correct=True total=41.07s (2/15)
+[llama3.1:8b + mxbai-embed-large:latest] q1 r3: executed correct=True total=41.70s (3/15)
+[llama3.1:8b + mxbai-embed-large:latest] q2 r1: executed correct=True total=43.38s (4/15)
+[llama3.1:8b + mxbai-embed-large:latest] q2 r2: executed correct=True total=44.13s (5/15)
+[llama3.1:8b + mxbai-embed-large:latest] q2 r3: executed correct=True total=42.25s (6/15)
+[llama3.1:8b + mxbai-embed-large:latest] q3 r1: executed correct=True total=41.64s (7/15)
+[llama3.1:8b + mxbai-embed-large:latest] q3 r2: executed correct=True total=41.44s (8/15)
+[llama3.1:8b + mxbai-embed-large:latest] q3 r3: executed correct=True total=41.95s (9/15)
+[llama3.1:8b + mxbai-embed-large:latest] q4 r1: executed correct=True total=49.88s (10/15)
+[llama3.1:8b + mxbai-embed-large:latest] q4 r2: executed correct=True total=50.36s (11/15)
+[llama3.1:8b + mxbai-embed-large:latest] q4 r3: executed correct=True total=49.21s (12/15)
+[llama3.1:8b + mxbai-embed-large:latest] q5 r1: executed correct=True total=46.49s (13/15)
+[llama3.1:8b + mxbai-embed-large:latest] q5 r2: executed correct=True total=46.56s (14/15)
+[llama3.1:8b + mxbai-embed-large:latest] q5 r3: executed correct=True total=46.09s (15/15)
+
+llama3.1:8b + mxbai-embed-large:latest: execution-result accuracy=1.000  SQL success=1.000  legacy=0.8  mean e2e=44.45s  (n=15)
+
+Results written to <repo>/exp_runs/20261017T151113Z_bridge-gold5-P5  [status: completed]
+All configurations finished.
+script-exit=0

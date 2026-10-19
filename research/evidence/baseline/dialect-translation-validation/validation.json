@@ -1,0 +1,1024 @@
+{
+  "summary": {
+    "supported_cases": 16,
+    "supported_passed": 16,
+    "unsupported_cases": 5,
+    "unsupported_refused": 5,
+    "naive_deletion_differs_in": 13,
+    "failures": [],
+    "validated": true,
+    "data": {
+      "rows": [
+        [
+          1,
+          3,
+          "x"
+        ],
+        [
+          2,
+          null,
+          "y"
+        ],
+        [
+          3,
+          1,
+          null
+        ],
+        [
+          4,
+          null,
+          null
+        ],
+        [
+          5,
+          2,
+          "x"
+        ],
+        [
+          6,
+          3,
+          null
+        ],
+        [
+          7,
+          1,
+          "z"
+        ],
+        [
+          8,
+          null,
+          "y"
+        ]
+      ],
+      "note": "columns a (INT) and b (VARCHAR) contain NULL and non-NULL values"
+    },
+    "oracle": "independent Python implementation of PostgreSQL's documented NULL ordering (ASC -> NULLS LAST, DESC -> NULLS FIRST by default)"
+  },
+  "cases": [
+    {
+      "case": "a ASC NULLS LAST",
+      "postgresql_sql": "SELECT a FROM null_order_test ORDER BY a ASC NULLS LAST",
+      "translated_sql": "SELECT a FROM null_order_test ORDER BY (a IS NULL) ASC, a ASC",
+      "rewrites": [
+        "ASC NULLS LAST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "a ASC NULLS FIRST",
+      "postgresql_sql": "SELECT a FROM null_order_test ORDER BY a ASC NULLS FIRST",
+      "translated_sql": "SELECT a FROM null_order_test ORDER BY a ASC",
+      "rewrites": [
+        "ASC NULLS FIRST: modifier removed"
+      ],
+      "expected_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ]
+      ],
+      "actual_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": true
+    },
+    {
+      "case": "a DESC NULLS LAST",
+      "postgresql_sql": "SELECT a FROM null_order_test ORDER BY a DESC NULLS LAST",
+      "translated_sql": "SELECT a FROM null_order_test ORDER BY a DESC",
+      "rewrites": [
+        "DESC NULLS LAST: modifier removed"
+      ],
+      "expected_order": [
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          2
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          2
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": true
+    },
+    {
+      "case": "a DESC NULLS FIRST",
+      "postgresql_sql": "SELECT a FROM null_order_test ORDER BY a DESC NULLS FIRST",
+      "translated_sql": "SELECT a FROM null_order_test ORDER BY (a IS NULL) DESC, a DESC",
+      "rewrites": [
+        "DESC NULLS FIRST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          2
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ]
+      ],
+      "actual_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          2
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "a NULLS LAST (implicit ASC)",
+      "postgresql_sql": "SELECT a FROM null_order_test ORDER BY a NULLS LAST",
+      "translated_sql": "SELECT a FROM null_order_test ORDER BY (a IS NULL) ASC, a ASC",
+      "rewrites": [
+        "ASC NULLS LAST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "a NULLS FIRST (implicit ASC)",
+      "postgresql_sql": "SELECT a FROM null_order_test ORDER BY a NULLS FIRST",
+      "translated_sql": "SELECT a FROM null_order_test ORDER BY a",
+      "rewrites": [
+        "ASC NULLS FIRST: modifier removed"
+      ],
+      "expected_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ]
+      ],
+      "actual_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": true
+    },
+    {
+      "case": "a DESC NULLS FIRST LIMIT 3",
+      "postgresql_sql": "SELECT a FROM null_order_test ORDER BY a DESC NULLS FIRST LIMIT 3",
+      "translated_sql": "SELECT a FROM null_order_test ORDER BY (a IS NULL) DESC, a DESC LIMIT 3",
+      "rewrites": [
+        "DESC NULLS FIRST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "a ASC NULLS LAST LIMIT 4",
+      "postgresql_sql": "SELECT a FROM null_order_test ORDER BY a ASC NULLS LAST LIMIT 4",
+      "translated_sql": "SELECT a FROM null_order_test ORDER BY (a IS NULL) ASC, a ASC LIMIT 4",
+      "rewrites": [
+        "ASC NULLS LAST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ]
+      ],
+      "actual_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "a DESC NULLS LAST, b ASC NULLS LAST",
+      "postgresql_sql": "SELECT a, b FROM null_order_test ORDER BY a DESC NULLS LAST, b ASC NULLS LAST",
+      "translated_sql": "SELECT a, b FROM null_order_test ORDER BY a DESC, (b IS NULL) ASC, b ASC",
+      "rewrites": [
+        "DESC NULLS LAST: modifier removed",
+        "ASC NULLS LAST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          3,
+          "x"
+        ],
+        [
+          3,
+          null
+        ],
+        [
+          2,
+          "x"
+        ],
+        [
+          1,
+          "z"
+        ],
+        [
+          1,
+          null
+        ],
+        [
+          null,
+          "y"
+        ],
+        [
+          null,
+          "y"
+        ],
+        [
+          null,
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          3,
+          "x"
+        ],
+        [
+          3,
+          null
+        ],
+        [
+          2,
+          "x"
+        ],
+        [
+          1,
+          "z"
+        ],
+        [
+          1,
+          null
+        ],
+        [
+          null,
+          "y"
+        ],
+        [
+          null,
+          "y"
+        ],
+        [
+          null,
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "a ASC NULLS FIRST, b DESC NULLS FIRST",
+      "postgresql_sql": "SELECT a, b FROM null_order_test ORDER BY a ASC NULLS FIRST, b DESC NULLS FIRST",
+      "translated_sql": "SELECT a, b FROM null_order_test ORDER BY a ASC, (b IS NULL) DESC, b DESC",
+      "rewrites": [
+        "ASC NULLS FIRST: modifier removed",
+        "DESC NULLS FIRST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          null,
+          null
+        ],
+        [
+          null,
+          "y"
+        ],
+        [
+          null,
+          "y"
+        ],
+        [
+          1,
+          null
+        ],
+        [
+          1,
+          "z"
+        ],
+        [
+          2,
+          "x"
+        ],
+        [
+          3,
+          null
+        ],
+        [
+          3,
+          "x"
+        ]
+      ],
+      "actual_order": [
+        [
+          null,
+          null
+        ],
+        [
+          null,
+          "y"
+        ],
+        [
+          null,
+          "y"
+        ],
+        [
+          1,
+          null
+        ],
+        [
+          1,
+          "z"
+        ],
+        [
+          2,
+          "x"
+        ],
+        [
+          3,
+          null
+        ],
+        [
+          3,
+          "x"
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "qualified x.a ASC NULLS LAST",
+      "postgresql_sql": "SELECT x.a FROM null_order_test x ORDER BY x.a ASC NULLS LAST",
+      "translated_sql": "SELECT x.a FROM null_order_test x ORDER BY (x.a IS NULL) ASC, x.a ASC",
+      "rewrites": [
+        "ASC NULLS LAST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "expression ABS(a - 2) DESC NULLS FIRST",
+      "postgresql_sql": "SELECT ABS(a - 2) AS d FROM null_order_test ORDER BY ABS(a - 2) DESC NULLS FIRST",
+      "translated_sql": "SELECT ABS(a - 2) AS d FROM null_order_test ORDER BY (ABS(a - 2) IS NULL) DESC, ABS(a - 2) DESC",
+      "rewrites": [
+        "DESC NULLS FIRST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          0
+        ]
+      ],
+      "actual_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          0
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "alias v NULLS LAST",
+      "postgresql_sql": "SELECT a AS v FROM null_order_test ORDER BY v NULLS LAST",
+      "translated_sql": "SELECT a AS v FROM null_order_test ORDER BY (v IS NULL) ASC, v ASC",
+      "rewrites": [
+        "ASC NULLS LAST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          1
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          3
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "string b ASC NULLS LAST",
+      "postgresql_sql": "SELECT b FROM null_order_test ORDER BY b ASC NULLS LAST",
+      "translated_sql": "SELECT b FROM null_order_test ORDER BY (b IS NULL) ASC, b ASC",
+      "rewrites": [
+        "ASC NULLS LAST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          "x"
+        ],
+        [
+          "x"
+        ],
+        [
+          "y"
+        ],
+        [
+          "y"
+        ],
+        [
+          "z"
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          "x"
+        ],
+        [
+          "x"
+        ],
+        [
+          "y"
+        ],
+        [
+          "y"
+        ],
+        [
+          "z"
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "string b DESC NULLS FIRST",
+      "postgresql_sql": "SELECT b FROM null_order_test ORDER BY b DESC NULLS FIRST",
+      "translated_sql": "SELECT b FROM null_order_test ORDER BY (b IS NULL) DESC, b DESC",
+      "rewrites": [
+        "DESC NULLS FIRST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          "z"
+        ],
+        [
+          "y"
+        ],
+        [
+          "y"
+        ],
+        [
+          "x"
+        ],
+        [
+          "x"
+        ]
+      ],
+      "actual_order": [
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          null
+        ],
+        [
+          "z"
+        ],
+        [
+          "y"
+        ],
+        [
+          "y"
+        ],
+        [
+          "x"
+        ],
+        [
+          "x"
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    },
+    {
+      "case": "WHERE + a DESC NULLS FIRST LIMIT 2",
+      "postgresql_sql": "SELECT a FROM null_order_test WHERE id > 2 ORDER BY a DESC NULLS FIRST LIMIT 2",
+      "translated_sql": "SELECT a FROM null_order_test WHERE id > 2 ORDER BY (a IS NULL) DESC, a DESC LIMIT 2",
+      "rewrites": [
+        "DESC NULLS FIRST: IS NULL key added"
+      ],
+      "expected_order": [
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "actual_order": [
+        [
+          null
+        ],
+        [
+          null
+        ]
+      ],
+      "passed": true,
+      "naive_deletion_matches_oracle": false
+    }
+  ],
+  "unsupported": [
+    {
+      "sql": "SELECT a, b FROM null_order_test ORDER BY 2 NULLS LAST",
+      "refused": true,
+      "reason": "ORDER BY position or literal cannot be translated"
+    },
+    {
+      "sql": "SELECT a FROM null_order_test ORDER BY RAND() NULLS LAST",
+      "refused": true,
+      "reason": "expression contains RAND: duplication not guaranteed equivalent"
+    },
+    {
+      "sql": "SELECT a FROM null_order_test ORDER BY (SELECT MAX(id) FROM null_order_test) NULLS LAST",
+      "refused": true,
+      "reason": "expression contains SELECT: duplication not guaranteed equivalent"
+    },
+    {
+      "sql": "SELECT a FROM null_order_test ORDER BY SUM(a) OVER (PARTITION BY b) NULLS LAST",
+      "refused": true,
+      "reason": "expression contains OVER: duplication not guaranteed equivalent"
+    },
+    {
+      "sql": "SELECT a FROM null_order_test ORDER BY a NULLS LAST, 2 NULLS LAST",
+      "refused": true,
+      "reason": "ORDER BY position or literal cannot be translated"
+    }
+  ],
+  "translator_sha256": "d648b36703386b995fa079067a20ac4b1c13fe56541b1a0892a0479fdf1e45fd",
+  "finished_utc": "2026-10-18T08:30:34.090396+00:00"
+}

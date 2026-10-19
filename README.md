@@ -6,7 +6,7 @@ QueryMind is a research project developed at the **University of Bahrain**. It a
 
 The system combines **Retrieval-Augmented Generation (RAG)**, **ChromaDB**, and local models running through **Ollama**. Schema metadata is used to provide the language model with relevant table definitions; database records are not included in the model prompt.
 
-**[Project website](https://querymind-text2sql.com)** · **[Watch the demo video](https://drive.google.com/file/d/1P1yun3DS4n5BoiAbfR6Dis9DOnm5SHRc/view?usp=drivesdk)**
+**[Project website](https://querymind-text2sql.com)**
 
 ## Research paper
 
@@ -80,7 +80,7 @@ An external comparison evaluated **Defog SQLCoder-8B** on the same database and 
 
 The security evaluation recorded **103/103 checks passed** in its original test suite. These results describe tested behaviors, not a guarantee against all attacks. The original five-question pilot used a different evaluation method and is **not directly comparable** to the expanded results.
 
-For the full methodology, statistical analysis, security test scope, and reproducibility details, see **[Evaluation documentation](docs/EVALUATION.md)** and **[Security documentation](docs/SECURITY_LAYERS.md)**.
+For the full methodology, statistical analysis, security test scope, and reproducibility details, see **[Evaluation documentation](docs/EVALUATION.md)** and **[Security documentation](docs/SECURITY_LAYERS.md)**. The saved evidence behind every number, the results workbook and a result-to-file map are in **[`research/`](research/README.md)**; the experiment code is in [`experiment/`](experiment/README.md).
 
 ---
 
@@ -165,7 +165,7 @@ The secret key is mandatory. The example generates a new key for each launch, so
 python -m unittest discover -s tests
 ```
 
-The last reported local test suite passed **205 tests**. The number may change as the project evolves.
+The last local run passed **220 tests**. The number may change as the project evolves.
 
 ## Security and practical limitations
 
@@ -179,18 +179,43 @@ QueryMind uses three complementary safeguards: a read-only database account, app
 
 See **[Security architecture and limitations](docs/SECURITY_LAYERS.md)** for technical details.
 
-## Repository guide
+## Repository structure
 
-| Path | Purpose |
+```text
+QueryMind/
+├── app.py                  Flask application: login, question, results, table-metadata API
+├── webguard.py             Web protections: server-side sessions, CSRF, rate limiting, database-host policy, security headers
+├── security.py             The three SELECT-only layers (privilege check, SQL validation, rollback guard)
+├── chroma_rag.py           Schema indexing and retrieval with ChromaDB and Ollama embeddings
+├── llm_engine.py           Prompt construction and SQL generation through Ollama
+├── query_executor.py       Extracts the SQL statement from the model's output
+├── config.py               Default language model and embedding model
+├── requirements.txt        Pinned Python dependencies
+├── templates/              Jinja pages (login, home, results, error) and shared components
+├── static/                 Stylesheet, scripts, icon, and locally bundled Bootstrap
+├── tests/                  Unit and regression tests
+├── docs/                   Evaluation guide, security documentation, project structure
+├── experiment/             Research code and benchmark data
+│   ├── benchmark/          32-question benchmark, runner, scoring, the five configurations
+│   ├── analysis/           Statistical analysis and latency control
+│   ├── baseline/           SQLCoder baseline, comparison, MariaDB dialect follow-up
+│   ├── security_eval/      103-check security evaluation and its disposable database server
+│   ├── common/             Provenance recording and run resilience
+│   └── pilot/              The original five questions (bridge set)
+├── research/               Sanitized evidence for the paper, results workbook, rebuild and check scripts
+└── archive/pilot-evaluation/   2025 five-question pilot: results and legacy scripts (historical)
+```
+
+| Folder | What it contains |
 |---|---|
-| `app.py`, `webguard.py`, `security.py` | Web application, web-layer protection, and SQL safeguards |
-| `chroma_rag.py`, `llm_engine.py`, `query_executor.py` | Schema retrieval, local model integration, and SQL extraction |
-| `config.py` | Model configuration |
-| `templates/`, `static/` | Browser interface |
-| `experiment/` | Benchmark runners, scoring, statistical analysis, and baseline evaluation |
-| `tests/` | Unit and regression tests |
-| `docs/` | Evaluation and security methodology |
-| `exp_com_res/`, `archive/legacy-runner/` | Historical pilot results and legacy evaluation tooling |
+| `templates/`, `static/` | `base.html` plus the login, home, result and error pages with shared `components/`; `css/main.css`, three small scripts, and Bootstrap served locally so the app makes no external requests. |
+| `experiment/` | Everything that produced the paper's numbers, grouped by purpose (see [`experiment/README.md`](experiment/README.md)). Run from the repository root. |
+| `research/` | Where the evidence is: sanitized copies of the saved runs, a manifest, the Excel results workbook and a map from each reported result to its files ([`research/README.md`](research/README.md)). |
+| `tests/` | Offline unit tests; they need neither a database nor Ollama. |
+| `docs/` | [`EVALUATION.md`](docs/EVALUATION.md) (how to reproduce), [`SECURITY_LAYERS.md`](docs/SECURITY_LAYERS.md) (safeguards, evidence, limits) and [`PROJECT_STRUCTURE.md`](docs/PROJECT_STRUCTURE.md) (the full map and where files moved). |
+| `archive/` | The original five-question pilot, kept for the record. Not comparable with the current benchmark. |
+
+Raw run output (`exp_runs/`), the Python environment and private notes are created locally and are not part of the repository.
 
 ## Data, model licenses, and citation
 

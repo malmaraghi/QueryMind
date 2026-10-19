@@ -38,7 +38,7 @@ effects outside the transaction (files, locks, delays). With a SELECT-only accou
 it exists as a second, independent safeguard and was demonstrated with a privileged account on disposable data only.
 An optional `read_only_transaction=True` makes the server refuse writes outright.
 
-## Evidence (disposable private MariaDB server, `experiment/security_evaluation.py`)
+## Evidence (disposable private MariaDB server, `experiment/security_eval/security_evaluation.py`)
 
 103 of 103 checks passed on 2026-10-18 (raw results are kept locally in `exp_runs/security_20261018T070742Z/`, which is not tracked in Git):
 
@@ -57,9 +57,9 @@ An optional `read_only_transaction=True` makes the server refuse writes outright
 Reproduce:
 
 ```bash
-experiment/security_private_server.sh start     # private MariaDB on 127.0.0.1:3307, temporary data dir, no sudo
-python experiment/security_evaluation.py        # add --skip-llm to skip the live-model prompts
-experiment/security_private_server.sh stop      # stops it and deletes its directory and credentials
+experiment/security_eval/security_private_server.sh start     # private MariaDB on 127.0.0.1:3307, temporary data dir, no sudo
+python experiment/security_eval/security_evaluation.py        # add --skip-llm to skip the live-model prompts
+experiment/security_eval/security_private_server.sh stop      # stops it and deletes its directory and credentials
 python -m unittest discover -s tests            # offline unit tests, including tests/test_security.py
 ```
 
@@ -84,7 +84,7 @@ Separate from the three SELECT-only layers (which are unchanged), `app.py` and [
 | No brute-force protection | Failed logins are counted per database account (default 5 per 5 min) and per client address (4x that); then HTTP 429 with `Retry-After`. A successful login clears the account counter. |
 | Shared / predictable search index (`md5(user_host_db)`) | Each login gets its own unguessable `sess-<random>` index directory under the index base; it is deleted when the session ends, removal is confined to that prefix and directory, and leftovers of an earlier run are purged at startup. |
 
-Verified on 2026-10-18: 205 unit tests pass; against a private MariaDB server, real login/logout with two independent sessions, the database password absent from the raw and decoded cookies, `GET /logout` 405, missing token 400, a destructive question blocked, and `experiment/security_evaluation.py --skip-llm` 93 of 93 checks (the earlier 103-check run included the live model and is unchanged evidence).
+Verified on 2026-10-18: 205 unit tests pass; against a private MariaDB server, real login/logout with two independent sessions, the database password absent from the raw and decoded cookies, `GET /logout` 405, missing token 400, a destructive question blocked, and `experiment/security_eval/security_evaluation.py --skip-llm` 93 of 93 checks (the earlier 103-check run included the live model and is unchanged evidence).
 
 Limits: sessions, counters and the host check exist per process only (use one worker; a restart logs users out); the password is held in server memory while a session is active; plain HTTP unless TLS is added in front; behind a proxy clients share one address for rate limiting; the host policy is not a firewall. Not independently audited.
 

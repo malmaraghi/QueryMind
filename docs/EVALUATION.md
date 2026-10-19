@@ -6,19 +6,22 @@ repository root with the project's virtual environment active. Results are writt
 
 ## Components
 
-| Purpose | Files in `experiment/` |
-|---|---|
-| Benchmark definition | `benchmark_30.json` (32 questions, 19 SQL categories, reference SQL, required tables, ordering flag, expected rows), `gold_questions.json` + `gold_annotations.json` (the original five questions), `difficulty_tiers.json`, `paper_configs.json` (the five LLM/embedding configurations) |
-| QueryMind runner | `run_benchmark.py` (+ `run_paper_benchmark.sh` for the five configurations), `latency_control.py` |
-| Scoring and statistics | `evaluation.py`, `metrics.py`, `analyze_results.py`, `compare_baseline.py`, `questions.py` |
-| Reproducibility support | `provenance.py` (versions, hardware, model digests, dataset fingerprint), `resilience.py` (resume, reconnect, locking) |
-| Reference rows | `generate_expected_rows.py` |
-| External baseline | `run_baseline.py`, `baseline_model_manifest.json` |
-| MariaDB dialect follow-up | `dialect_followup_protocol.md`, `dialect_translation.py`, `dialect_translation_validation.py`, `sqlcoder_dialect_followup.py` |
-| Security evidence | `security_evaluation.py`, `security_private_server.sh` (see [SECURITY_LAYERS.md](SECURITY_LAYERS.md)) |
+| Purpose | Folder in `experiment/` | Files |
+|---|---|---|
+| Benchmark definition and QueryMind runner | `benchmark/` | `benchmark_30.json` (32 questions, 19 SQL categories, reference SQL, required tables, ordering flag, expected rows), `difficulty_tiers.json`, `paper_configs.json` (the five configurations), `run_benchmark.py`, `run_paper_benchmark.sh`, `generate_expected_rows.py` |
+| Scoring | `benchmark/` | `evaluation.py` (execution-result equivalence), `metrics.py`, `questions.py` |
+| Statistics and latency | `analysis/` | `analyze_results.py` (accuracy, intervals, paired tests), `latency_control.py` |
+| External baseline and dialect follow-up | `baseline/` | `run_baseline.py`, `baseline_model_manifest.json`, `compare_baseline.py`, `dialect_followup_protocol.md`, `dialect_translation.py`, `dialect_translation_validation.py`, `sqlcoder_dialect_followup.py` |
+| Security evidence | `security_eval/` | `security_evaluation.py`, `security_private_server.sh` (see [SECURITY_LAYERS.md](SECURITY_LAYERS.md)) |
+| Reproducibility support | `common/` | `provenance.py` (versions, hardware, model digests, dataset fingerprint), `resilience.py` (resume, reconnect, locking) |
+| Original five questions (bridge set) | `pilot/` | `gold_questions.json`, `gold_annotations.json` |
 
-The scripts that produced the original five-question results are kept for the record in
-[`archive/legacy-runner/`](../archive/legacy-runner/README.md).
+The scripts import each other by module name; each one adds the project root and these folders to `sys.path` itself, so
+they are run from the repository root exactly as shown below.
+
+The scripts and results of the original 2025 five-question pilot are kept for the record in
+[`archive/pilot-evaluation/`](../archive/pilot-evaluation/README.md). Sanitized copies of the evidence behind every
+published number, with a map from each result to its files, are in [`research/`](../research/README.md).
 
 ## The reference database
 
@@ -56,19 +59,19 @@ GRANT SELECT ON classicmodels_gold.* TO 'querymind_eval'@'localhost';
 ## Running
 
 ```bash
-experiment/run_paper_benchmark.sh                  # 5 configurations x 32 questions x 3 repeats = 480 trials
-experiment/run_paper_benchmark.sh --extra          # + the optional Llama 3.1 8B + all-minilm run (not in the paper)
-QUESTIONS=experiment/gold_questions.json GROUP=bridge-gold5 experiment/run_paper_benchmark.sh   # original five questions
-python experiment/analyze_results.py exp_runs/*paper-v1-P*    # accuracy, intervals, hallucination rate, latency, paired tests
+experiment/benchmark/run_paper_benchmark.sh                  # 5 configurations x 32 questions x 3 repeats = 480 trials
+experiment/benchmark/run_paper_benchmark.sh --extra          # + the optional Llama 3.1 8B + all-minilm run (not in the paper)
+QUESTIONS=experiment/pilot/gold_questions.json GROUP=bridge-gold5 experiment/benchmark/run_paper_benchmark.sh   # original five questions
+python experiment/analysis/analyze_results.py exp_runs/*paper-v1-P*    # accuracy, intervals, hallucination rate, latency, paired tests
 ```
 
-A single configuration: `python experiment/run_benchmark.py --llm llama3.1:8b --embedding mxbai-embed-large:latest --questions experiment/benchmark_30.json --repeats 3`.
+A single configuration: `python experiment/benchmark/run_benchmark.py --llm llama3.1:8b --embedding mxbai-embed-large:latest --questions experiment/benchmark/benchmark_30.json --repeats 3`.
 
 - One run directory per configuration (`exp_runs/<UTC timestamp>_<tag>/`, never reused). Each trial is written
   and synced to `trials.jsonl` when it finishes; `run_metadata.json` records the commit, Python and package
   versions, hardware, Ollama version, model names and digests, retrieval and generation settings and a
   fingerprint of the database (schema hash, row counts, table checksums).
-- **Resume:** `python experiment/run_benchmark.py --resume exp_runs/<run directory>` runs only the missing trials,
+- **Resume:** `python experiment/benchmark/run_benchmark.py --resume exp_runs/<run directory>` runs only the missing trials,
   after checking that code, models, settings and the database are unchanged. A half-written last line is moved
   aside, not lost.
 - **Timeout:** each LLM request has a 300 s limit (`--generation-timeout`); a timeout is recorded as `generation_error`.
@@ -111,13 +114,13 @@ complete system, so schema, prompt, extraction, validation, execution and scorin
 front end differs: the baseline receives the model's official prompt with all table definitions (no retrieval).
 
 ```bash
-# 1. Download the community Q4_K_M GGUF pinned in experiment/baseline_model_manifest.json (about 4.9 GB) and verify its
+# 1. Download the community Q4_K_M GGUF pinned in experiment/baseline/baseline_model_manifest.json (about 4.9 GB) and verify its
 #    SHA-256 against the manifest, then import it (Modelfile: FROM <file>, TEMPLATE "{{ .Prompt }}", PARAMETER stop <|eot_id|>)
 ollama create sqlcoder-llama3-8b:q4_k_m -f Modelfile
 # 2. Run (96 trials), compare with the QueryMind run for Llama 3.1 8B + mxbai, and measure latency on a few questions
-python experiment/run_baseline.py --repeats 3 --tag sqlcoder-8b-baseline
-python experiment/compare_baseline.py --querymind exp_runs/<P5 run> --baseline exp_runs/<baseline run> --control exp_runs/<latency control run> --out exp_runs/comparison_sqlcoder-vs-querymind
-python experiment/latency_control.py
+python experiment/baseline/run_baseline.py --repeats 3 --tag sqlcoder-8b-baseline
+python experiment/baseline/compare_baseline.py --querymind exp_runs/<P5 run> --baseline exp_runs/<baseline run> --control exp_runs/<latency control run> --out exp_runs/comparison_sqlcoder-vs-querymind
+python experiment/analysis/latency_control.py
 ```
 
 Documented deviations from the official setup (also stored in each run's metadata): one MariaDB dialect sentence in

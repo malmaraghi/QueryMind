@@ -1,0 +1,359 @@
+{
+  "configs": {
+    "gemma3:1b + all-minilm:latest": {
+      "n_trials": 96,
+      "n_questions": 32,
+      "n_repeats": 3,
+      "status_counts": {
+        "retrieval_error": 0,
+        "generation_error": 0,
+        "validation_failure": 0,
+        "db_error": 24,
+        "executed": 72
+      },
+      "execution_result_accuracy": 0.28125,
+      "sql_execution_success_rate": 0.75,
+      "executed_but_incorrect": 45,
+      "accuracy_by_repeat": {
+        "1": 0.28125,
+        "2": 0.28125,
+        "3": 0.28125
+      },
+      "accuracy_stdev_across_repeats": 0.0,
+      "legacy_result_match_rate": 0.1875,
+      "retrieval": {
+        "mean_recall_at_1": 0.6979166666666666,
+        "mean_recall_at_3": 0.984375,
+        "mean_recall_at_5": 0.9921875,
+        "mean_recall_at_configured_top_k": 0.9921875,
+        "full_recall_rate": 0.96875
+      },
+      "latency_seconds": {
+        "retrieval": {
+          "n": 96,
+          "mean": 0.032235098375072845,
+          "median": 0.032095082500745775,
+          "stdev": 0.0016334273787236096,
+          "min": 0.0273117690012441,
+          "max": 0.037669003000701196
+        },
+        "generation": {
+          "n": 96,
+          "mean": 5.888800362208333,
+          "median": 5.9625975134995315,
+          "stdev": 0.6518688591976097,
+          "min": 4.349229565999849,
+          "max": 7.084402901999056
+        },
+        "db_execution": {
+          "n": 96,
+          "mean": 0.001210328854161465,
+          "median": 0.0009952070004146663,
+          "stdev": 0.0008053650108768461,
+          "min": 0.00036289700074121356,
+          "max": 0.005312488001436577
+        },
+        "end_to_end": {
+          "n": 96,
+          "mean": 5.922340144593856,
+          "median": 5.996271647000867,
+          "stdev": 0.6526689815045834,
+          "min": 4.382199603000117,
+          "max": 7.120188185999723
+        }
+      },
+      "per_question": {
+        "101": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 2,
+          "mean_recall_at_k": 1.0
+        },
+        "102": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 1.0,
+          "db_error_rate": 1.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "103": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "104": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "105": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "106": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "107": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "108": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "109": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "110": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 1.0,
+          "db_error_rate": 1.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "111": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 1.0,
+          "db_error_rate": 1.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "112": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "113": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 1.0,
+          "db_error_rate": 1.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 0.75
+        },
+        "114": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "115": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "116": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "117": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 1.0,
+          "db_error_rate": 1.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "118": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "119": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "120": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "121": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "122": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "123": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "124": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 1.0,
+          "db_error_rate": 1.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "125": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "126": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "127": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "128": {
+          "trials": 3,
+          "correct": 3,
+          "failure_rate": 0.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "129": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 1.0,
+          "db_error_rate": 1.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "130": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 1.0,
+          "db_error_rate": 1.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "131": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        },
+        "132": {
+          "trials": 3,
+          "correct": 0,
+          "failure_rate": 1.0,
+          "execution_failure_rate": 0.0,
+          "db_error_rate": 0.0,
+          "distinct_generated_sql": 1,
+          "mean_recall_at_k": 1.0
+        }
+      }
+    }
+  },
+  "unverified_question_ids": [],
+  "status": "completed"
+}

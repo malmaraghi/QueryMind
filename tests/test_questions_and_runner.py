@@ -15,11 +15,11 @@ EXP = context.EXPERIMENT
 
 class GoldSetTests(unittest.TestCase):
     def test_original_gold_set_unchanged_and_annotated(self):
-        with open(os.path.join(EXP, "gold_questions.json"), encoding="utf-8") as handle:
+        with open(os.path.join(EXP, "pilot", "gold_questions.json"), encoding="utf-8") as handle:
             raw = json.load(handle)
         self.assertEqual([q["id"] for q in raw], [1, 2, 3, 4, 5])
         self.assertTrue(all("required_tables" not in q for q in raw))  # annotations stay in the sidecar
-        merged = load_questions(os.path.join(EXP, "gold_questions.json"), os.path.join(EXP, "gold_annotations.json"))
+        merged = load_questions(os.path.join(EXP, "pilot", "gold_questions.json"), os.path.join(EXP, "pilot", "gold_annotations.json"))
         self.assertEqual(len(merged), 5)
         self.assertEqual(merged[3]["required_tables"], ["customers", "orders"])
         self.assertTrue(all(q["expected_rows"] for q in merged))
@@ -28,7 +28,7 @@ class GoldSetTests(unittest.TestCase):
 class BenchmarkFileTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        with open(os.path.join(EXP, "benchmark_30.json"), encoding="utf-8") as handle:
+        with open(os.path.join(EXP, "benchmark", "benchmark_30.json"), encoding="utf-8") as handle:
             cls.document = json.load(handle)
         cls.questions = cls.document["questions"]
 

@@ -117,7 +117,6 @@ h2 { font-size: var(--qm-font-lg); font-weight: 650; }
 .qm-feature { display: flex; gap: 0.75rem; align-items: flex-start; }
 .qm-feature .bi { color: var(--qm-primary); font-size: 1.25rem; line-height: 1.4; }
 .qm-login-card { width: 100%; max-width: 32rem; margin-inline: auto; }
-.qm-port { max-width: 9rem; }
 
 /* ---- 6. Home: question workspace and table explorer ---------------------------------------------------------- */
 .qm-question { resize: vertical; min-height: 9rem; padding: 0.9rem 1rem; font-size: var(--qm-font-lg); line-height: 1.5; }
@@ -170,7 +169,6 @@ h2 { font-size: var(--qm-font-lg); font-weight: 650; }
   :root { --qm-gutter: 0.875rem; }
   .qm-main { padding-block: var(--qm-space-2) var(--qm-space-3); }
   .qm-card-body { padding: var(--qm-space-2); }
-  .qm-port { max-width: none; }
   .qm-metrics > div { flex-basis: 45%; }
   .qm-metrics > div:nth-child(odd) { border-left: 0; }
 }
